@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "951278545502",
+    "project_id": "animo-firebase",
+    "storage_bucket": "animo-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:951278545502:android:98eccca0dfdf3d2fcaa2cf",
+        "android_client_info": {
+          "package_name": "com.panu.animo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "951278545502-2kqbr2hucprsu7h3cl107t0gegblbrkr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPIbxonmD5AMUJ6-iFB5XBCGnUh8SwD8g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "951278545502-2kqbr2hucprsu7h3cl107t0gegblbrkr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
