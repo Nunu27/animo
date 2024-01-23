@@ -2,12 +2,14 @@ import 'package:animo/firebase_options.dart';
 import 'package:animo/models/user.dart';
 import 'package:animo/providers/user_provider.dart';
 import 'package:animo/router.dart';
+import 'package:animo/services/api.dart';
 import 'package:animo/services/notification.dart';
 import 'package:animo/theme/pallete.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -32,14 +34,19 @@ class MyApp extends ConsumerStatefulWidget {
 class _MyAppState extends ConsumerState<MyApp> {
   final _listenable = Hive.box('animo').listenable(keys: ['user']);
   void onUserChange() {
-    ref
-        .read(userProvider.notifier)
-        .update((state) => _listenable.value.get('user'));
+    final User? user = _listenable.value.get('user');
+    ref.read(apiServiceProvider).token = user?.token;
+    ref.read(userProvider.notifier).update((state) => user);
+
+    if (user == null) context.replace('/signin');
   }
 
   @override
   void initState() {
     super.initState();
+    final User? user = _listenable.value.get('user');
+
+    ref.read(apiServiceProvider).token = user?.token;
     ref.read(notificationProvider).init();
     _listenable.addListener(onUserChange);
   }
