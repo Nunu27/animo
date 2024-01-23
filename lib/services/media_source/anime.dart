@@ -36,8 +36,6 @@ class AnimeProvider extends MediaProvider {
   final Dio dio = Dio(
     BaseOptions(
       baseUrl: URLConstants.anime,
-      connectTimeout: const Duration(seconds: 5),
-      receiveTimeout: const Duration(seconds: 10),
     ),
   );
 

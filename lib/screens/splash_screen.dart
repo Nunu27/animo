@@ -1,4 +1,3 @@
-import 'package:animo/theme/pallete.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +18,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -43,11 +44,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   children: [
                     Container(
                       margin: const EdgeInsets.only(right: 10),
-                      child: const SizedBox(
+                      child: SizedBox(
                         height: 15,
                         width: 15,
                         child: CircularProgressIndicator(
-                          color: Pallete.primary,
+                          color: theme.colorScheme.primary,
                           strokeWidth: 2,
                         ),
                       ),
