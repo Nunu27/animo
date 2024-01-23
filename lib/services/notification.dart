@@ -8,18 +8,18 @@ final notificationProvider = Provider((ref) {
   return NotificationService(ref);
 });
 
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'animo_main',
+  'Animo main notification channel',
+  importance: Importance.max,
+);
+
 class NotificationService {
   final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
   final Ref _ref;
   String? _token;
-
-  static const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'animo_main',
-    'Animo main notification channel',
-    importance: Importance.max,
-  );
 
   NotificationService(this._ref);
 
@@ -49,14 +49,20 @@ class NotificationService {
       final apiService = _ref.read(apiServiceProvider);
 
       if (apiService.token != null) {
-        await apiService.updatePushToken(newToken, oldToken: token);
+        await apiService.updatePushToken(oldToken: token, newToken: newToken);
       }
     }
+
     _token = newToken;
   }
 
   void init() async {
     FirebaseMessaging.onMessage.listen(_handleMessage);
+    await _plugin.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/launcher_icon'),
+      ),
+    );
     await _fcm.requestPermission(
       alert: true,
       announcement: false,

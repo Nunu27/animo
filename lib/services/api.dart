@@ -58,11 +58,11 @@ class ApiService {
     }
   }
 
-  FutureVoid updatePushToken(String token, {String? oldToken}) async {
+  FutureVoid updatePushToken({String? oldToken, String? newToken}) async {
     try {
       final request = dio.post('/user/push_token', data: {
         'old_token': oldToken,
-        'push_token': token,
+        'push_token': newToken,
       });
       await _handleApi(request);
 
@@ -89,7 +89,7 @@ class ApiService {
 
       token = response.data;
 
-      if (pushToken != null) await updatePushToken(pushToken);
+      if (pushToken != null) await updatePushToken(newToken: pushToken);
       return await getUser();
     } catch (e) {
       return left(getError(e));
@@ -141,11 +141,11 @@ class ApiService {
     }
   }
 
-  FutureEither<FutureEither<ApiResponse> Function(String)> forgotPassword(
-    String email,
-    String password,
-    String confirmPassword,
-  ) async {
+  FutureEither<FutureEither<ApiResponse> Function(String)> forgotPassword({
+    required String email,
+    required String password,
+    required String confirmPassword,
+  }) async {
     try {
       final request = dio.post('/auth/forgot-password', data: {
         'email': email,
