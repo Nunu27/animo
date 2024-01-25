@@ -34,8 +34,7 @@ class AuthController extends StateNotifier<bool> {
       (l) => BotToast.showText(text: l.message),
       (r) {
         _box.put('user', r);
-        // TODO set to the home path
-        context.replace('/');
+        context.go('/explore');
       },
     );
   }
@@ -78,13 +77,15 @@ class AuthController extends StateNotifier<bool> {
     });
   }
 
-  void signOut() async {
+  void signOut(BuildContext context) async {
     state = true;
     await _api.updatePushToken(
       oldToken: _ref.read(notificationProvider).token,
     );
     state = false;
 
-    _box.delete('user');
+    _box.delete('user').then(
+          (value) => context.go('/signin'),
+        );
   }
 }

@@ -1,18 +1,19 @@
-import 'package:animo/screens/library/library_manga_screen.dart';
+import 'package:animo/screens/explore/explore_manga_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Library extends StatelessWidget {
-  const Library({super.key});
+class Explore extends ConsumerWidget {
+  const Explore({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Library'),
+          title: const Text('Explore'),
           bottom: const TabBar(
-            tabs: [
+            tabs: <Widget>[
               Tab(
                 text: 'Anime',
               ),
@@ -21,13 +22,17 @@ class Library extends StatelessWidget {
               ),
               Tab(
                 text: 'Novel',
-              )
+              ),
             ],
           ),
           actions: [
             IconButton(
               onPressed: () {},
               icon: const Icon(Icons.search),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.filter_list_rounded),
             ),
             PopupMenuButton(
               itemBuilder: (context) {
@@ -45,9 +50,9 @@ class Library extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            LibraryMangaScreen(),
-            LibraryMangaScreen(),
-            LibraryMangaScreen(),
+            ExploreMangaScrenn(),
+            ExploreMangaScrenn(),
+            ExploreMangaScrenn(),
           ],
         ),
       ),

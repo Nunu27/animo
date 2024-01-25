@@ -32,6 +32,11 @@ class AnimoTheme {
           ),
         ),
       ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: colorScheme.onBackground,
+        ),
+      ),
     );
   }
 }

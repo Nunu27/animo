@@ -10,7 +10,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -38,8 +37,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     final User? user = _listenable.value.get('user');
     ref.read(apiServiceProvider).token = user?.token;
     ref.read(userProvider.notifier).update((state) => user);
-
-    if (user == null) context.replace('/signin');
   }
 
   @override

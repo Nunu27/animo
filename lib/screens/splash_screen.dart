@@ -1,5 +1,7 @@
+import 'package:animo/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -11,9 +13,21 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool transitioning = false;
 
+  void checkState() async {
+    final user = ref.read(userProvider);
+    if (user == null) {
+      context.go('/signin');
+    } else {
+      context.go('/explore');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      checkState();
+    });
   }
 
   @override
@@ -54,7 +68,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       ),
                     ),
                     const Text(
-                      "Checking for updates",
+                      'Checking for updates',
                       style: TextStyle(fontSize: 13),
                     ),
                   ],
