@@ -10,7 +10,7 @@ class LibraryMangaScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FutureBuilder(
-      future: ref.read(mangaProvider).filter(sort: 'rating'),
+      future: ref.read(mangaProvider).filter({'sort': 'rating'}),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return CustomScrollView(

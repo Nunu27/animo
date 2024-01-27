@@ -14,8 +14,8 @@ abstract class MediaProvider extends MetaProvider {
     required this.filterOptions,
   });
 
-  Future<List<MediaBasic>> basicSearch({required String keyword});
-  Future<List<MediaBasic>> filter();
+  Future<List<MediaBasic>> basicSearch(String keyword);
+  Future<List<MediaBasic>> filter(Map<String, dynamic> options, {int page = 1});
 
   Map<String, dynamic> formatQuery(Map<String, dynamic> map) {
     return map..removeWhere((key, value) => value == null);

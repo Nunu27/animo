@@ -16,13 +16,16 @@ class NovelProvider extends MediaProvider {
       : super(name: 'Novel', type: MediaType.novel, filterOptions: []);
 
   @override
-  Future<List<MediaBasic>> basicSearch({required String keyword}) {
+  Future<List<MediaBasic>> basicSearch(String keyword) {
     // TODO: implement basicSearch
     throw UnimplementedError();
   }
 
   @override
-  Future<List<MediaBasic>> filter() {
+  Future<List<MediaBasic>> filter(
+    Map<String, dynamic> options, {
+    int page = 1,
+  }) {
     // TODO: implement filter
     throw UnimplementedError();
   }

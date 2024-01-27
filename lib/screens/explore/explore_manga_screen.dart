@@ -11,7 +11,7 @@ class ExploreMangaScrenn extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return FutureBuilder(
-      future: ref.read(mangaProvider).filter(sort: 'rating'),
+      future: ref.read(mangaProvider).filter({'sort': 'rating'}),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Padding(
