@@ -1,3 +1,4 @@
+import 'package:animo/models/base_media.dart';
 import 'package:hive/hive.dart';
 
 part 'media_basic.g.dart';
@@ -5,70 +6,71 @@ part 'media_basic.g.dart';
 @HiveType(typeId: 1)
 class MediaBasic {
   @HiveField(0)
-  String id = "";
+  final String slug;
   @HiveField(1)
-  String? cover;
+  final String? cover;
   @HiveField(2)
-  String title = "";
+  final String title;
   @HiveField(3)
-  String? info;
+  final MediaType type;
+  @HiveField(4)
+  final String? info;
 
   MediaBasic({
-    required this.id,
+    required this.slug,
     this.cover,
     required this.title,
+    required this.type,
     this.info,
   });
 
   MediaBasic copyWith({
-    String? id,
+    String? slug,
     String? cover,
     String? title,
+    MediaType? type,
     String? info,
   }) {
     return MediaBasic(
-      id: id ?? this.id,
+      slug: slug ?? this.slug,
       cover: cover ?? this.cover,
       title: title ?? this.title,
+      type: type ?? this.type,
       info: info ?? this.info,
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'cover': cover,
-      'title': title,
-      'info': info,
-    };
-  }
-
   factory MediaBasic.fromMap(Map<String, dynamic> map) {
     return MediaBasic(
-      id: map['id'] as String,
+      slug: map['slug'] as String,
       cover: map['cover'] != null ? map['cover'] as String : null,
       title: map['title'] as String,
+      type: MediaType.values.byName(map['type']),
       info: map['info'] != null ? map['info'] as String : null,
     );
   }
-
   @override
   String toString() {
-    return 'MediaBasic(id: $id, cover: $cover, title: $title, info: $info)';
+    return 'MediaBasic(slug: $slug, cover: $cover, title: $title, type: $type, info: $info)';
   }
 
   @override
   bool operator ==(covariant MediaBasic other) {
     if (identical(this, other)) return true;
 
-    return other.id == id &&
+    return other.slug == slug &&
         other.cover == cover &&
         other.title == title &&
+        other.type == type &&
         other.info == info;
   }
 
   @override
   int get hashCode {
-    return id.hashCode ^ cover.hashCode ^ title.hashCode ^ info.hashCode;
+    return slug.hashCode ^
+        cover.hashCode ^
+        title.hashCode ^
+        type.hashCode ^
+        info.hashCode;
   }
 }

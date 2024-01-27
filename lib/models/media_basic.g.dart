@@ -17,24 +17,27 @@ class MediaBasicAdapter extends TypeAdapter<MediaBasic> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return MediaBasic(
-      id: fields[0] as String,
+      slug: fields[0] as String,
       cover: fields[1] as String?,
       title: fields[2] as String,
-      info: fields[3] as String?,
+      type: fields[3] as MediaType,
+      info: fields[4] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, MediaBasic obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.slug)
       ..writeByte(1)
       ..write(obj.cover)
       ..writeByte(2)
       ..write(obj.title)
       ..writeByte(3)
+      ..write(obj.type)
+      ..writeByte(4)
       ..write(obj.info);
   }
 

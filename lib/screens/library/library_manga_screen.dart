@@ -21,7 +21,7 @@ class _LibraryMangaScreenState extends ConsumerState<LibraryMangaScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return FutureBuilder(
-      future: ref.read(mangaProvider).filter(sort: 'rating'),
+      future: ref.read(mangaProvider).filter({'sort': 'rating'}),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return CustomScrollView(

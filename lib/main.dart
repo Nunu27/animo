@@ -20,6 +20,7 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(UserAdapter());
   await Hive.openBox('animo');
+  await Hive.openBox('favorites');
 
   runApp(const ProviderScope(child: MyApp()));
 }

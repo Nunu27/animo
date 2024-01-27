@@ -1,3 +1,4 @@
+import 'package:animo/providers/favorites_provider.dart';
 import 'package:animo/services/api.dart';
 import 'package:animo/services/notification.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -83,6 +84,7 @@ class AuthController extends StateNotifier<bool> {
       oldToken: _ref.read(notificationProvider).token,
     );
     state = false;
+    _ref.read(favoritesProvider.notifier).clearLocalData();
 
     _box.delete('user').then(
           (value) => context.go('/signin'),

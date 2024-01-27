@@ -19,29 +19,32 @@ class UserAdapter extends TypeAdapter<User> {
     return User(
       token: fields[0] as String,
       id: fields[1] as String,
-      email: fields[2] as String,
-      username: fields[3] as String,
-      anilistToken: fields[4] as String?,
-      avatar: fields[5] as String?,
+      avatar: fields[2] as String?,
+      email: fields[3] as String,
+      username: fields[4] as String,
+      anilistToken: fields[5] as String?,
+      malToken: fields[6] as MalToken?,
     );
   }
 
   @override
   void write(BinaryWriter writer, User obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.token)
       ..writeByte(1)
       ..write(obj.id)
       ..writeByte(2)
-      ..write(obj.email)
+      ..write(obj.avatar)
       ..writeByte(3)
-      ..write(obj.username)
+      ..write(obj.email)
       ..writeByte(4)
-      ..write(obj.anilistToken)
+      ..write(obj.username)
       ..writeByte(5)
-      ..write(obj.avatar);
+      ..write(obj.anilistToken)
+      ..writeByte(6)
+      ..write(obj.malToken);
   }
 
   @override
