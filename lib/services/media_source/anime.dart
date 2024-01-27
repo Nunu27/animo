@@ -34,7 +34,7 @@ class AnimeProvider extends MediaProvider {
         );
 
   @override
-  Future<List<MediaBasic>> basicSearch({required String keyword}) async {
+  Future<List<MediaBasic>> basicSearch(String keyword) async {
     final response = await _dio.get<Map<String, dynamic>>(
       '/ajax/search/suggest',
       queryParameters: {'keyword': keyword},
@@ -51,28 +51,15 @@ class AnimeProvider extends MediaProvider {
   }
 
   @override
-  Future<List<MediaBasic>> filter({
-    String? keyword,
-    String? type,
-    String? status,
-    String? season,
-    String? sort,
-    String? genres,
+  Future<List<MediaBasic>> filter(
+    Map<String, dynamic> options, {
     int page = 1,
   }) async {
+    options['page'] = page;
+
     final response = await _dio.get<String>(
-      keyword == null ? '/filter' : '/search',
-      queryParameters: formatQuery(
-        {
-          'keyword': keyword,
-          'type': type,
-          'status': status,
-          'season': season,
-          'sort': sort,
-          'genres': genres,
-          'page': page,
-        },
-      ),
+      options['keyword'] == null ? '/filter' : '/search',
+      queryParameters: formatQuery(options),
     );
 
     final document = parse(response.data);

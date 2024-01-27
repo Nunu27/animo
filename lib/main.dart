@@ -4,12 +4,12 @@ import 'package:animo/providers/user_provider.dart';
 import 'package:animo/router.dart';
 import 'package:animo/services/api.dart';
 import 'package:animo/services/notification.dart';
-import 'package:animo/theme/pallete.dart';
+import 'package:animo/theme/animo_theme.dart';
+import 'package:animo/theme/color_schemes.g.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
@@ -38,8 +38,6 @@ class _MyAppState extends ConsumerState<MyApp> {
     final User? user = _listenable.value.get('user');
     ref.read(apiServiceProvider).token = user?.token;
     ref.read(userProvider.notifier).update((state) => user);
-
-    if (user == null) context.replace('/signin');
   }
 
   @override
@@ -61,17 +59,11 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       title: 'Animo',
       themeMode: ThemeMode.dark,
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        primarySwatch: Colors.blue,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Pallete.primary,
-          background: Pallete.background,
-          brightness: Brightness.dark,
-        ),
-      ),
+      darkTheme: const AnimoTheme(colorScheme: darkColorScheme).build(),
+      theme: const AnimoTheme(colorScheme: lightColorScheme).build(),
       builder: BotToastInit(),
       routerConfig: router,
     );

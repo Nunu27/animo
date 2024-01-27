@@ -1,6 +1,7 @@
-import 'package:animo/theme/pallete.dart';
+import 'package:animo/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -12,13 +13,27 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool transitioning = false;
 
+  void checkState() async {
+    final user = ref.read(userProvider);
+    if (user == null) {
+      context.go('/signin');
+    } else {
+      context.go('/explore');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      checkState();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -43,17 +58,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   children: [
                     Container(
                       margin: const EdgeInsets.only(right: 10),
-                      child: const SizedBox(
+                      child: SizedBox(
                         height: 15,
                         width: 15,
                         child: CircularProgressIndicator(
-                          color: Pallete.primary,
+                          color: theme.colorScheme.primary,
                           strokeWidth: 2,
                         ),
                       ),
                     ),
                     const Text(
-                      "Checking for updates",
+                      'Checking for updates',
                       style: TextStyle(fontSize: 13),
                     ),
                   ],

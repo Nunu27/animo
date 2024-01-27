@@ -34,23 +34,25 @@ class MangaProvider extends MediaProvider {
         );
 
   @override
-  Future<List<MediaBasic>> basicSearch({required String keyword}) async {
-    return await filter(keyword: keyword);
+  Future<List<MediaBasic>> basicSearch(String keyword) async {
+    return await filter({'q': keyword});
   }
 
   @override
-  Future<List<MediaBasic>> filter({
-    String? keyword,
+  Future<List<MediaBasic>> filter(
+    Map<String, dynamic> options, {
+    int page = 1,
   }) async {
+    options.addAll({
+      'type': 'comic',
+      'tachiyomi': true,
+      'limit': 36,
+      'page': page,
+    });
+
     final response = await _dio.get<List<dynamic>>(
       '/v1.0/search',
-      queryParameters: formatQuery(
-        {
-          'type': 'comic',
-          'tachiyomi': true,
-          'q': keyword,
-        },
-      ),
+      queryParameters: formatQuery(options),
     );
 
     return response.data!.map(formatMangaFilter).toList();
