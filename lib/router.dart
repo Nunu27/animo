@@ -1,7 +1,8 @@
 import 'package:animo/models/media_basic.dart';
 import 'package:animo/screens/explore/explore.dart';
 import 'package:animo/screens/library/library.dart';
-import 'package:animo/screens/manga/detail_manga.dart';
+import 'package:animo/screens/media/detail_anime.dart';
+import 'package:animo/screens/media/detail_manga.dart';
 import 'package:animo/screens/profile/profile.dart';
 import 'package:animo/widgets/scaffold_with_bar.dart';
 import 'package:animo/screens/auth/signin_screen.dart';
@@ -33,6 +34,13 @@ final router = GoRouter(
       builder: (context, state) {
         MediaBasic media = state.extra as MediaBasic;
         return DetailManga(media: media);
+      },
+    ),
+    GoRoute(
+      path: '/anime',
+      builder: (context, state) {
+        MediaBasic media = state.extra as MediaBasic;
+        return DetailAnime(media: media);
       },
     ),
     StatefulShellRoute.indexedStack(

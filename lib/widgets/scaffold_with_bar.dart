@@ -20,17 +20,17 @@ class ScaffoldWithBar extends StatelessWidget {
           NavigationDestination(
             selectedIcon: Icon(Icons.explore),
             icon: Icon(Icons.explore_outlined),
-            label: 'explore',
+            label: 'Explore',
           ),
           NavigationDestination(
             selectedIcon: Icon(Icons.bookmark),
             icon: Icon(Icons.bookmark_outline),
-            label: 'library',
+            label: 'Library',
           ),
           NavigationDestination(
             selectedIcon: Icon(Icons.person),
             icon: Icon(Icons.person_outline),
-            label: 'profile',
+            label: 'Profile',
           ),
         ],
       ),

@@ -26,17 +26,20 @@ class Profile extends ConsumerWidget {
                   onPressed: () {
                     return logout(ref, context);
                   },
-                  icon: const Icon(Icons.logout),
+                  icon: Icon(
+                    Icons.logout,
+                    color: theme.colorScheme.error,
+                  ),
                 ),
               ]
             : null,
       ),
       body: user != null
-          ? Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
+          ? Padding(
+              padding: const EdgeInsets.all(14),
+              child: Column(
+                children: [
+                  Row(
                     children: [
                       SizedBox(
                         height: 56,
@@ -73,8 +76,8 @@ class Profile extends ConsumerWidget {
                       ),
                     ],
                   ),
-                )
-              ],
+                ],
+              ),
             )
           : SizedBox(
               width: MediaQuery.of(context).size.width,

@@ -1,14 +1,26 @@
 import 'package:animo/services/media_source/manga.dart';
 import 'package:animo/widgets/cover_card.dart';
+import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class ExploreMangaScrenn extends ConsumerWidget {
+class ExploreMangaScrenn extends ConsumerStatefulWidget {
   const ExploreMangaScrenn({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ExploreMangaScrenn> createState() => _ExploreMangaScrennState();
+}
+
+class _ExploreMangaScrennState extends ConsumerState<ExploreMangaScrenn>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
     final theme = Theme.of(context);
     return FutureBuilder(
       future: ref.read(mangaProvider).filter(sort: 'rating'),
@@ -27,13 +39,15 @@ class ExploreMangaScrenn extends ConsumerWidget {
                   height: 8,
                 ),
                 SizedBox(
-                  height: 220,
+                  height: 224,
                   child: ListView.builder(
-                    shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
                     itemCount: 10,
                     itemBuilder: (context, index) {
                       return CoverCard(
+                        onTap: () {
+                          context.push('/manga', extra: snapshot.data![index]);
+                        },
                         media: snapshot.data![index],
                         width: 120,
                       );
@@ -44,7 +58,10 @@ class ExploreMangaScrenn extends ConsumerWidget {
             ),
           );
         } else if (snapshot.hasError) {
-          return Text(snapshot.error.toString());
+          return ErrorView(
+            message: snapshot.error.toString(),
+            onRetry: () {},
+          );
         } else {
           return const Loader();
         }

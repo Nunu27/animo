@@ -1,4 +1,3 @@
-import 'package:animo/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 
 class ErrorView extends StatelessWidget {
@@ -15,7 +14,7 @@ class ErrorView extends StatelessWidget {
         if (icon != null) icon!,
         Text(message),
         if (onRetry != null)
-          PrimaryButton(
+          FilledButton(
             onPressed: onRetry!,
             child: const Text('Try again'),
           )

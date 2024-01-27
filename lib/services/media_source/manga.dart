@@ -24,8 +24,8 @@ class MangaProvider extends MediaProvider {
   final Dio dio = Dio(
     BaseOptions(
       baseUrl: URLConstants.manga,
-      // connectTimeout: const Duration(seconds: 5),
-      // receiveTimeout: const Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 5),
+      receiveTimeout: const Duration(seconds: 10),
     ),
   );
 

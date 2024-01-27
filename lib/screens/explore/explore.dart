@@ -1,3 +1,4 @@
+import 'package:animo/screens/explore/explore_anime_screen.dart';
 import 'package:animo/screens/explore/explore_manga_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,7 +51,7 @@ class Explore extends ConsumerWidget {
         ),
         body: const TabBarView(
           children: [
-            ExploreMangaScrenn(),
+            ExploreAnimeScreen(),
             ExploreMangaScrenn(),
             ExploreMangaScrenn(),
           ],

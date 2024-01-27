@@ -9,7 +9,7 @@ class Cover extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 2 / 3,
+      aspectRatio: 225 / 350,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(4),
         child: CachedNetworkImage(

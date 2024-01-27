@@ -3,12 +3,23 @@ import 'package:animo/widgets/cover_card_compact.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class LibraryMangaScreen extends ConsumerWidget {
+class LibraryMangaScreen extends ConsumerStatefulWidget {
   const LibraryMangaScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LibraryMangaScreen> createState() => _LibraryMangaScreenState();
+}
+
+class _LibraryMangaScreenState extends ConsumerState<LibraryMangaScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
     return FutureBuilder(
       future: ref.read(mangaProvider).filter(sort: 'rating'),
       builder: (context, snapshot) {
@@ -19,10 +30,15 @@ class LibraryMangaScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(8),
                 sliver: SliverGrid.count(
                   crossAxisCount: 2,
-                  childAspectRatio: 2 / 3,
+                  childAspectRatio: 225 / 350,
                   children: [
                     ...snapshot.data!.map(
-                      (e) => CoverCardCompact(media: e),
+                      (e) => CoverCardCompact(
+                        media: e,
+                        onTap: () {
+                          context.push('/manga', extra: e);
+                        },
+                      ),
                     )
                   ],
                 ),
