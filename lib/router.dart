@@ -1,8 +1,9 @@
-import 'package:animo/models/media_basic.dart';
+import 'package:animo/models/base_media.dart';
 import 'package:animo/screens/explore/explore.dart';
 import 'package:animo/screens/library/library.dart';
 import 'package:animo/screens/media/detail_anime.dart';
 import 'package:animo/screens/media/detail_manga.dart';
+import 'package:animo/screens/media/manga_reader_screen.dart';
 import 'package:animo/screens/profile/profile.dart';
 import 'package:animo/widgets/scaffold_with_bar.dart';
 import 'package:animo/screens/auth/signin_screen.dart';
@@ -30,17 +31,43 @@ final router = GoRouter(
           const NoTransitionPage(child: SignInScreen()),
     ),
     GoRoute(
-      path: '/manga',
+      path: '/manga/:slug',
+      name: 'manga',
       builder: (context, state) {
-        MediaBasic media = state.extra as MediaBasic;
-        return DetailManga(media: media);
+        String slug = state.pathParameters['slug']!;
+        return DetailManga(
+            baseMedia: BaseMedia(slug: slug, type: MediaType.manga));
       },
+      routes: [
+        GoRoute(
+          parentNavigatorKey: _rootNavigator,
+          path: 'chapter/:ch',
+          name: 'chapter',
+          builder: (context, state) {
+            String slug = state.pathParameters['slug']!;
+            String ch = state.pathParameters['ch']!;
+            return MangaReaderScreen(
+              slug: slug,
+              type: MediaType.manga,
+              chapter: ch,
+            );
+          },
+        ),
+        // GoRoute(
+        //   path: 'characters',
+        //   builder: (context, state) {},
+        // ),
+      ],
     ),
     GoRoute(
-      path: '/anime',
+      path: '/anime/:slug',
+      name: 'anime',
       builder: (context, state) {
-        MediaBasic media = state.extra as MediaBasic;
-        return DetailAnime(media: media);
+        String slug = state.pathParameters['slug']!;
+
+        return DetailAnime(
+          baseMedia: BaseMedia(slug: slug, type: MediaType.anime),
+        );
       },
     ),
     StatefulShellRoute.indexedStack(

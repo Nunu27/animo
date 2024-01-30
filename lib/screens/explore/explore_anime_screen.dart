@@ -24,7 +24,7 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreAnimeScreen>
     final theme = Theme.of(context);
 
     return FutureBuilder(
-      future: ref.read(animeProvider).filter(sort: 'rating'),
+      future: ref.read(animeProvider).filter({'sort': 'rating'}),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Padding(
@@ -47,7 +47,9 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreAnimeScreen>
                     itemBuilder: (context, index) {
                       return CoverCard(
                         onTap: () {
-                          context.push('/anime', extra: snapshot.data![index]);
+                          context.pushNamed('anime', pathParameters: {
+                            'slug': snapshot.data![index].slug
+                          });
                         },
                         media: snapshot.data![index],
                         width: 120,

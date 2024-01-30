@@ -47,7 +47,7 @@ class Anilist extends MetaProvider {
     final response = await _dio.post<Map<String, dynamic>>('', data: {
       'query': Constants.anilistMediaQuery,
       'variables': {
-        'id': syncData.id,
+        'id': syncData.aniId,
       }
     });
     final data = response.data!['data']['Media'];

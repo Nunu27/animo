@@ -12,6 +12,22 @@ class AnimoTheme {
       fontFamily: 'PlusJakartaSans',
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: colorScheme.primaryContainer,
+        iconTheme: MaterialStatePropertyAll(
+          IconThemeData(
+            color: colorScheme.onPrimaryContainer,
+          ),
+        ),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: colorScheme.background,
+        surfaceTintColor: colorScheme.background,
+        showDragHandle: true,
+      ),
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        surfaceTintColor: colorScheme.background,
+        backgroundColor: colorScheme.background,
+        foregroundColor: colorScheme.onBackground,
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(

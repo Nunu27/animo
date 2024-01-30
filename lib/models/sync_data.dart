@@ -58,7 +58,7 @@ class SyncData extends BaseMedia {
 
   factory SyncData.fromMap(Map<String, dynamic> map) {
     return SyncData(
-      id: map['id'] as String,
+      id: map['id'].toString(),
       aniId: map['aniId'] != null ? map['aniId'] as int : null,
       malId: map['malId'] != null ? map['malId'] as int : null,
       slug: map['slug'] as String,

@@ -41,12 +41,11 @@ class HeaderDetailScreen extends StatelessWidget {
             ),
           ),
         ),
-        child != null
-            ? Align(
-                alignment: Alignment.bottomCenter,
-                child: child,
-              )
-            : const SizedBox(),
+        if (child != null)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: child,
+          )
       ],
     );
   }

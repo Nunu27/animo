@@ -46,7 +46,9 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreMangaScrenn>
                     itemBuilder: (context, index) {
                       return CoverCard(
                         onTap: () {
-                          context.push('/manga', extra: snapshot.data![index]);
+                          context.pushNamed('manga', pathParameters: {
+                            'slug': snapshot.data![index].slug
+                          });
                         },
                         media: snapshot.data![index],
                         width: 120,

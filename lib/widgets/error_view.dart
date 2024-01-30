@@ -9,16 +9,18 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(children: [
-        if (icon != null) icon!,
-        Text(message),
-        if (onRetry != null)
-          FilledButton(
-            onPressed: onRetry!,
-            child: const Text('Try again'),
-          )
-      ]),
+    return Material(
+      child: Center(
+        child: Column(children: [
+          if (icon != null) icon!,
+          Text(message),
+          if (onRetry != null)
+            FilledButton(
+              onPressed: onRetry!,
+              child: const Text('Try again'),
+            )
+        ]),
+      ),
     );
   }
 }

@@ -13,7 +13,7 @@ MediaTrailer? formatALTrailer(trailer) => trailer == null
 MediaCharacter formatALCharacter(e) => MediaCharacter(
       id: e['node']['id'].toString(),
       name: e['node']['name']['userPreferred'],
-      cover: e['image']?['medium'],
+      cover: e['node']['image']?['medium'],
       role: anilistRole[e['role']] ?? CharacterRole.background,
     );
 MediaRelation formatALRelation(e) => MediaRelation(
