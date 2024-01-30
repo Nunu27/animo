@@ -62,11 +62,17 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
 
   @override
   Widget build(BuildContext context) {
-    return _videoPlayerController.value.isInitialized
-        ? AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Chewie(controller: _chewieController),
-          )
-        : widget.placeholder ?? const Loader();
+    if (_videoPlayerController.value.isInitialized) {
+      return MediaQuery.removePadding(
+        context: context,
+        removeTop: true,
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: Chewie(controller: _chewieController),
+        ),
+      );
+    } else {
+      return widget.placeholder ?? const Loader();
+    }
   }
 }

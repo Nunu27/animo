@@ -1,6 +1,7 @@
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/widgets/cover.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class CoverCardCompact extends StatelessWidget {
   const CoverCardCompact({
@@ -17,6 +18,8 @@ class CoverCardCompact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    var brightness = Theme.of(context).brightness;
+    bool isDarkMode = brightness == Brightness.dark;
 
     return InkWell(
       onTap: onTap,
@@ -29,17 +32,28 @@ class CoverCardCompact extends StatelessWidget {
             Cover(
               imageUrl: media.cover!,
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: theme.colorScheme.background,
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    theme.colorScheme.background.withOpacity(0),
-                    theme.colorScheme.background.withOpacity(0.8),
-                  ],
-                  stops: const [0.5, 1.0],
+            AspectRatio(
+              aspectRatio: 225 / 350,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.background,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: isDarkMode
+                          ? [
+                              theme.colorScheme.background.withOpacity(0),
+                              theme.colorScheme.background.withOpacity(0.8)
+                            ]
+                          : [
+                              theme.colorScheme.onBackground.withOpacity(0),
+                              theme.colorScheme.onBackground.withOpacity(0.8),
+                            ],
+                      stops: const [0.5, 1.0],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -54,7 +68,11 @@ class CoverCardCompact extends StatelessWidget {
                   media.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall,
+                  style: theme.textTheme.bodySmall!.copyWith(
+                    color: isDarkMode
+                        ? theme.colorScheme.onBackground
+                        : theme.colorScheme.background,
+                  ),
                 ),
               ),
             ),

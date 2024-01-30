@@ -47,8 +47,10 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreAnimeScreen>
                     itemBuilder: (context, index) {
                       return CoverCard(
                         onTap: () {
-                          context.push('/anime',
-                              extra: snapshot.data!.data[index]);
+                          context.push(
+                            '/anime',
+                            extra: snapshot.data!.data[index],
+                          );
                         },
                         media: snapshot.data!.data[index],
                         width: 120,
