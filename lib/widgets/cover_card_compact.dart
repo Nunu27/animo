@@ -1,4 +1,4 @@
-import 'package:animo/models/media_basic.dart';
+import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/widgets/cover.dart';
 import 'package:flutter/material.dart';
 

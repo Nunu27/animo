@@ -1,4 +1,4 @@
-import 'package:animo/models/media_basic.dart';
+import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/widgets/custom_input_form.dart';
 import 'package:animo/widgets/header_detail_screen.dart';
 import 'package:animo/widgets/synopsis_view.dart';

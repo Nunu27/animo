@@ -1,4 +1,4 @@
-import 'package:animo/services/media_source/manga.dart';
+import 'package:animo/services/media_sources/manga/manga.dart';
 import 'package:animo/widgets/cover_card.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/loader.dart';
@@ -46,9 +46,10 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreMangaScrenn>
                     itemBuilder: (context, index) {
                       return CoverCard(
                         onTap: () {
-                          context.push('/manga', extra: snapshot.data![index]);
+                          context.push('/manga',
+                              extra: snapshot.data!.data[index]);
                         },
-                        media: snapshot.data![index],
+                        media: snapshot.data!.data[index],
                         width: 120,
                       );
                     },

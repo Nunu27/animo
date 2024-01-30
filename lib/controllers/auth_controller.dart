@@ -1,4 +1,5 @@
-import 'package:animo/providers/favorites_provider.dart';
+import 'package:animo/constants/box_constants.dart';
+import 'package:animo/providers/library_provider.dart';
 import 'package:animo/services/api.dart';
 import 'package:animo/services/notification.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -13,7 +14,7 @@ final authControllerProvider =
 });
 
 class AuthController extends StateNotifier<bool> {
-  final Box _box = Hive.box('animo');
+  final Box _box = Hive.box(BoxConstants.main);
   final ApiService _api;
   final Ref _ref;
 
@@ -34,7 +35,7 @@ class AuthController extends StateNotifier<bool> {
     res.fold(
       (l) => BotToast.showText(text: l.message),
       (r) {
-        _box.put('user', r);
+        _box.put(BoxConstants.userKey, r);
         context.go('/explore');
       },
     );
@@ -55,9 +56,27 @@ class AuthController extends StateNotifier<bool> {
     );
     state = false;
 
-    res.fold((l) => BotToast.showText(text: l.message), (callback) {
-      // TODO open OTP verification modal
-    });
+    res.fold(
+      (l) => BotToast.showText(text: l.message),
+      (callback) {
+        // TODO open OTP verification modal
+      },
+    );
+  }
+
+  void signUpWithGoogle() async {
+    state = true;
+    state = false;
+  }
+
+  void signUpWithAnilist() async {
+    state = true;
+    state = false;
+  }
+
+  void signUpWithMAL() async {
+    state = true;
+    state = false;
   }
 
   void forgotPassword({
@@ -73,9 +92,12 @@ class AuthController extends StateNotifier<bool> {
     );
     state = false;
 
-    res.fold((l) => BotToast.showText(text: l.message), (callback) {
-      // TODO open OTP verification modal
-    });
+    res.fold(
+      (l) => BotToast.showText(text: l.message),
+      (callback) {
+        // TODO open OTP verification modal
+      },
+    );
   }
 
   void signOut(BuildContext context) async {
@@ -84,9 +106,9 @@ class AuthController extends StateNotifier<bool> {
       oldToken: _ref.read(notificationProvider).token,
     );
     state = false;
-    _ref.read(favoritesProvider.notifier).clearLocalData();
+    _ref.read(libraryProvider).clearLocalData();
 
-    _box.delete('user').then(
+    _box.delete(BoxConstants.userKey).then(
           (value) => context.go('/signin'),
         );
   }

@@ -1,4 +1,4 @@
-import 'package:animo/models/media_basic.dart';
+import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/screens/explore/explore.dart';
 import 'package:animo/screens/library/library.dart';
 import 'package:animo/screens/media/detail_anime.dart';

@@ -33,27 +33,4 @@ class ApiResponse {
       version: map['version'] != null ? map['version'] as String : null,
     );
   }
-
-  @override
-  String toString() {
-    return 'ApiResponse(success: $success, data: $data, message: $message, version: $version)';
-  }
-
-  @override
-  bool operator ==(covariant ApiResponse other) {
-    if (identical(this, other)) return true;
-
-    return other.success == success &&
-        other.data == data &&
-        other.message == message &&
-        other.version == version;
-  }
-
-  @override
-  int get hashCode {
-    return success.hashCode ^
-        data.hashCode ^
-        message.hashCode ^
-        version.hashCode;
-  }
 }

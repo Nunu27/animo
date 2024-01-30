@@ -1,4 +1,4 @@
-import 'package:animo/services/media_source/manga.dart';
+import 'package:animo/services/media_sources/manga/manga.dart';
 import 'package:animo/widgets/cover_card_compact.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +32,7 @@ class _LibraryMangaScreenState extends ConsumerState<LibraryMangaScreen>
                   crossAxisCount: 2,
                   childAspectRatio: 225 / 350,
                   children: [
-                    ...snapshot.data!.map(
+                    ...snapshot.data!.data.map(
                       (e) => CoverCardCompact(
                         media: e,
                         onTap: () {

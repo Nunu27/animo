@@ -1,17 +1,18 @@
 import 'package:animo/constants/url_constants.dart';
 import 'package:animo/models/api_response.dart';
-import 'package:animo/models/base_media.dart';
-import 'package:animo/models/media.dart';
-import 'package:animo/models/media_basic.dart';
-import 'package:animo/models/media_provider.dart';
-import 'package:animo/models/meta_provider.dart';
+import 'package:animo/models/base_data.dart';
+import 'package:animo/models/media/media.dart';
+import 'package:animo/models/media/media_basic.dart';
+import 'package:animo/models/media/media_meta.dart';
+import 'package:animo/models/abstract/media_provider.dart';
+import 'package:animo/models/abstract/meta_provider.dart';
 import 'package:animo/models/sync_data.dart';
 import 'package:animo/models/user.dart';
-import 'package:animo/services/anilist.dart';
-import 'package:animo/services/mal.dart';
-import 'package:animo/services/media_source/anime.dart';
-import 'package:animo/services/media_source/manga.dart';
-import 'package:animo/services/media_source/novel.dart';
+import 'package:animo/services/meta_sources/anilist/anilist.dart';
+import 'package:animo/services/meta_sources/mal/mal.dart';
+import 'package:animo/services/media_sources/anime/anime.dart';
+import 'package:animo/services/media_sources/manga/manga.dart';
+import 'package:animo/services/media_sources/novel/novel.dart';
 import 'package:animo/services/notification.dart';
 import 'package:animo/type_defs.dart';
 import 'package:animo/utils/utils.dart';
@@ -23,9 +24,17 @@ final apiServiceProvider = Provider((ref) {
   return ApiService(ref);
 });
 
-final getMediaProvider =
-    FutureProvider.family((ref, BaseMedia baseMedia) async {
-  return await ref.watch(apiServiceProvider).getMedia(baseMedia);
+final getSyncDataProvider = FutureProvider.family((
+  ref,
+  BaseData baseMedia,
+) async {
+  return ref.watch(apiServiceProvider).getSyncData(baseMedia);
+});
+
+final getMediaProvider = FutureProvider.family((ref, BaseData baseMedia) async {
+  final syncData = await ref.watch(getSyncDataProvider(baseMedia).future);
+
+  return await ref.watch(apiServiceProvider).getMedia(syncData);
 });
 
 class ApiService {
@@ -33,7 +42,7 @@ class ApiService {
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: URLConstants.api,
-      connectTimeout: const Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 20),
       validateStatus: (status) => true,
     ),
@@ -45,7 +54,7 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          if (token != null) options.headers['Authorization'] = "Bearer $token";
+          if (token != null) options.headers['Authorization'] = 'Bearer $token';
           return handler.next(options);
         },
       ),
@@ -54,7 +63,7 @@ class ApiService {
 
   FutureEither<String> getVersion() async {
     try {
-      final request = _dio.get("/");
+      final request = _dio.get('/');
       final response = await _handleApi(request);
 
       return right(response.version!);
@@ -98,8 +107,8 @@ class ApiService {
       final request = _dio.post(
         '/auth/signin',
         data: {
-          "email": email,
-          "password": password,
+          'email': email,
+          'password': password,
         },
       );
       final response = await _handleApi(request);
@@ -124,10 +133,10 @@ class ApiService {
       final request = _dio.post(
         '/auth/signup',
         data: {
-          "username": username,
-          "email": email,
-          "password": password,
-          "confirmPassword": confirmPassword,
+          'username': username,
+          'email': email,
+          'password': password,
+          'confirmPassword': confirmPassword,
         },
       );
       final response = await _handleApi(request);
@@ -148,8 +157,8 @@ class ApiService {
       final request = _dio.post(
         '/auth/verify',
         data: {
-          "session": session,
-          "otp": otp,
+          'session': session,
+          'otp': otp,
         },
       );
 
@@ -198,9 +207,9 @@ class ApiService {
     }
   }
 
-  // Favorites
+  // Library
 
-  FutureVoid import(List<String> slugs, MediaSource source) async {
+  FutureVoid import(List<String> slugs, DataSource source) async {
     try {
       final request = _dio
           .post('/user/import', data: {'slugs': slugs, 'source': source.name});
@@ -212,9 +221,9 @@ class ApiService {
     }
   }
 
-  FutureEither<List<MediaBasic>> getFavorites() async {
+  FutureEither<List<MediaBasic>> getLibrary() async {
     try {
-      final request = _dio.get('/user/favorites');
+      final request = _dio.get('/user/library');
       final response = await _handleApi(request);
 
       return right(
@@ -227,9 +236,9 @@ class ApiService {
     }
   }
 
-  FutureEither<List<String>> addFavorites(List<String> slugs) async {
+  FutureEither<List<String>> addToLibrary(List<String> slugs) async {
     try {
-      final request = _dio.put('/user/favorites', data: {'slugs': slugs});
+      final request = _dio.put('/user/library', data: {'slugs': slugs});
       final response = await _handleApi(request);
 
       return right(response.data);
@@ -238,9 +247,9 @@ class ApiService {
     }
   }
 
-  FutureEither<List<String>> removeFavorites(List<String> slugs) async {
+  FutureEither<List<String>> removeFromLibrary(List<String> slugs) async {
     try {
-      final request = _dio.delete('/user/favorites', data: {'slugs': slugs});
+      final request = _dio.delete('/user/library', data: {'slugs': slugs});
       final response = await _handleApi(request);
 
       return right(response.data);
@@ -249,9 +258,9 @@ class ApiService {
     }
   }
 
-  FutureVoid clearFavorites() async {
+  FutureVoid clearLibrary() async {
     try {
-      final request = _dio.post('/user/favorites/clear');
+      final request = _dio.post('/user/library/clear');
       await _handleApi(request);
 
       return right(null);
@@ -261,9 +270,19 @@ class ApiService {
   }
 
   // Media
+  Future<SyncData> getSyncData(BaseData baseData) async {
+    final request = _dio.post('/sync-data', data: {
+      'slug': baseData.parentSlug ?? baseData.slug,
+      'type': baseData.type.name,
+    });
+    final response = await _handleApi(request);
+
+    return SyncData.fromMap(response.data);
+  }
+
   Future<List<MediaBasic>> getMediaBasics(
     List<String> slugs,
-    MediaSource source,
+    DataSource source,
   ) async {
     final request = _dio.post('/media-basic', data: {
       'slugs': slugs,
@@ -276,37 +295,44 @@ class ApiService {
         .toList();
   }
 
-  Future<Media> getMedia(BaseMedia baseMedia) async {
-    final request = _dio.post('/sync-data', data: {
-      'slug': baseMedia.slug,
-      'type': baseMedia.type.name,
-    });
-    final response = await _handleApi(request);
+  Future<Media> getMedia(SyncData syncData) async {
+    Provider<MediaProvider> mediaProvider = _getMediaProvider(syncData.type);
+    Provider<MetaProvider>? metaProvider = _getMetaProvider(syncData);
 
-    final syncData = SyncData.fromMap(response.data);
-    Provider<MetaProvider> provider;
-
-    if (syncData.aniId != null) {
-      provider = anilistProvider;
-    } else if (syncData.malId != null) {
-      provider = malProvider;
-    } else {
-      provider = _getMediaProvider(syncData.type);
+    final List<Future> futures = [_ref.read(mediaProvider).getMedia(syncData)];
+    if (metaProvider != null) {
+      futures.add(_ref.read(metaProvider).getMeta(syncData));
     }
 
-    return await _ref.read(provider).getMedia(syncData);
+    final results = await Future.wait(futures);
+
+    switch (results) {
+      case [
+          final media as Media,
+          final meta as MediaMeta,
+        ]:
+        return media.withMeta(meta);
+      default:
+        return results.first as Media;
+    }
   }
 
   // Utils
-
   Provider<MediaProvider> _getMediaProvider(MediaType type) {
-    switch (type) {
-      case MediaType.anime:
-        return animeProvider;
-      case MediaType.manga:
-        return mangaProvider;
-      case MediaType.novel:
-        return novelProvider;
+    return switch (type) {
+      MediaType.anime => animeProvider,
+      MediaType.manga => mangaProvider,
+      MediaType.novel => novelProvider,
+    } as Provider<MediaProvider>;
+  }
+
+  Provider<MetaProvider>? _getMetaProvider(SyncData syncData) {
+    if (syncData.aniId != null) {
+      return anilistProvider;
+    } else if (syncData.malId != null) {
+      return malProvider;
+    } else {
+      return null;
     }
   }
 
@@ -316,7 +342,7 @@ class ApiService {
     final raw = await request;
     final ApiResponse response = ApiResponse.fromMap(raw.data);
     if (!response.success) {
-      throw response.message ?? "Something is wrong";
+      throw response.message ?? 'Something is wrong';
     }
 
     return response;

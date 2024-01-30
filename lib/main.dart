@@ -1,5 +1,8 @@
+import 'package:animo/constants/box_constants.dart';
 import 'package:animo/firebase_options.dart';
+import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/models/user.dart';
+import 'package:animo/providers/library_provider.dart';
 import 'package:animo/providers/user_provider.dart';
 import 'package:animo/router.dart';
 import 'package:animo/services/api.dart';
@@ -19,8 +22,9 @@ void main() async {
   );
   await Hive.initFlutter();
   Hive.registerAdapter(UserAdapter());
-  await Hive.openBox('animo');
-  await Hive.openBox('favorites');
+  Hive.registerAdapter(MediaBasicAdapter());
+  await Hive.openBox(BoxConstants.main);
+  await Hive.openBox<MediaBasic>(BoxConstants.library);
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -33,9 +37,11 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  final _listenable = Hive.box('animo').listenable(keys: ['user']);
+  final _listenable = Hive.box(BoxConstants.main).listenable(
+    keys: [BoxConstants.userKey],
+  );
   void onUserChange() {
-    final User? user = _listenable.value.get('user');
+    final User? user = _listenable.value.get(BoxConstants.userKey);
     ref.read(apiServiceProvider).token = user?.token;
     ref.read(userProvider.notifier).update((state) => user);
   }
@@ -43,11 +49,15 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
-    final User? user = _listenable.value.get('user');
+    final user = ref.read(userProvider);
 
     ref.read(apiServiceProvider).token = user?.token;
     ref.read(notificationProvider).init();
     _listenable.addListener(onUserChange);
+
+    for (var media in Hive.box<MediaBasic>(BoxConstants.library).values) {
+      ref.read(getMediaLibrary(media.type)).add(media);
+    }
   }
 
   @override
