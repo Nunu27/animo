@@ -4,16 +4,15 @@ import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
-class ExploreMangaScrenn extends ConsumerStatefulWidget {
-  const ExploreMangaScrenn({super.key});
+class ExploreMangaScreen extends ConsumerStatefulWidget {
+  const ExploreMangaScreen({super.key});
 
   @override
-  ConsumerState<ExploreMangaScrenn> createState() => _ExploreMangaScrennState();
+  ConsumerState<ExploreMangaScreen> createState() => _ExploreMangaScreenState();
 }
 
-class _ExploreMangaScrennState extends ConsumerState<ExploreMangaScrenn>
+class _ExploreMangaScreenState extends ConsumerState<ExploreMangaScreen>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -45,11 +44,6 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreMangaScrenn>
                     itemCount: 10,
                     itemBuilder: (context, index) {
                       return CoverCard(
-                        onTap: () {
-                          context.pushNamed('manga', pathParameters: {
-                            'slug': snapshot.data!.data[index].slug
-                          });
-                        },
                         media: snapshot.data!.data[index],
                         width: 120,
                       );

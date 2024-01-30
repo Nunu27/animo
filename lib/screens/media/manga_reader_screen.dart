@@ -86,8 +86,7 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
   }
 
   void _handleNextChapter() {
-    Navigator.of(context).pop();
-    GoRouter.of(context).pushNamed(
+    context.goNamed(
       'chapter',
       pathParameters: {
         'slug': widget.slug,
@@ -97,8 +96,7 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
   }
 
   void _handlePrevChapter() {
-    Navigator.of(context).pop();
-    GoRouter.of(context).pushNamed(
+    context.goNamed(
       'chapter',
       pathParameters: {
         'slug': widget.slug,
@@ -282,7 +280,7 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
                       theme.appBarTheme.backgroundColor!.withOpacity(0.8),
                   leading: BackButton(
                     onPressed: () {
-                      Navigator.pop(context);
+                      context.pop();
                     },
                   ),
                   title: ListTile(

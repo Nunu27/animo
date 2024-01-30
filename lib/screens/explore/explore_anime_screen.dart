@@ -4,7 +4,6 @@ import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 class ExploreAnimeScreen extends ConsumerStatefulWidget {
   const ExploreAnimeScreen({super.key});
@@ -46,12 +45,6 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreAnimeScreen>
                     itemCount: 10,
                     itemBuilder: (context, index) {
                       return CoverCard(
-                        onTap: () {
-                          context.push(
-                            '/anime',
-                            extra: snapshot.data!.data[index],
-                          );
-                        },
                         media: snapshot.data!.data[index],
                         width: 120,
                       );

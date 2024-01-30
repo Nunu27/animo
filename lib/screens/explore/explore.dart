@@ -52,8 +52,8 @@ class Explore extends ConsumerWidget {
         body: const TabBarView(
           children: [
             ExploreAnimeScreen(),
-            ExploreMangaScrenn(),
-            ExploreMangaScrenn(),
+            ExploreMangaScreen(),
+            ExploreMangaScreen(),
           ],
         ),
       ),
