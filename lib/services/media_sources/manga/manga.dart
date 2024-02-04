@@ -126,8 +126,7 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
   }) async {
     options ??= {};
 
-    options['page'] = page;
-    options['limit'] = 100;
+    options = {...options, 'page': page, 'limit': 100};
 
     final response = await _dio.get<Map<String, dynamic>>(
       '/comic/${syncData.id}/chapters',
@@ -150,6 +149,7 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
     BaseData baseContent, {
     List<MediaContent>? contents,
   }) async {
+    print(baseContent.slug);
     final parent = await _ref.read(getSyncDataProvider(baseContent).future);
     final response = await _dio.get<Map<String, dynamic>>(
       '/chapter/${baseContent.slug}?tachiyomi=true',

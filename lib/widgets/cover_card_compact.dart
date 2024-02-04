@@ -1,7 +1,7 @@
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/widgets/cover.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
 
 class CoverCardCompact extends StatelessWidget {
   const CoverCardCompact({
@@ -9,11 +9,17 @@ class CoverCardCompact extends StatelessWidget {
     required this.media,
     this.width,
     this.onTap,
+    this.showLabel = true,
   });
 
   final MediaBasic media;
   final double? width;
   final VoidCallback? onTap;
+  final bool showLabel;
+
+  void goToDetail(BuildContext context) {
+    context.push('/${media.type.name}/${media.slug}');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,19 +28,22 @@ class CoverCardCompact extends StatelessWidget {
     bool isDarkMode = brightness == Brightness.dark;
 
     return InkWell(
-      onTap: onTap,
+      onTap: () => goToDetail(context),
       borderRadius: BorderRadius.circular(6),
       child: Container(
         width: width,
         padding: const EdgeInsets.all(6),
-        child: Stack(
-          children: [
-            Cover(
-              imageUrl: media.cover!,
-            ),
-            AspectRatio(
-              aspectRatio: 225 / 350,
-              child: ClipRRect(
+        child: AspectRatio(
+          aspectRatio: 225 / 350,
+          child: Stack(
+            children: [
+              SizedBox(
+                height: double.infinity,
+                child: Cover(
+                  imageUrl: media.cover!,
+                ),
+              ),
+              ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: Container(
                   decoration: BoxDecoration(
@@ -56,27 +65,48 @@ class CoverCardCompact extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 14,
-                ),
-                child: Text(
-                  media.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall!.copyWith(
-                    color: isDarkMode
-                        ? theme.colorScheme.onBackground
-                        : theme.colorScheme.background,
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    media.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall!.copyWith(
+                      color: isDarkMode
+                          ? theme.colorScheme.onBackground
+                          : theme.colorScheme.background,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Column(
+                    children: [
+                      if (media.info != null && showLabel)
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.tertiaryContainer,
+                            borderRadius: BorderRadius.circular(36),
+                          ),
+                          child: Text(
+                            media.info!,
+                            style: theme.textTheme.bodySmall!.copyWith(
+                              color: theme.colorScheme.onTertiaryContainer,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

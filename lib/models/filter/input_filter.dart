@@ -1,4 +1,5 @@
 import 'package:animo/models/abstract/filter.dart';
+import 'package:animo/widgets/custom_input_filter.dart';
 import 'package:flutter/material.dart';
 
 class InputFilter extends Filter {
@@ -8,7 +9,12 @@ class InputFilter extends Filter {
 
   @override
   Widget build(Map<String, dynamic> optionValue) {
-    // TODO: implement build
-    throw UnimplementedError();
+    // print('input filter : $title');
+    return CustomInputFilter(
+      filterKey: key,
+      label: label,
+      optionValue: optionValue,
+      title: title,
+    );
   }
 }

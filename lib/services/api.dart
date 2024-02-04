@@ -3,9 +3,11 @@ import 'package:animo/models/api_response.dart';
 import 'package:animo/models/base_data.dart';
 import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_basic.dart';
+import 'package:animo/models/media/media_content.dart';
 import 'package:animo/models/media/media_meta.dart';
 import 'package:animo/models/abstract/media_provider.dart';
 import 'package:animo/models/abstract/meta_provider.dart';
+import 'package:animo/models/paginated_data.dart';
 import 'package:animo/models/sync_data.dart';
 import 'package:animo/models/user.dart';
 import 'package:animo/services/meta_sources/anilist/anilist.dart';
@@ -290,9 +292,7 @@ class ApiService {
     });
     final response = await _handleApi(request);
 
-    return (response.data as List<Map<String, dynamic>>)
-        .map((e) => MediaBasic.fromMap(e))
-        .toList();
+    return (response.data as List).map((e) => MediaBasic.fromMap(e)).toList();
   }
 
   Future<Media> getMedia(SyncData syncData) async {
@@ -315,6 +315,16 @@ class ApiService {
       default:
         return results.first as Media;
     }
+  }
+
+  Future<PaginatedData<MediaContent>> getMediaContents(
+    SyncData syncData, {
+    int page = 1,
+    Map<String, dynamic> options = const {},
+  }) async {
+    return await _ref
+        .read(_getMediaProvider(syncData.type))
+        .getMediaContents(syncData, page: page, options: options);
   }
 
   // Utils

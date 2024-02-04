@@ -54,7 +54,7 @@ class Anilist extends MetaProvider {
 
     final trailer = data['trailer'];
     final characters = data['characters']['edges'] as List<dynamic>;
-    final relations = data['characters']['edges'] as List<dynamic>;
+    final relations = data['relations']['edges'] as List<dynamic>;
 
     return MediaMeta(
       slug: syncData.slug,

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
-class CustomBottomModalSheet {
+class CustomBottomModalSheet<T> {
   const CustomBottomModalSheet({
     required this.children,
     required this.context,
+    this.maxChildExpand = 0.7,
   });
 
   final List<Widget> children;
   final BuildContext context;
+  final double maxChildExpand;
 
-  void showModal() {
-    showModalBottomSheet(
+  Future<T?> showModal() async {
+    return await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: true,
@@ -18,12 +21,17 @@ class CustomBottomModalSheet {
         return DraggableScrollableSheet(
           initialChildSize: 0.5,
           minChildSize: 0.3,
-          maxChildSize: 0.7,
+          maxChildSize: maxChildExpand,
           expand: false,
           builder: (context, scrollController) {
             return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
               controller: scrollController,
-              slivers: children,
+              slivers: [
+                MultiSliver(
+                  children: children,
+                ),
+              ],
             );
           },
         );

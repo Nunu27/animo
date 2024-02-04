@@ -2,6 +2,7 @@ import 'package:animo/models/filter/select_option.dart';
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/models/media/media_content.dart';
 import 'package:animo/models/media/media_meta.dart';
+import 'package:animo/models/sync_data.dart';
 
 class Media extends MediaMeta {
   final String? cover;
@@ -36,6 +37,10 @@ class Media extends MediaMeta {
 
   MediaBasic toMediaBasic() {
     return MediaBasic(slug: slug, cover: cover, title: title, type: type);
+  }
+
+  SyncData toSyncData() {
+    return SyncData(id: id, slug: slug, cover: cover, title: title, type: type);
   }
 
   Media withMeta(MediaMeta meta) {

@@ -1,18 +1,28 @@
+import 'dart:async';
+
 import 'package:animo/models/base_data.dart';
-import 'package:animo/services/api.dart';
+import 'package:animo/models/media/media.dart';
+import 'package:animo/models/media/media_content.dart';
 import 'package:animo/widgets/chapter_list_view.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:animo/services/api.dart';
 import 'package:animo/widgets/character_list_view.dart';
 import 'package:animo/widgets/cover.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/genre_list_view.dart';
 import 'package:animo/widgets/header_detail_screen.dart';
 import 'package:animo/widgets/loader.dart';
+import 'package:animo/widgets/relation_view.dart';
 import 'package:animo/widgets/synopsis_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 class DetailManga extends ConsumerStatefulWidget {
-  const DetailManga({super.key, required this.baseMedia});
+  const DetailManga({
+    super.key,
+    required this.baseMedia,
+  });
 
   final BaseData baseMedia;
 
@@ -22,33 +32,67 @@ class DetailManga extends ConsumerStatefulWidget {
 
 class _DetailMangaState extends ConsumerState<DetailManga> {
   late final TextEditingController _searchController;
+  late final RefreshController _refreshController;
   final double _sliverAppbarHeight = 225;
   bool _isInLibrary = true;
   bool _isDownloaded = false;
-
-  final List<String> chapterList =
-      List.generate(100, (index) => 'Chapter $index');
-
+  int currentPage = 1;
+  List<MediaContent> chapterList = [];
   List<String> searchResultList = [];
 
   @override
   void initState() {
     _searchController = TextEditingController();
+    _refreshController = RefreshController(initialRefresh: true);
     super.initState();
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _refreshController.dispose();
     super.dispose();
+  }
+
+  void _onLoading(Media media) async {
+    currentPage++;
+    try {
+      final data = await ref
+          .read(apiServiceProvider)
+          .getMediaContents(media.toSyncData(), page: currentPage);
+      if (data.data.isNotEmpty) {
+        chapterList.addAll(data.data);
+        _refreshController.loadComplete();
+      } else {
+        _refreshController.loadNoData();
+      }
+    } catch (error) {
+      print(error);
+      _refreshController.loadFailed();
+    }
+    setState(() {});
+  }
+
+  void _onRefresh(Media media) async {
+    chapterList.clear();
+    currentPage = 1;
+    try {
+      final data = await ref
+          .read(apiServiceProvider)
+          .getMediaContents(media.toSyncData(), page: currentPage);
+      chapterList.addAll(data.data);
+      _refreshController.refreshCompleted();
+    } catch (error) {
+      print(error);
+      _refreshController.refreshFailed();
+    }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final Size size = MediaQuery.of(context).size;
-    // final searchManga = ref.read(mangaProvider).filter({'q': ''});
-    // final searchAnime = ref.read(animeProvider).filter({'keyword': ''});
 
     return ref.watch(getMediaProvider(widget.baseMedia)).when(
       data: (media) {
@@ -60,10 +104,16 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
           ),
           extendBodyBehindAppBar: true,
           backgroundColor: theme.colorScheme.background,
-          body: Scrollbar(
-            interactive: true,
-            radius: const Radius.circular(40),
-            thickness: 8,
+          body: SmartRefresher(
+            header: const WaterDropMaterialHeader(),
+            enablePullUp: true,
+            controller: _refreshController,
+            onRefresh: () {
+              _onRefresh(media);
+            },
+            onLoading: () {
+              _onLoading(media);
+            },
             child: CustomScrollView(
               slivers: [
                 SliverLayoutBuilder(
@@ -118,18 +168,51 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
                                         ),
                                         Text(
                                           media.format.text,
-                                          maxLines: 2,
+                                          maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                           style: theme.textTheme.titleSmall,
                                         ),
                                         const SizedBox(
                                           height: 4,
                                         ),
-                                        Text(
-                                          '${media.rating ?? 0} • ${media.year}',
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: theme.textTheme.titleSmall,
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.star,
+                                              size: 18,
+                                            ),
+                                            const SizedBox(
+                                              width: 2,
+                                            ),
+                                            Text(
+                                              '${media.rating ?? 0}',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: theme.textTheme.titleSmall,
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 4,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              media.status.icon,
+                                              color: theme
+                                                  .colorScheme.onBackground,
+                                              size: 18,
+                                            ),
+                                            const SizedBox(
+                                              width: 2,
+                                            ),
+                                            Text(
+                                              '${media.status.text} •  ${media.year}',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: theme.textTheme.titleSmall,
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -194,32 +277,74 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                   ),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SynopsisView(text: media.description),
-                        const SizedBox(
-                          height: 14,
-                        ),
-                        CharacterListView(characters: media.characters),
-                        const SizedBox(
-                          height: 14,
-                        ),
-                        GenreListView(
-                          genres: media.genres.map((e) => e.text).toList(),
-                        ),
-                        const SizedBox(
-                          height: 14,
-                        ),
-                      ],
-                    ),
+                  sliver: MultiSliver(
+                    children: [
+                      SynopsisView(text: media.description),
+                      const SizedBox(
+                        height: 14,
+                      ),
+                      CharacterListView(characters: media.characters),
+                      const SizedBox(
+                        height: 14,
+                      ),
+                      RelationView(
+                        relationList: media.relations?.data,
+                        dataSource: media.source,
+                        slug: media.slug,
+                      ),
+                      const SizedBox(
+                        height: 14,
+                      ),
+                      GenreListView(
+                        genres: media.genres.map((e) => e.text).toList(),
+                      ),
+                      const SizedBox(
+                        height: 14,
+                      ),
+                    ],
                   ),
                 ),
                 ChapterListView(
+                  mediaType: MediaType.manga,
+                  parentSlug: media.slug,
                   chapterList: chapterList,
-                  slug: media.slug,
+                  langList: media.langList,
                 ),
+                // FutureBuilder(
+                //   future: ref
+                //       .read(apiServiceProvider)
+                //       .getMediaContents(media.toSyncData(), page: currentPage),
+                //   builder: (context, snapshot) {
+                //     if (snapshot.hasData) {
+                //       if (snapshot.data!.data.isNotEmpty) {
+                //         chapterList.addAll(snapshot.data!.data);
+                //         _refreshController.loadComplete();
+                //         print('chapterList length: ${chapterList.length}');
+                //         print('currentPage : $currentPage');
+                //       } else {
+                //         _refreshController.loadNoData();
+                //       }
+                //       return ChapterListView(
+                //         mediaType: MediaType.manga,
+                //         parentSlug: media.slug,
+                //         chapterList: chapterList,
+                //         langList: media.langList,
+                //       );
+                //     } else if (snapshot.hasError) {
+                //       _refreshController.loadFailed();
+                //       return SliverToBoxAdapter(
+                //         child: ErrorView(
+                //           message: snapshot.error.toString(),
+                //           onRetry: () {},
+                //         ),
+                //       );
+                //     } else {
+                //       return const SliverToBoxAdapter(
+                //         child: Loader(),
+                //       );
+                //     }
+                //   },
+                // )
               ],
             ),
           ),

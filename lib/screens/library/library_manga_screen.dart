@@ -35,9 +35,6 @@ class _LibraryMangaScreenState extends ConsumerState<LibraryMangaScreen>
                     ...snapshot.data!.data.map(
                       (e) => CoverCardCompact(
                         media: e,
-                        onTap: () {
-                          context.push('/manga', extra: e);
-                        },
                       ),
                     )
                   ],

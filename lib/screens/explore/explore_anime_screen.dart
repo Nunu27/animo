@@ -26,6 +26,7 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreAnimeScreen>
       future: ref.read(animeProvider).filter({'sort': 'rating'}),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
+          final media = snapshot.data!;
           return Padding(
             padding: const EdgeInsets.all(14.0),
             child: Column(
@@ -42,10 +43,10 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreAnimeScreen>
                   height: 224,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 10,
+                    itemCount: media.data.length,
                     itemBuilder: (context, index) {
                       return CoverCard(
-                        media: snapshot.data!.data[index],
+                        media: media.data[index],
                         width: 120,
                       );
                     },

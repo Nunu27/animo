@@ -18,4 +18,8 @@ class MediaTrailer {
   final String thumbnail;
 
   MediaTrailer({required this.id, required this.site, required this.thumbnail});
+
+  String getEmbedUrl() {
+    return site.getEmbedUrl(id);
+  }
 }

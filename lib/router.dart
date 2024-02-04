@@ -1,5 +1,6 @@
 import 'package:animo/models/base_data.dart';
 import 'package:animo/screens/explore/explore.dart';
+import 'package:animo/screens/explore/search_screen.dart';
 import 'package:animo/screens/library/library.dart';
 import 'package:animo/screens/media/detail_anime.dart';
 import 'package:animo/screens/media/detail_manga.dart';
@@ -36,7 +37,8 @@ final router = GoRouter(
       builder: (context, state) {
         String slug = state.pathParameters['slug']!;
         return DetailManga(
-            baseMedia: BaseData(slug: slug, type: MediaType.manga));
+          baseMedia: BaseData(slug: slug, type: MediaType.manga),
+        );
       },
       routes: [
         GoRoute(
@@ -46,10 +48,10 @@ final router = GoRouter(
           builder: (context, state) {
             String slug = state.pathParameters['slug']!;
             String ch = state.pathParameters['ch']!;
+
             return MangaReaderScreen(
-              slug: slug,
-              type: MediaType.manga,
-              chapter: ch,
+              baseData:
+                  BaseData(slug: ch, type: MediaType.manga, parentSlug: slug),
             );
           },
         ),
@@ -81,6 +83,17 @@ final router = GoRouter(
               path: '/explore',
               pageBuilder: (context, state) =>
                   const NoTransitionPage(child: Explore()),
+              routes: [
+                GoRoute(
+                  path: 'search',
+                  name: 'explore-search',
+                  parentNavigatorKey: _rootNavigator,
+                  builder: (context, state) {
+                    final MediaType mediaType = state.extra as MediaType;
+                    return SearchScreen(mediaType: mediaType);
+                  },
+                )
+              ],
             ),
           ],
         ),
