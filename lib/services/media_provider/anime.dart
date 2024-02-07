@@ -1,3 +1,4 @@
+import 'package:animo/models/abstract/provider_info.dart';
 import 'package:animo/models/filter/input_filter.dart';
 import 'package:animo/models/filter/multiselect_filter.dart';
 import 'package:animo/models/filter/select_option.dart';
@@ -106,15 +107,19 @@ final animeGenres = [
   SelectOption('Vampire', '32'),
 ];
 
-final animeMediaOptions = [
-  MultiSelectFilter('Genres', 'genres', animeGenres),
-  SelectFilter('Type', 'type', animeTypes),
-  SelectFilter('Status', 'status', animeStatuses),
-  SelectFilter('Rated', 'rated', animeRatings),
-  SelectFilter('Score', 'score', animeScores),
-  SelectFilter('Season', 'season', animeSeasons),
-  SelectFilter('Language', 'language', animeLanguages),
-  InputFilter('From', 'sy', title: 'From year, ex: 2010'),
-  InputFilter('To', 'ey', title: 'To year, ex: 2021'),
-  SelectFilter('Sort', 'sort', animeSorts),
-];
+final animeInfo = ProviderInfo(
+  name: 'Anime',
+  mediaFilters: [
+    MultiSelectFilter('Genres', 'genres', animeGenres),
+    SelectFilter('Type', 'type', animeTypes),
+    SelectFilter('Status', 'status', animeStatuses),
+    SelectFilter('Rated', 'rated', animeRatings),
+    SelectFilter('Score', 'score', animeScores),
+    SelectFilter('Season', 'season', animeSeasons),
+    SelectFilter('Language', 'language', animeLanguages),
+    InputFilter('From', 'sy', title: 'From year, ex: 2010'),
+    InputFilter('To', 'ey', title: 'To year, ex: 2021'),
+    SelectFilter('Sort', 'sort', animeSorts),
+  ],
+  haveGroupFilter: false,
+);

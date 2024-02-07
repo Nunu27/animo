@@ -1,5 +1,5 @@
 import 'package:animo/models/base_data.dart';
-import 'package:animo/services/api.dart';
+import 'package:animo/providers/api_provider.dart';
 import 'package:animo/widgets/chapter_list_view.dart';
 import 'package:animo/widgets/character_list_view.dart';
 import 'package:animo/widgets/error_view.dart';
@@ -12,9 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DetailAnime extends ConsumerStatefulWidget {
-  const DetailAnime({super.key, required this.baseMedia});
+  final MediaType type;
+  final String slug;
 
-  final BaseData baseMedia;
+  const DetailAnime({super.key, required this.type, required this.slug});
 
   @override
   ConsumerState<DetailAnime> createState() => _DetailAnimeState();
@@ -43,7 +44,9 @@ class _DetailAnimeState extends ConsumerState<DetailAnime> {
     final ThemeData theme = Theme.of(context);
     final double sliverHeight = MediaQuery.of(context).size.width / 16 * 9;
 
-    return ref.watch(getMediaProvider(widget.baseMedia)).when(
+    return ref
+        .watch(getMediaProvider(type: widget.type, slug: widget.slug))
+        .when(
       data: (media) {
         return Scaffold(
           floatingActionButton: FilledButton.icon(

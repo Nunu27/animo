@@ -1,27 +1,27 @@
-import 'package:animo/constants/box_constants.dart';
-import 'package:animo/providers/library_provider.dart';
-import 'package:animo/services/api.dart';
-import 'package:animo/services/notification.dart';
+// ignore_for_file: avoid_build_context_in_providers
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final authControllerProvider =
-    StateNotifierProvider<AuthController, bool>((ref) {
-  return AuthController(api: ref.watch(apiServiceProvider), ref: ref);
-});
+import 'package:animo/constants/box_constants.dart';
+import 'package:animo/providers/library_provider.dart';
+import 'package:animo/repositories/auth_repository.dart';
+import 'package:animo/services/notification.dart';
 
-class AuthController extends StateNotifier<bool> {
+part 'auth_controller.g.dart';
+
+@riverpod
+class AuthController extends _$AuthController {
   final Box _box = Hive.box(BoxConstants.main);
-  final ApiService _api;
-  final Ref _ref;
 
-  AuthController({required ApiService api, required Ref ref})
-      : _api = api,
-        _ref = ref,
-        super(false);
+  AuthRepository get _repository => ref.read(authRepositoryProvider);
+
+  @override
+  bool build() {
+    return false;
+  }
 
   void signIn({
     required BuildContext context,
@@ -29,7 +29,7 @@ class AuthController extends StateNotifier<bool> {
     required String password,
   }) async {
     state = true;
-    final res = await _api.signIn(email: email, password: password);
+    final res = await _repository.signIn(email: email, password: password);
     state = false;
 
     res.fold(
@@ -48,7 +48,7 @@ class AuthController extends StateNotifier<bool> {
     required String confirmPassword,
   }) async {
     state = true;
-    final res = await _api.signUp(
+    final res = await _repository.signUp(
       username: username,
       email: email,
       password: password,
@@ -85,7 +85,7 @@ class AuthController extends StateNotifier<bool> {
     required String confirmPassword,
   }) async {
     state = true;
-    final res = await _api.forgotPassword(
+    final res = await _repository.forgotPassword(
       email: email,
       password: password,
       confirmPassword: confirmPassword,
@@ -102,14 +102,14 @@ class AuthController extends StateNotifier<bool> {
 
   void signOut(BuildContext context) async {
     state = true;
-    await _api.updatePushToken(
-      oldToken: _ref.read(notificationProvider).token,
+    await _repository.updatePushToken(
+      oldToken: ref.read(notificationProvider).token,
     );
     state = false;
-    _ref.read(libraryProvider).clearLocalData();
+    ref.read(libraryManagerProvider).clearLocalData();
 
-    _box.delete(BoxConstants.userKey).then(
-          (value) => context.go('/signin'),
-        );
+    _box.deleteAll([BoxConstants.tokenKey, BoxConstants.userKey]).then(
+      (value) => context.go('/signin'),
+    );
   }
 }

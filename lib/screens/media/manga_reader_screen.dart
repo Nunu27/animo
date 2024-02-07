@@ -52,7 +52,7 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
       CurveTween(curve: Curves.easeOut).animate(_animationController),
     );
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
 
   @override
@@ -114,7 +114,7 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
     _isOverlayVisible
         ? SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
             overlays: SystemUiOverlay.values)
-        : SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+        : SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
 
   @override

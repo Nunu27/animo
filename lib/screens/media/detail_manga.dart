@@ -1,5 +1,5 @@
 import 'package:animo/models/base_data.dart';
-import 'package:animo/services/api.dart';
+import 'package:animo/providers/api_provider.dart';
 import 'package:animo/widgets/chapter_list_view.dart';
 import 'package:animo/widgets/character_list_view.dart';
 import 'package:animo/widgets/cover.dart';
@@ -12,9 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DetailManga extends ConsumerStatefulWidget {
-  const DetailManga({super.key, required this.baseMedia});
+  final MediaType type;
+  final String slug;
 
-  final BaseData baseMedia;
+  const DetailManga({super.key, required this.type, required this.slug});
 
   @override
   ConsumerState<DetailManga> createState() => _DetailMangaState();
@@ -50,7 +51,9 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
     // final searchManga = ref.read(mangaProvider).filter({'q': ''});
     // final searchAnime = ref.read(animeProvider).filter({'keyword': ''});
 
-    return ref.watch(getMediaProvider(widget.baseMedia)).when(
+    return ref
+        .watch(getMediaProvider(type: widget.type, slug: widget.slug))
+        .when(
       data: (media) {
         return Scaffold(
           floatingActionButton: FilledButton.icon(

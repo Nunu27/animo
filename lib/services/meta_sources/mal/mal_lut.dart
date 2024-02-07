@@ -1,5 +1,5 @@
+import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_character.dart';
-import 'package:animo/models/media/media_meta.dart';
 import 'package:animo/models/media/media_relation.dart';
 
 final Map<String, MediaFormat> malFormat = {
@@ -29,7 +29,17 @@ final Map<String, MediaStatus> malStatus = {
   'Discontinued': MediaStatus.cancelled,
 };
 final Map<String, RelationType> malRelation = {
+  'Sequel': RelationType.sequel,
+  'Prequel': RelationType.prequel,
+  'Alternative setting': RelationType.alternative,
+  'Alternative version': RelationType.alternative,
+  'Side story': RelationType.sideStory,
+  'Summary': RelationType.summary,
+  'Full story': RelationType.source,
+  'Parent story': RelationType.parent,
+  'Spin-off': RelationType.spinOff,
   'Adaptation': RelationType.adaptation,
+  'Character': RelationType.character,
 };
 final Map<String, CharacterRole> malRole = {
   'Main': CharacterRole.main,

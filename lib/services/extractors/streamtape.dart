@@ -1,12 +1,16 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import 'package:animo/models/abstract/video_extractor.dart';
 import 'package:animo/models/content/video_data.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final streamTapeProvider = Provider((ref) {
+part 'streamtape.g.dart';
+
+@riverpod
+StreamTape streamTape(StreamTapeRef ref) {
   return StreamTape();
-});
+}
 
-class StreamTape extends VideoExtractor {
+class StreamTape implements VideoExtractor {
   @override
   Future<VideoData> extract(String url) {
     // TODO: implement extract

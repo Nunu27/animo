@@ -1,10 +1,15 @@
-import 'package:animo/models/base_data.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'package:hive/hive.dart';
+
+import 'package:animo/models/abstract/mappable.dart';
+import 'package:animo/models/base_data.dart';
 
 part 'media_basic.g.dart';
 
 @HiveType(typeId: 1)
-class MediaBasic {
+class MediaBasic implements Mappable {
   @HiveField(0)
   final String slug;
   @HiveField(1)
@@ -40,6 +45,17 @@ class MediaBasic {
     );
   }
 
+  @override
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'slug': slug,
+      'cover': cover,
+      'title': title,
+      'type': type.name,
+      'info': info,
+    };
+  }
+
   factory MediaBasic.fromMap(Map<String, dynamic> map) {
     return MediaBasic(
       slug: map['slug'] as String,
@@ -49,6 +65,12 @@ class MediaBasic {
       info: map['info'] != null ? map['info'] as String : null,
     );
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory MediaBasic.fromJson(String source) =>
+      MediaBasic.fromMap(json.decode(source) as Map<String, dynamic>);
+
   @override
   String toString() {
     return 'MediaBasic(slug: $slug, cover: $cover, title: $title, type: $type, info: $info)';

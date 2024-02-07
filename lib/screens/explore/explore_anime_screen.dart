@@ -1,4 +1,5 @@
-import 'package:animo/services/media_sources/anime/anime.dart';
+import 'package:animo/models/base_data.dart';
+import 'package:animo/repositories/media_repository.dart';
 import 'package:animo/widgets/cover_card.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/loader.dart';
@@ -16,6 +17,21 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreAnimeScreen>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
+  Future? future;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  void fetchData() {
+    setState(() {
+      future = ref
+          .read(mediaRepositoryProvider)
+          .filter(MediaType.anime, {'sort': 'rating'});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +39,7 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreAnimeScreen>
     final theme = Theme.of(context);
 
     return FutureBuilder(
-      future: ref.read(animeProvider).filter({'sort': 'rating'}),
+      future: future,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Padding(
@@ -55,9 +71,10 @@ class _ExploreMangaScrennState extends ConsumerState<ExploreAnimeScreen>
             ),
           );
         } else if (snapshot.hasError) {
+          print(snapshot.error);
           return ErrorView(
             message: snapshot.error.toString(),
-            onRetry: () {},
+            onRetry: fetchData,
           );
         } else {
           return const Loader();

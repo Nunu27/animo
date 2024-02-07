@@ -1,9 +1,10 @@
-import 'package:animo/controllers/auth_controller.dart';
-import 'package:animo/providers/user_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:animo/controllers/auth_controller.dart';
+import 'package:animo/providers/user_provider.dart';
 
 class Profile extends ConsumerWidget {
   const Profile({super.key});
@@ -14,7 +15,7 @@ class Profile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userStateProvider);
     final theme = Theme.of(context);
 
     return Scaffold(

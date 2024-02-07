@@ -1,12 +1,17 @@
-import 'package:animo/services/api.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final notificationProvider = Provider((ref) {
+import 'package:animo/repositories/auth_repository.dart';
+
+part 'notification.g.dart';
+
+@Riverpod(keepAlive: true)
+NotificationService notification(NotificationRef ref) {
   return NotificationService(ref);
-});
+}
 
 const AndroidNotificationChannel channel = AndroidNotificationChannel(
   'animo_main',
@@ -46,10 +51,11 @@ class NotificationService {
 
   void onToken(String? newToken) async {
     if (newToken != null) {
-      final apiService = _ref.read(apiServiceProvider);
+      final authRepository = _ref.read(authRepositoryProvider);
 
-      if (apiService.token != null) {
-        await apiService.updatePushToken(oldToken: token, newToken: newToken);
+      if (authRepository.token != null) {
+        await authRepository.updatePushToken(
+            oldToken: token, newToken: newToken);
       }
     }
 

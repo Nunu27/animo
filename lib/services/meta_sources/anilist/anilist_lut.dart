@@ -1,5 +1,5 @@
+import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_character.dart';
-import 'package:animo/models/media/media_meta.dart';
 import 'package:animo/models/media/media_relation.dart';
 
 final Map<String, MediaFormat> anilistFormat = {
@@ -13,13 +13,6 @@ final Map<String, MediaFormat> anilistFormat = {
   'MANGA': MediaFormat.manga,
   'NOVEL': MediaFormat.novel,
   'ONE_SHOT': MediaFormat.oneShot,
-};
-final Map<String, MediaStatus> anilistStatus = {
-  'FINISHED': MediaStatus.completed,
-  'RELEASING': MediaStatus.ongoing,
-  'NOT_YET_RELEASED': MediaStatus.upcoming,
-  'CANCELLED': MediaStatus.cancelled,
-  'HIATUS': MediaStatus.hiatus,
 };
 final Map<String, RelationType> anilistRelation = {
   'ADAPTATION': RelationType.adaptation,

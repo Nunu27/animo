@@ -1,4 +1,5 @@
-import 'package:animo/services/media_sources/manga/manga.dart';
+import 'package:animo/models/base_data.dart';
+import 'package:animo/repositories/media_repository.dart';
 import 'package:animo/widgets/cover_card.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/loader.dart';
@@ -22,7 +23,9 @@ class _ExploreMangaScreenState extends ConsumerState<ExploreMangaScreen>
     super.build(context);
     final theme = Theme.of(context);
     return FutureBuilder(
-      future: ref.read(mangaProvider).filter({'sort': 'rating'}),
+      future: ref
+          .read(mediaRepositoryProvider)
+          .filter(MediaType.manga, {'sort': 'rating'}),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Padding(

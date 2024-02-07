@@ -36,7 +36,9 @@ final router = GoRouter(
       builder: (context, state) {
         String slug = state.pathParameters['slug']!;
         return DetailManga(
-            baseMedia: BaseData(slug: slug, type: MediaType.manga));
+          slug: slug,
+          type: MediaType.manga,
+        );
       },
       routes: [
         GoRoute(
@@ -66,7 +68,8 @@ final router = GoRouter(
         String slug = state.pathParameters['slug']!;
 
         return DetailAnime(
-          baseMedia: BaseData(slug: slug, type: MediaType.anime),
+          slug: slug,
+          type: MediaType.anime,
         );
       },
     ),

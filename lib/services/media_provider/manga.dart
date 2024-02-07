@@ -1,3 +1,4 @@
+import 'package:animo/models/abstract/provider_info.dart';
 import 'package:animo/models/filter/input_filter.dart';
 import 'package:animo/models/filter/multiselect_filter.dart';
 import 'package:animo/models/filter/select_option.dart';
@@ -130,17 +131,21 @@ final mangaContentSorts = [
   SelectOption('Date (asc)', '1', key: 'date-order'),
 ];
 
-final mangaMediaFilters = [
-  MultiSelectFilter('Genres', 'genres', mangaGenres),
-  MultiSelectFilter('Demographic', 'demographic', mangaDemographics),
-  MultiSelectFilter('Type', 'country', mangaTypes),
-  SelectFilter('Created at', 'time', mangaCreatedAts),
-  InputFilter('Minimum chapters', 'minimum'),
-  SelectFilter('Status', 'status', mangaStatuses),
-  InputFilter('From', 'from', title: 'From year, ex: 2010'),
-  InputFilter('To', 'to', title: 'To year, ex: 2021'),
-  SelectFilter('Sort', 'sort', mangaSorts),
-];
-final mangaContentFilters = [
-  SelectFilter('Sort', 'sort', mangaContentSorts),
-];
+final mangaInfo = ProviderInfo(
+  name: 'Manga',
+  mediaFilters: [
+    MultiSelectFilter('Genres', 'genres', mangaGenres),
+    MultiSelectFilter('Demographic', 'demographic', mangaDemographics),
+    MultiSelectFilter('Type', 'country', mangaTypes),
+    SelectFilter('Created at', 'time', mangaCreatedAts),
+    InputFilter('Minimum chapters', 'minimum'),
+    SelectFilter('Status', 'status', mangaStatuses),
+    InputFilter('From', 'from', title: 'From year, ex: 2010'),
+    InputFilter('To', 'to', title: 'To year, ex: 2021'),
+    SelectFilter('Sort', 'sort', mangaSorts),
+  ],
+  contentFilters: [
+    SelectFilter('Sort', 'sort', mangaContentSorts),
+  ],
+  useFetchGroup: false,
+);
