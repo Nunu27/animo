@@ -17,3 +17,13 @@ Provider<MediaProvider> getMediaProvider(MediaType type) {
     MediaType.novel => novelProvider,
   } as Provider<MediaProvider>;
 }
+
+MediaType getMediaType(String type) {
+  if (type case 'anime') {
+    return MediaType.anime;
+  } else if (type case 'manga') {
+    return MediaType.manga;
+  } else {
+    return MediaType.novel;
+  }
+}

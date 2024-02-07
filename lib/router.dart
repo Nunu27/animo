@@ -1,11 +1,14 @@
 import 'package:animo/models/base_data.dart';
 import 'package:animo/screens/explore/explore.dart';
+import 'package:animo/screens/explore/explore_detail.dart';
 import 'package:animo/screens/explore/search_screen.dart';
 import 'package:animo/screens/library/library.dart';
 import 'package:animo/screens/media/detail_anime.dart';
 import 'package:animo/screens/media/detail_manga.dart';
 import 'package:animo/screens/media/manga_reader_screen.dart';
 import 'package:animo/screens/profile/profile.dart';
+import 'package:animo/utils/utils.dart';
+import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/scaffold_with_bar.dart';
 import 'package:animo/screens/auth/signin_screen.dart';
 import 'package:animo/screens/splash_screen.dart';
@@ -91,6 +94,27 @@ final router = GoRouter(
                   builder: (context, state) {
                     final MediaType mediaType = state.extra as MediaType;
                     return SearchScreen(mediaType: mediaType);
+                  },
+                ),
+                GoRoute(
+                  path: ':media/:filter',
+                  name: 'explore-detail',
+                  parentNavigatorKey: _rootNavigator,
+                  builder: (context, state) {
+                    final MediaType mediaType =
+                        getMediaType(state.pathParameters['media']!);
+                    final String filter = state.pathParameters['filter']!;
+                    final String title = state.extra as String;
+
+                    if (state.error != null) {
+                      return ErrorView(message: state.error!.message);
+                    }
+
+                    return ExploreDetail(
+                      mediaType: mediaType,
+                      filter: filter,
+                      title: title,
+                    );
                   },
                 )
               ],

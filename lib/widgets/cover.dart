@@ -1,3 +1,4 @@
+import 'package:animo/constants/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,7 @@ class Cover extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: 225 / 350,
+      aspectRatio: Constants.coverRatio,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(4),
         child: CachedNetworkImage(

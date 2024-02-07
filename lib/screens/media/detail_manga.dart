@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:animo/models/base_data.dart';
 import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_content.dart';
@@ -82,11 +80,10 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
           .getMediaContents(media.toSyncData(), page: currentPage);
       chapterList.addAll(data.data);
       _refreshController.refreshCompleted();
+      setState(() {});
     } catch (error) {
-      print(error);
       _refreshController.refreshFailed();
     }
-    setState(() {});
   }
 
   @override
@@ -118,8 +115,7 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
               slivers: [
                 SliverLayoutBuilder(
                   builder: (context, constraints) {
-                    final bool isCollapse = constraints.scrollOffset >
-                        _sliverAppbarHeight - kToolbarHeight;
+                    final bool isCollapse = constraints.scrollOffset != 0;
                     return SliverAppBar(
                       expandedHeight: _sliverAppbarHeight,
                       title: isCollapse ? Text(media.title) : null,
@@ -310,41 +306,6 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
                   chapterList: chapterList,
                   langList: media.langList,
                 ),
-                // FutureBuilder(
-                //   future: ref
-                //       .read(apiServiceProvider)
-                //       .getMediaContents(media.toSyncData(), page: currentPage),
-                //   builder: (context, snapshot) {
-                //     if (snapshot.hasData) {
-                //       if (snapshot.data!.data.isNotEmpty) {
-                //         chapterList.addAll(snapshot.data!.data);
-                //         _refreshController.loadComplete();
-                //         print('chapterList length: ${chapterList.length}');
-                //         print('currentPage : $currentPage');
-                //       } else {
-                //         _refreshController.loadNoData();
-                //       }
-                //       return ChapterListView(
-                //         mediaType: MediaType.manga,
-                //         parentSlug: media.slug,
-                //         chapterList: chapterList,
-                //         langList: media.langList,
-                //       );
-                //     } else if (snapshot.hasError) {
-                //       _refreshController.loadFailed();
-                //       return SliverToBoxAdapter(
-                //         child: ErrorView(
-                //           message: snapshot.error.toString(),
-                //           onRetry: () {},
-                //         ),
-                //       );
-                //     } else {
-                //       return const SliverToBoxAdapter(
-                //         child: Loader(),
-                //       );
-                //     }
-                //   },
-                // )
               ],
             ),
           ),

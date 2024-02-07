@@ -1,3 +1,4 @@
+import 'package:animo/constants/constants.dart';
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/widgets/cover.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,11 @@ class CoverCard extends StatelessWidget {
   const CoverCard({
     super.key,
     required this.media,
-    this.width,
+    this.width = 120,
   });
 
   final MediaBasic media;
-  final double? width;
+  final double width;
 
   void goToDetail(BuildContext context) {
     context.push('/${media.type.name}/${media.slug}');
@@ -26,7 +27,7 @@ class CoverCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(6),
       child: Container(
         width: width,
-        padding: const EdgeInsets.all(6),
+        padding: const EdgeInsets.all(4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -40,7 +41,7 @@ class CoverCard extends StatelessWidget {
               media.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodySmall!.copyWith(),
+              style: theme.textTheme.bodySmall,
             ),
           ],
         ),

@@ -149,7 +149,6 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
     BaseData baseContent, {
     List<MediaContent>? contents,
   }) async {
-    print(baseContent.slug);
     final parent = await _ref.read(getSyncDataProvider(baseContent).future);
     final response = await _dio.get<Map<String, dynamic>>(
       '/chapter/${baseContent.slug}?tachiyomi=true',

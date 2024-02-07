@@ -1,3 +1,4 @@
+import 'package:animo/constants/constants.dart';
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/widgets/cover.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class CoverCardCompact extends StatelessWidget {
         width: width,
         padding: const EdgeInsets.all(6),
         child: AspectRatio(
-          aspectRatio: 225 / 350,
+          aspectRatio: Constants.coverRatio,
           child: Stack(
             children: [
               SizedBox(

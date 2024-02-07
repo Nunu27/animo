@@ -1,7 +1,5 @@
-import 'package:animo/services/media_sources/manga/manga.dart';
-import 'package:animo/widgets/cover_card.dart';
-import 'package:animo/widgets/error_view.dart';
-import 'package:animo/widgets/loader.dart';
+import 'package:animo/models/base_data.dart';
+import 'package:animo/screens/explore/explore_media_future.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,54 +12,24 @@ class ExploreMangaScreen extends ConsumerStatefulWidget {
 
 class _ExploreMangaScreenState extends ConsumerState<ExploreMangaScreen>
     with AutomaticKeepAliveClientMixin {
+  final List<Map<String, String>> options = [
+    {'follow': 'Most popular'},
+    {'rating': 'Highest rating'},
+    {'user_follow_count': 'Most follows'},
+    {'created_at': 'Newest'},
+    {'view': 'Most views'},
+    {'uploaded': 'Last updated'},
+  ];
+
   @override
   bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final theme = Theme.of(context);
-    return FutureBuilder(
-      future: ref.read(mangaProvider).filter({'sort': 'rating'}),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Padding(
-            padding: const EdgeInsets.all(14.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Manga Trending',
-                  style: theme.textTheme.titleMedium,
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                SizedBox(
-                  height: 224,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      return CoverCard(
-                        media: snapshot.data!.data[index],
-                        width: 120,
-                      );
-                    },
-                  ),
-                )
-              ],
-            ),
-          );
-        } else if (snapshot.hasError) {
-          return ErrorView(
-            message: snapshot.error.toString(),
-            onRetry: () {},
-          );
-        } else {
-          return const Loader();
-        }
-      },
+    return ExploreMediaFuture(
+      mediaType: MediaType.manga,
+      options: options,
     );
   }
 }

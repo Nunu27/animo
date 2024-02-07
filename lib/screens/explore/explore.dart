@@ -1,6 +1,7 @@
 import 'package:animo/models/base_data.dart';
 import 'package:animo/screens/explore/explore_anime_screen.dart';
 import 'package:animo/screens/explore/explore_manga_screen.dart';
+import 'package:animo/screens/explore/explore_novel_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -84,7 +85,7 @@ class _ExploreState extends ConsumerState<Explore>
         children: const [
           ExploreAnimeScreen(),
           ExploreMangaScreen(),
-          ExploreMangaScreen(),
+          ExploreNovelScreen(),
         ],
       ),
     );

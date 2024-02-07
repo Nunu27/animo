@@ -2,7 +2,7 @@ import 'package:animo/models/base_data.dart';
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/models/paginated_data.dart';
 import 'package:animo/utils/utils.dart';
-import 'package:animo/widgets/cover_card_compact.dart';
+import 'package:animo/widgets/cover_card_compact_gridview.dart';
 import 'package:animo/widgets/custom_bottom_modal_sheet.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/filter_modal.dart';
@@ -135,22 +135,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final searchResult = snapshot.data!.data;
-                    print(searchResult.length);
                     return searchResult.isEmpty
                         ? ErrorView(
                             message:
                                 "${selectedMediaType.name} '${_searchController.text}' not found",
                           )
-                        : GridView.count(
-                            crossAxisCount: 3,
-                            childAspectRatio: 225 / 350,
-                            children: searchResult
-                                .map(
-                                  (e) => CoverCardCompact(
-                                    media: e,
-                                  ),
-                                )
-                                .toList(),
+                        : CoverCardCompactGridView(
+                            data: searchResult,
+                            column: 3,
                           );
                   } else if (snapshot.hasError) {
                     return ErrorView(message: snapshot.error.toString());
