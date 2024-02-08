@@ -19,15 +19,15 @@ MediaCharacter formatALCharacter(e) => MediaCharacter(
       cover: e['node']['image']?['medium'],
       role: anilistRole[e['role']] ?? CharacterRole.background,
     );
-MediaRelation formatALRelation(e) {
+BaseData formatALRelation(e) {
   final type =
       MediaType.values.byName((e['node']['type'] as String).toLowerCase());
 
-  return MediaRelation(
+  return BaseData(
     slug: e['node']['id'].toString(),
     type: type == MediaType.manga && e['node']['format'] == 'NOVEL'
         ? MediaType.novel
         : type,
-    relationType: anilistRelation[e['relation']] ?? RelationType.other,
+    info: (anilistRelation[e['relationType']] ?? RelationType.other).text,
   );
 }

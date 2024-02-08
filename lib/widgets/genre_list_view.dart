@@ -23,7 +23,7 @@ class GenreListView extends StatelessWidget {
             padding: const EdgeInsets.only(right: 8.0),
             child: OutlinedButton(
               style: theme.outlinedButtonTheme.style!.copyWith(
-                visualDensity: VisualDensity.compact,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 padding: const MaterialStatePropertyAll(
                   EdgeInsets.symmetric(horizontal: 14, vertical: 0),
                 ),

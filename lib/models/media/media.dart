@@ -1,3 +1,4 @@
+import 'package:animo/models/identifier.dart';
 import 'package:animo/models/media/media_meta.dart';
 import 'package:animo/models/sync_data.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +9,6 @@ import 'package:animo/models/filter/select_option.dart';
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/models/media/media_character.dart';
 import 'package:animo/models/media/media_content.dart';
-import 'package:animo/models/media/media_relation.dart';
 import 'package:animo/models/media/media_trailer.dart';
 import 'package:animo/models/paginated_data.dart';
 
@@ -64,11 +64,10 @@ class Media {
   final List<SelectOption> genres;
   final double? rating;
   final PaginatedData<MediaCharacter>? characters;
-  final PaginatedData<MediaRelation>? relations;
+  final PaginatedData<BaseData>? relations;
   final MediaContent? firstContent;
   final MediaContent? lastContent;
   final List<String> langList;
-  final DataSource source;
 
   Media({
     required this.id,
@@ -93,7 +92,6 @@ class Media {
     this.firstContent,
     this.lastContent,
     this.langList = const [],
-    this.source = DataSource.animo,
   });
 
   int? getMetaId(DataSource source) {
@@ -102,6 +100,10 @@ class Media {
       DataSource.myanimelist => malId,
       _ => null,
     };
+  }
+
+  Identifier getIdentifier() {
+    return Identifier(id: id, slug: slug);
   }
 
   MediaBasic toMediaBasic() {
@@ -119,11 +121,12 @@ class Media {
       aniId: aniId,
       malId: malId,
       slug: slug,
+      title: title,
       type: type,
     );
   }
 
-  Media withMeta(MediaMeta meta, DataSource source) {
+  Media withMeta(MediaMeta meta) {
     return copyWith(
       native: meta.native,
       synonyms: meta.synonyms,
@@ -132,7 +135,6 @@ class Media {
       trailer: meta.trailer,
       characters: meta.characters,
       relations: meta.relations,
-      source: source,
     );
   }
 
@@ -155,11 +157,10 @@ class Media {
     List<SelectOption>? genres,
     double? rating,
     PaginatedData<MediaCharacter>? characters,
-    PaginatedData<MediaRelation>? relations,
+    PaginatedData<BaseData>? relations,
     MediaContent? firstContent,
     MediaContent? lastContent,
     List<String>? langList,
-    DataSource? source,
   }) {
     return Media(
       id: id ?? this.id,
@@ -184,7 +185,6 @@ class Media {
       firstContent: firstContent ?? this.firstContent,
       lastContent: lastContent ?? this.lastContent,
       langList: langList ?? this.langList,
-      source: source ?? this.source,
     );
   }
 
@@ -219,8 +219,9 @@ class Media {
               map['characters'] as Map<String, dynamic>, MediaCharacter.fromMap)
           : null,
       relations: map['relations'] != null
-          ? PaginatedData<MediaRelation>.fromMap(
-              map['relations'] as Map<String, dynamic>, MediaRelation.fromMap)
+          ? PaginatedData<BaseData>.fromMap(
+              map['relations'] as Map<String, dynamic>,
+              BaseData.fromRelationMap)
           : null,
       firstContent: map['firstContent'] != null
           ? MediaContent.fromMap(map['firstContent'] as Map<String, dynamic>)
@@ -234,7 +235,7 @@ class Media {
 
   @override
   String toString() {
-    return 'Media(id: $id, aniId: $aniId, malId: $malId, slug: $slug, title: $title, native: $native, synonyms: $synonyms, cover: $cover, banner: $banner, type: $type, format: $format, status: $status, description: $description, trailer: $trailer, year: $year, genres: $genres, rating: $rating, characters: $characters, relations: $relations, firstContent: $firstContent, lastContent: $lastContent, langList: $langList, source: $source)';
+    return 'Media(id: $id, aniId: $aniId, malId: $malId, slug: $slug, title: $title, native: $native, synonyms: $synonyms, cover: $cover, banner: $banner, type: $type, format: $format, status: $status, description: $description, trailer: $trailer, year: $year, genres: $genres, rating: $rating, characters: $characters, relations: $relations, firstContent: $firstContent, lastContent: $lastContent, langList: $langList)';
   }
 
   @override
@@ -262,8 +263,7 @@ class Media {
         other.relations == relations &&
         other.firstContent == firstContent &&
         other.lastContent == lastContent &&
-        listEquals(other.langList, langList) &&
-        other.source == source;
+        listEquals(other.langList, langList);
   }
 
   @override
@@ -289,7 +289,6 @@ class Media {
         relations.hashCode ^
         firstContent.hashCode ^
         lastContent.hashCode ^
-        langList.hashCode ^
-        source.hashCode;
+        langList.hashCode;
   }
 }

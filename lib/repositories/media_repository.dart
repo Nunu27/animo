@@ -64,11 +64,10 @@ class MediaRepository extends ApiRepository {
 
   Future<List<MediaBasic>> getMediaBasics(
     List<BaseData> list,
-    DataSource source, {
-    Map<String, String>? infoMap,
-  }) async {
+    DataSource source,
+  ) async {
     final request = api.post('/media-basic', data: {
-      'list': list.map((e) => e.toMap()),
+      'list': list.map((e) => e.toMap()).toList(),
       'source': source.name,
     });
     final response = await handleApi(request);
@@ -91,7 +90,7 @@ class MediaRepository extends ApiRepository {
           .read(metaProvider)
           .getMeta(type, media.getMetaId(provider.source)!);
 
-      return media.withMeta(meta, provider.source);
+      return media.withMeta(meta);
     }
   }
 
@@ -110,7 +109,7 @@ class MediaRepository extends ApiRepository {
     return PaginatedData.fromMap(response.data, MediaContent.fromMap);
   }
 
-  Future<ContentData> getContent(
+  Future<ContentData<T>> getContent<T>(
     BaseData baseContent, {
     bool withContentList = false,
     int? current,

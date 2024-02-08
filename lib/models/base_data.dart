@@ -1,3 +1,5 @@
+import 'package:animo/models/media/media_relation.dart';
+
 enum MediaType { anime, manga, novel }
 
 enum DataSource { animo, anilist, myanimelist }
@@ -50,6 +52,10 @@ class BaseData {
       info: map['info'] != null ? map['info'] as String : null,
       source: DataSource.values.byName(map['source']),
     );
+  }
+
+  factory BaseData.fromRelationMap(Map<String, dynamic> map) {
+    return MediaRelation.fromMap(map).toBaseData();
   }
 
   @override

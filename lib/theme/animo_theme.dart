@@ -10,6 +10,36 @@ class AnimoTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       fontFamily: 'PlusJakartaSans',
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        selectedIcon: null,
+        style: ButtonStyle(
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: const MaterialStatePropertyAll(
+            EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 4,
+            ),
+          ),
+          backgroundColor: MaterialStateProperty.resolveWith(
+            (states) {
+              if (states.contains(MaterialState.selected)) {
+                return colorScheme.primaryContainer;
+              } else {
+                return colorScheme.background;
+              }
+            },
+          ),
+          foregroundColor: MaterialStateProperty.resolveWith(
+            (states) {
+              if (states.contains(MaterialState.selected)) {
+                return colorScheme.onPrimaryContainer;
+              } else {
+                return colorScheme.onBackground;
+              }
+            },
+          ),
+        ),
+      ),
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: colorScheme.primaryContainer,
         iconTheme: MaterialStatePropertyAll(

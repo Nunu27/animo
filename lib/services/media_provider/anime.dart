@@ -110,16 +110,16 @@ final animeGenres = [
 final animeInfo = ProviderInfo(
   name: 'Anime',
   mediaFilters: [
-    MultiSelectFilter('Genres', 'genres', animeGenres),
+    InputFilter('From', 'sy', title: 'From year, ex: 2010'),
+    InputFilter('To', 'ey', title: 'To year, ex: 2021'),
     SelectFilter('Type', 'type', animeTypes),
     SelectFilter('Status', 'status', animeStatuses),
     SelectFilter('Rated', 'rated', animeRatings),
     SelectFilter('Score', 'score', animeScores),
     SelectFilter('Season', 'season', animeSeasons),
     SelectFilter('Language', 'language', animeLanguages),
-    InputFilter('From', 'sy', title: 'From year, ex: 2010'),
-    InputFilter('To', 'ey', title: 'To year, ex: 2021'),
     SelectFilter('Sort', 'sort', animeSorts),
+    MultiSelectFilter('Genres', 'genres', animeGenres),
   ],
   haveGroupFilter: false,
 );

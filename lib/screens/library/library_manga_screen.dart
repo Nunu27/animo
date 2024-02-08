@@ -1,6 +1,6 @@
+import 'package:animo/widgets/cover_card_compact_gridview.dart';
 import 'package:animo/models/base_data.dart';
 import 'package:animo/repositories/media_repository.dart';
-import 'package:animo/widgets/cover_card_compact.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,21 +26,9 @@ class _LibraryMangaScreenState extends ConsumerState<LibraryMangaScreen>
           .filter(MediaType.manga, {'sort': 'rating'}),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.all(8),
-                sliver: SliverGrid.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: 225 / 350,
-                  children: [
-                    ...snapshot.data!.data.map(
-                      (e) => CoverCardCompact(media: e),
-                    )
-                  ],
-                ),
-              ),
-            ],
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CoverCardCompactGridView(data: snapshot.data!.data),
           );
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());

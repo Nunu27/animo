@@ -27,15 +27,15 @@ class MAL extends MetaProvider {
   final Dio _jikan = Dio(
     BaseOptions(
       baseUrl: URLConstants.jikan,
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 20),
+      connectTimeout: Constants.connectTimeout,
+      receiveTimeout: Constants.receiveTimeout,
     ),
   );
   final Dio _mal = Dio(
     BaseOptions(
       baseUrl: URLConstants.mal,
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 20),
+      connectTimeout: Constants.connectTimeout,
+      receiveTimeout: Constants.receiveTimeout,
     ),
   );
 
@@ -66,16 +66,15 @@ class MAL extends MetaProvider {
     final data = response.data!['data'];
 
     final relationData = data['relations'] as List;
-    final List<MediaRelation> relations = [];
+    final List<BaseData> relations = [];
 
     for (var relation in relationData) {
       for (var entry in relation['entry']) {
         relations.add(
-          MediaRelation(
+          BaseData(
             slug: entry['mal_id'].toString(),
             type: MediaType.values.byName(entry['type']),
-            relationType:
-                malRelation[relation['relation']] ?? RelationType.other,
+            info: (malRelation[entry['relation']] ?? RelationType.other).text,
           ),
         );
       }
@@ -93,10 +92,11 @@ class MAL extends MetaProvider {
       ),
       relations: relations.isEmpty
           ? null
-          : PaginatedData<MediaRelation>(
+          : PaginatedData<BaseData>(
               total: relations.length,
               haveMore: false,
               data: relations,
+              source: source,
             ),
     );
   }
@@ -117,6 +117,7 @@ class MAL extends MetaProvider {
       currentPage: page,
       haveMore: false,
       data: data.map(formatMALCharacter).toList(),
+      source: source,
     );
   }
 }

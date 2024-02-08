@@ -1,4 +1,3 @@
-import 'package:animo/models/abstract/mappable.dart';
 import 'package:animo/models/base_data.dart';
 
 enum RelationType {
@@ -24,23 +23,21 @@ enum RelationType {
   final String text;
 }
 
-class MediaRelation extends BaseData implements Mappable {
+class MediaRelation {
+  final String slug;
+  final MediaType type;
   final RelationType relationType;
 
   MediaRelation({
-    required super.slug,
-    required super.type,
+    required this.slug,
+    required this.type,
     required this.relationType,
   });
 
-  @override
   MediaRelation copyWith({
     String? slug,
-    String? parentSlug,
     MediaType? type,
-    String? info,
     RelationType? relationType,
-    DataSource? source,
   }) {
     return MediaRelation(
       slug: slug ?? this.slug,
@@ -49,13 +46,8 @@ class MediaRelation extends BaseData implements Mappable {
     );
   }
 
-  @override
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'slug': slug,
-      'type': type.name,
-      'info': relationType.text,
-    };
+  BaseData toBaseData() {
+    return BaseData(slug: slug, type: type, info: relationType.text);
   }
 
   factory MediaRelation.fromMap(Map<String, dynamic> map) {
@@ -67,7 +59,8 @@ class MediaRelation extends BaseData implements Mappable {
   }
 
   @override
-  String toString() => 'MediaRelation(relationType: $relationType)';
+  String toString() =>
+      'MediaRelation(slug: $slug, type: $type, relationType: $relationType)';
 
   @override
   bool operator ==(covariant MediaRelation other) {

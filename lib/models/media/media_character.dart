@@ -1,5 +1,3 @@
-import 'package:animo/models/abstract/mappable.dart';
-
 enum CharacterRole {
   main('Main'),
   supporting('Supporting'),
@@ -10,7 +8,7 @@ enum CharacterRole {
   final String text;
 }
 
-class MediaCharacter implements Mappable {
+class MediaCharacter {
   final String slug;
   final String name;
   final String? cover;
@@ -35,16 +33,6 @@ class MediaCharacter implements Mappable {
       cover: cover ?? this.cover,
       role: role ?? this.role,
     );
-  }
-
-  @override
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'slug': slug,
-      'name': name,
-      'cover': cover,
-      'role': role.name,
-    };
   }
 
   factory MediaCharacter.fromMap(Map<String, dynamic> map) {

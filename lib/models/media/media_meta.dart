@@ -1,6 +1,6 @@
+import 'package:animo/models/base_data.dart';
 import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_character.dart';
-import 'package:animo/models/media/media_relation.dart';
 import 'package:animo/models/media/media_trailer.dart';
 import 'package:animo/models/paginated_data.dart';
 
@@ -11,7 +11,7 @@ class MediaMeta {
   final MediaFormat format;
   final MediaTrailer? trailer;
   final PaginatedData<MediaCharacter>? characters;
-  final PaginatedData<MediaRelation>? relations;
+  final PaginatedData<BaseData>? relations;
 
   MediaMeta({
     this.native,

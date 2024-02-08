@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:animo/models/media/media_content.dart';
 import 'package:animo/models/sync_data.dart';
+import 'package:fpdart/fpdart.dart';
 
 class ContentData<T> {
   final SyncData syncData;
@@ -44,8 +45,11 @@ class ContentData<T> {
       current: map['current'] != null ? map['current'] as int : null,
       contents: map['contents'] != null
           ? List<MediaContent>.from(
-              (map['contents'] as List<int>).map<MediaContent?>(
-                (x) => MediaContent.fromMap(x as Map<String, dynamic>),
+              (map['contents'] as List).mapWithIndex<MediaContent?>(
+                (x, index) =>
+                    MediaContent.fromMap(x as Map<String, dynamic>).copyWith(
+                  index: index,
+                ),
               ),
             )
           : null,
@@ -57,7 +61,7 @@ class ContentData<T> {
       case MediaType.anime:
         return VideoContent.fromMap(data);
       case MediaType.manga:
-        return (data as List).map((e) => ImageContent.fromMap(e));
+        return (data as List).map((e) => ImageContent.fromMap(e)).toList();
       default:
         throw UnimplementedError();
     }

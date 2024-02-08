@@ -5,6 +5,7 @@ class SyncData {
   final int? aniId;
   final int? malId;
   final String slug;
+  final String title;
   final MediaType type;
 
   SyncData({
@@ -12,6 +13,7 @@ class SyncData {
     required this.aniId,
     required this.malId,
     required this.slug,
+    required this.title,
     required this.type,
   });
 }

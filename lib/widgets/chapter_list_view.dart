@@ -1,27 +1,37 @@
+import 'package:animo/models/base_data.dart';
+import 'package:animo/models/media/media_content.dart';
 import 'package:animo/widgets/custom_input_form.dart';
+import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-class ChapterListView extends StatefulWidget {
+class ChapterListView extends ConsumerStatefulWidget {
   const ChapterListView({
     super.key,
     required this.chapterList,
-    required this.slug,
+    required this.parentSlug,
+    this.langList,
+    required this.mediaType,
     this.isModal = false,
+    this.onTap,
   });
 
-  final List<String> chapterList;
-  final String slug;
+  final List<MediaContent> chapterList;
+  final String parentSlug;
   final bool isModal;
+  final List<String>? langList;
+  final MediaType mediaType;
+  final Function(int)? onTap;
 
   @override
-  State<ChapterListView> createState() => _ChapterListViewState();
+  ConsumerState<ChapterListView> createState() => _ChapterListViewState();
 }
 
-class _ChapterListViewState extends State<ChapterListView> {
+class _ChapterListViewState extends ConsumerState<ChapterListView> {
   late final TextEditingController _searchController;
-  List<String> searchResultList = [];
+  List<MediaContent> searchResultList = [];
 
   @override
   void initState() {
@@ -33,6 +43,47 @@ class _ChapterListViewState extends State<ChapterListView> {
   void dispose() {
     super.dispose();
     _searchController.dispose();
+  }
+
+  String _handleTitle(MediaContent chapter) {
+    if (chapter.title == null || chapter.title!.isEmpty) {
+      return 'Chapter ${chapter.number}';
+    } else {
+      return 'Ch. ${chapter.number}: ${chapter.title}';
+    }
+  }
+
+  String _getDate(DateTime? time) {
+    if (time != null) return time.toString().substring(0, 10);
+    return DateTime.now().toString().substring(0, 10);
+  }
+
+  String _handleSubtitle(DateTime? time, String? group) {
+    if (group != null) return '${_getDate(time)} • $group';
+    return _getDate(time);
+  }
+
+  void _handleOnTap(MediaContent mediaContent) {
+    if (widget.onTap != null) {
+      widget.onTap!(mediaContent.index!);
+      context.pop();
+    } else if (widget.isModal && widget.mediaType == MediaType.manga) {
+      context.pushReplacementNamed(
+        'chapter',
+        pathParameters: {
+          'slug': widget.parentSlug,
+          'ch': mediaContent.slug,
+        },
+      );
+    } else if (widget.mediaType == MediaType.manga) {
+      context.pushNamed(
+        'chapter',
+        pathParameters: {
+          'slug': widget.parentSlug,
+          'ch': mediaContent.slug,
+        },
+      );
+    } else if (widget.mediaType == MediaType.anime) {}
   }
 
   @override
@@ -58,7 +109,7 @@ class _ChapterListViewState extends State<ChapterListView> {
                             style: theme.textTheme.titleMedium,
                           ),
                           Text(
-                            '100 Total chapters found',
+                            '${widget.chapterList.length} Total chapters found',
                             style: theme.textTheme.bodySmall,
                           ),
                         ],
@@ -67,6 +118,7 @@ class _ChapterListViewState extends State<ChapterListView> {
                     Expanded(
                       flex: 2,
                       child: CustomInputForm(
+                        keyboardType: TextInputType.number,
                         hintText: 'Goto',
                         hintTextStyle: theme.textTheme.bodySmall!.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
@@ -79,10 +131,10 @@ class _ChapterListViewState extends State<ChapterListView> {
                           setState(
                             () {
                               if (value != null) {
+                                // search result
                                 searchResultList = widget.chapterList
-                                    .where((chapter) => chapter
-                                        .toLowerCase()
-                                        .contains(value.toLowerCase()))
+                                    .where((chapter) =>
+                                        chapter.number!.contains(value))
                                     .toList();
                               }
                             },
@@ -113,46 +165,62 @@ class _ChapterListViewState extends State<ChapterListView> {
           SliverClip(
             child: MultiSliver(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      '32 Languages are available',
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.filter_list),
-                    ),
-                  ],
-                ),
-                ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
+                if (widget.langList != null &&
+                    widget.mediaType != MediaType.anime)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${widget.langList!.length} Languages are available',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.filter_list),
+                      ),
+                    ],
+                  ),
+                SliverList.builder(
                   itemCount: searchResultList.isEmpty
                       ? widget.chapterList.length
                       : searchResultList.length,
                   itemBuilder: (context, index) {
+                    final MediaContent currentChapter =
+                        widget.chapterList[index];
                     return ListTile(
                       onTap: () {
-                        if (widget.isModal) {
-                          Navigator.of(context).pop();
-                          Navigator.of(context).pop();
-                        }
-                        context.pushNamed(
-                          'chapter',
-                          pathParameters: {
-                            'slug': widget.slug,
-                            'ch': index.toString(),
-                          },
-                        );
+                        _handleOnTap(currentChapter);
                       },
                       title: Text(
                         searchResultList.isEmpty
-                            ? widget.chapterList[index]
-                            : searchResultList[index],
+                            ? _handleTitle(currentChapter)
+                            : _handleTitle(searchResultList[index]),
+                        style: theme.textTheme.titleMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                      subtitle: Text(
+                        _handleSubtitle(
+                          currentChapter.updatedAt,
+                          currentChapter.group,
+                        ),
+                        style: theme.textTheme.bodySmall,
+                      ),
+                      trailing: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.download_for_offline_outlined,
+                          size: 24,
+                        ),
+                      ),
+                      leading: currentChapter.lang == null
+                          ? null
+                          : Flag.fromString(
+                              currentChapter.lang!,
+                              height: 24,
+                              width: 24,
+                            ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
                     );
                   },
                 )

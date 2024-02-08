@@ -1,5 +1,4 @@
 import 'package:animo/models/base_data.dart';
-import 'package:animo/models/content/content_data.dart';
 import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/repositories/media_repository.dart';
@@ -29,24 +28,7 @@ Future<List<MediaBasic>> getMediaBasic(
         list,
         source,
       );
-  ref.cacheFor(const Duration(hours: 1));
-
-  return result;
-}
-
-@riverpod
-Future<ContentData> getContent(
-  GetContentRef ref, {
-  required BaseData baseContent,
-  bool withContentList = false,
-  int? current,
-}) async {
-  final result = await ref.watch(mediaRepositoryProvider).getContent(
-        baseContent,
-        withContentList: withContentList,
-        current: current,
-      );
-  ref.cacheFor(const Duration(hours: 2));
+  ref.keepAlive();
 
   return result;
 }

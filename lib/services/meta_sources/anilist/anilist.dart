@@ -9,7 +9,6 @@ import 'package:animo/models/base_data.dart';
 import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_character.dart';
 import 'package:animo/models/media/media_meta.dart';
-import 'package:animo/models/media/media_relation.dart';
 import 'package:animo/models/paginated_data.dart';
 import 'package:animo/providers/user_provider.dart';
 import 'package:animo/services/meta_sources/anilist/anilist_formatter.dart';
@@ -27,8 +26,8 @@ class Anilist extends MetaProvider {
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: URLConstants.anilist,
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 20),
+      connectTimeout: Constants.connectTimeout,
+      receiveTimeout: Constants.receiveTimeout,
     ),
   );
 
@@ -72,12 +71,14 @@ class Anilist extends MetaProvider {
           : PaginatedData<MediaCharacter>(
               haveMore: data['characters']['pageInfo']['hasNextPage'],
               data: characters.map(formatALCharacter).toList(),
+              source: source,
             ),
       relations: relations.isEmpty
           ? null
-          : PaginatedData<MediaRelation>(
+          : PaginatedData<BaseData>(
               haveMore: data['relations']['pageInfo']['hasNextPage'],
               data: relations.map(formatALRelation).toList(),
+              source: source,
             ),
     );
   }

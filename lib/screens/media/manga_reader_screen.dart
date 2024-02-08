@@ -1,108 +1,121 @@
 import 'package:animo/models/base_data.dart';
+import 'package:animo/models/content/content_data.dart';
+import 'package:animo/models/content/image_content.dart';
+import 'package:animo/models/media/media_content.dart';
+import 'package:animo/repositories/media_repository.dart';
 import 'package:animo/widgets/chapter_list_view.dart';
 import 'package:animo/widgets/custom_bottom_modal_sheet.dart';
+import 'package:animo/widgets/future_view.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
-class MangaReaderScreen extends StatefulWidget {
+class MangaReaderScreen extends ConsumerStatefulWidget {
   const MangaReaderScreen({
     super.key,
-    required this.slug,
-    required this.type,
-    required this.chapter,
+    required this.baseData,
   });
 
-  final String slug;
-  final MediaType type;
-  final String chapter;
+  final BaseData baseData;
 
   @override
-  State<MangaReaderScreen> createState() => _MangaReaderScreenState();
+  ConsumerState<MangaReaderScreen> createState() => _MangaReaderScreenState();
 }
 
-class _MangaReaderScreenState extends State<MangaReaderScreen>
+class _MangaReaderScreenState extends ConsumerState<MangaReaderScreen>
     with SingleTickerProviderStateMixin {
-  late final TransformationController _transformationController;
+  final ScrollController _scrollController = ScrollController();
+  final PhotoViewScaleStateController _photoViewScaleStateController =
+      PhotoViewScaleStateController();
+  final PhotoViewController _photoViewController = PhotoViewController();
   late final AnimationController _animationController;
-  late Animation<Matrix4> _animation;
-  late TapDownDetails _doubleTapDetails;
+  late Animation<double> _animation;
+  Alignment _scalePosition = Alignment.center;
   bool _isOverlayVisible = false;
 
-  final List<String> chapterList =
-      List.generate(100, (index) => 'Chapter $index');
+  int? current;
+  List<MediaContent>? chapters;
+
+  int? nextChapter;
+  int? prevChapter;
+  Future<ContentData<List<ImageContent>>>? future;
+
+  double get pixelRatio => View.of(context).devicePixelRatio;
+  Size get size => View.of(context).physicalSize / pixelRatio;
 
   @override
   void initState() {
     super.initState();
-    _transformationController = TransformationController();
-    _doubleTapDetails = TapDownDetails();
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 400),
-    )..addListener(
-        () {
-          _transformationController.value = _animation.value;
-        },
-      );
-
-    _animation = Matrix4Tween().animate(
-      CurveTween(curve: Curves.easeOut).animate(_animationController),
+    );
+    _animation = Tween(begin: 1.0, end: 2.0).animate(
+        CurvedAnimation(curve: Curves.ease, parent: _animationController));
+    _animation.addListener(
+      () => _photoViewController.scale = _animation.value,
     );
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _fetchData(widget.baseData);
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
     _animationController.dispose();
-    _transformationController.dispose();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values); // to re-show bars
+    _photoViewScaleStateController.dispose();
+    _photoViewController.dispose();
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
   }
 
-  void _handleDoubleTap() {
-    Matrix4 endMatrix;
-    Offset position = _doubleTapDetails.localPosition;
+  void _updateNav() {
+    final index = current ?? 0;
 
-    if (_transformationController.value != Matrix4.identity()) {
-      endMatrix = Matrix4.identity();
-    } else {
-      endMatrix = Matrix4.identity()
-        ..translate(-position.dx, -position.dy)
-        ..scale(2.0);
+    nextChapter = index > 0 ? current! - 1 : null;
+    prevChapter = index < ((chapters?.length ?? 1) - 1) ? current! + 1 : null;
+  }
+
+  void _fetchData(BaseData baseContent, {int? fetchedIndex}) async {
+    current = fetchedIndex;
+
+    if (current != null) _updateNav();
+    final withContent = chapters == null;
+
+    setState(() {
+      future = ref.read(mediaRepositoryProvider).getContent(
+            baseContent,
+            withContentList: withContent,
+            current: fetchedIndex,
+          );
+    });
+
+    final data = await future!;
+    if (withContent) {
+      chapters = data.contents;
+      current ??= data.current!;
+      _updateNav();
+      setState(() {});
     }
-
-    _animation = Matrix4Tween(
-      begin: _transformationController.value,
-      end: endMatrix,
-    ).animate(
-      CurveTween(curve: Curves.easeOut).animate(_animationController),
-    );
-    _animationController.forward(from: 0);
   }
 
-  void _handleNextChapter() {
-    context.goNamed(
-      'chapter',
-      pathParameters: {
-        'slug': widget.slug,
-        'ch': '${int.parse(widget.chapter) + 1}'
-      },
+  void _fetchChapter(int index) {
+    _fetchData(
+      widget.baseData.copyWith(slug: chapters![index].slug),
+      fetchedIndex: index,
     );
-  }
-
-  void _handlePrevChapter() {
-    context.goNamed(
-      'chapter',
-      pathParameters: {
-        'slug': widget.slug,
-        'ch': '${int.parse(widget.chapter) - 1}'
-      },
-    );
+    _scrollController.animateTo(0,
+        duration: Durations.extralong3, curve: Curves.easeInOut);
   }
 
   void _toggleOverlay() {
@@ -117,259 +130,222 @@ class _MangaReaderScreenState extends State<MangaReaderScreen>
         : SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
   }
 
+  Alignment _computeAlignmentByTapOffset(Offset offset) {
+    return Alignment((offset.dx - size.width / 2) / (size.width / 2),
+        (offset.dy - size.height / 2) / (size.height / 2));
+  }
+
+  void _toggleScale(Offset tapPosition) {
+    if (mounted) {
+      setState(() {
+        if (_animationController.isAnimating) {
+          return;
+        }
+        if (_photoViewController.scale == 1.0) {
+          _scalePosition = _computeAlignmentByTapOffset(tapPosition);
+
+          if (_animationController.isCompleted) {
+            _animationController.reset();
+          }
+
+          _animationController.forward();
+          return;
+        }
+
+        if (_photoViewController.scale == 2.0) {
+          _animationController.reverse();
+          return;
+        }
+
+        _photoViewScaleStateController.reset();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    const List<Map<String, dynamic>> imgChapters = [
-      {
-        'url': 'https://meo.comick.pictures/0-gG84fPNobl_1t-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/1-riBfb7Z4DpWug-m.jpg',
-        'w': 984,
-        'h': 1400
-      },
-      {
-        'url': 'https://meo.comick.pictures/2-8nEx7rAiFRFRZ-m.jpg',
-        'w': 984,
-        'h': 1400
-      },
-      {
-        'url': 'https://meo.comick.pictures/3-kl07X7gzeOSqr-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/4-6db-maLpHI1Yz-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/5-REA_fBoO0ORxs-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/6-ofJ8caCQ-3Eay-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/7-Vryim8Nqx-wHo-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/8-AnjHAH0kUAGYX-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/9-L5YM3n-kY0A1b-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/10-JPmJ-AH7Kwuy7-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/11-9UPh12gIFHNSc-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/12-SiHsnnIMs07Xe-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/13-N-ikGqwP_TyVu-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/14-Jd0ekUY_fY5Af-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/15-ajiBX1tDSpDTJ-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/16-f8S91o0PfB8rF-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/17-Tt-40Sh5iukD2-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/18-z4eYXzpUoKjqq-m.jpg',
-        'w': 1360,
-        'h': 1920
-      },
-      {
-        'url': 'https://meo.comick.pictures/19-k4J1LpSFmCR42-m.jpg',
-        'w': 1360,
-        'h': 1920
-      }
-    ];
     final mediaQuery = MediaQuery.of(context);
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      body: Scrollbar(
-        interactive: true,
-        radius: const Radius.circular(40),
-        thickness: 8,
-        child: Stack(
-          children: [
-            GestureDetector(
-              onTap: _toggleOverlay,
-              onDoubleTapDown: (d) => _doubleTapDetails = d,
-              onDoubleTap: _handleDoubleTap,
-              child: InteractiveViewer(
-                transformationController: _transformationController,
-                child: ListView.builder(
-                  itemCount: imgChapters.length,
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.zero,
-                  itemBuilder: (context, index) {
-                    final double imgHeight = mediaQuery.size.width /
-                        imgChapters[index]['w'] *
-                        imgChapters[index]['h'];
-                    return SizedBox(
-                      child: CachedNetworkImage(
-                        imageUrl: imgChapters[index]['url'],
-                        progressIndicatorBuilder: (context, url, progress) {
-                          return SizedBox(
-                            height: imgHeight,
-                            child: Loader(
-                              value: progress.progress,
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              child: AnimatedContainer(
-                duration: Durations.medium1,
-                height: _isOverlayVisible
-                    ? (mediaQuery.padding.top + kToolbarHeight)
-                    : 0,
-                width: mediaQuery.size.width,
-                alignment: Alignment.topCenter,
-                child: AppBar(
-                  centerTitle: false,
-                  automaticallyImplyLeading: false,
-                  titleSpacing: 0,
-                  backgroundColor:
-                      theme.appBarTheme.backgroundColor!.withOpacity(0.8),
-                  leading: BackButton(
-                    onPressed: () {
-                      context.pop();
+    return FutureView(
+      future: future,
+      onData: (data) {
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          body: Stack(
+            children: [
+              PhotoViewGallery.builder(
+                itemCount: 2,
+                builder: (context, index) {
+                  return PhotoViewGalleryPageOptions.customChild(
+                    scaleStateController: _photoViewScaleStateController,
+                    basePosition: _scalePosition,
+                    controller: _photoViewController,
+                    onScaleEnd: (context, details, controllerValue) {
+                      if (controllerValue.scale! < 1) {
+                        _photoViewScaleStateController.reset();
+                      }
                     },
-                  ),
-                  title: ListTile(
-                    dense: true,
-                    title: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: Text(
-                        widget.slug,
-                        style: theme.textTheme.titleLarge,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    subtitle: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      child: Text(
-                        'Chapter ${widget.chapter}',
-                        style: theme.textTheme.titleSmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              child: AnimatedContainer(
-                duration: Durations.medium1,
-                height: _isOverlayVisible ? kToolbarHeight : 0,
-                width: mediaQuery.size.width,
-                decoration: BoxDecoration(
-                  color: theme.appBarTheme.backgroundColor!.withOpacity(0.8),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          CustomBottomModalSheet(
-                            context: context,
-                            children: [
-                              ChapterListView(
-                                chapterList: chapterList,
-                                slug: widget.slug,
-                                isModal: true,
-                              )
-                            ],
-                          ).showModal();
-                        },
-                        icon: Icon(
-                          Icons.format_list_numbered_rounded,
-                          color: theme.appBarTheme.foregroundColor,
+                    child: GestureDetector(
+                      onTap: _toggleOverlay,
+                      onDoubleTapDown: (details) {
+                        _toggleScale(details.globalPosition);
+                      },
+                      onDoubleTap: () {},
+                      child: Scrollbar(
+                        controller: _scrollController,
+                        radius: const Radius.circular(40),
+                        thickness: 8,
+                        interactive: true,
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          itemCount: data.data.length,
+                          physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.zero,
+                          itemBuilder: (context, index) {
+                            final double imgHeight = mediaQuery.size.width /
+                                data.data[index].w *
+                                data.data[index].h;
+                            return SizedBox(
+                              child: CachedNetworkImage(
+                                imageUrl: data.data[index].url,
+                                progressIndicatorBuilder:
+                                    (context, url, progress) {
+                                  return SizedBox(
+                                    height: imgHeight,
+                                    child: Loader(
+                                      value: progress.progress,
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
                         ),
                       ),
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: _handlePrevChapter,
-                            icon: const Icon(
-                              Icons.arrow_back_ios_rounded,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            widget.chapter,
-                            style: theme.textTheme.bodyLarge,
-                          ),
-                          const SizedBox(
-                            width: 4,
-                          ),
-                          IconButton(
-                            onPressed: _handleNextChapter,
-                            icon: const Icon(Icons.arrow_forward_ios_rounded),
-                          ),
-                        ],
+                    ),
+                  );
+                },
+              ),
+              _appBar(mediaQuery, theme, context, data),
+              _bottomNavBar(mediaQuery, theme, context, data)
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Positioned _bottomNavBar(
+    MediaQueryData mediaQuery,
+    ThemeData theme,
+    BuildContext context,
+    ContentData<List<ImageContent>> data,
+  ) {
+    return Positioned(
+      bottom: 0,
+      child: AnimatedContainer(
+        duration: Durations.medium1,
+        height: _isOverlayVisible ? kToolbarHeight : 0,
+        width: mediaQuery.size.width,
+        decoration: BoxDecoration(
+          color: theme.appBarTheme.backgroundColor!.withOpacity(0.8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              IconButton(
+                onPressed: () {
+                  CustomBottomModalSheet(
+                    context: context,
+                    children: [
+                      ChapterListView(
+                        mediaType: MediaType.manga,
+                        chapterList: chapters!,
+                        parentSlug: data.syncData.slug,
+                        isModal: true,
+                        onTap: _fetchChapter,
                       )
                     ],
-                  ),
+                  ).showModal();
+                },
+                icon: Icon(
+                  Icons.format_list_numbered_rounded,
+                  color: theme.appBarTheme.foregroundColor,
                 ),
               ),
-            )
-          ],
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: prevChapter == null
+                        ? null
+                        : () => _fetchChapter(prevChapter!),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_rounded,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  IconButton(
+                    onPressed: nextChapter == null
+                        ? null
+                        : () => _fetchChapter(nextChapter!),
+                    icon: const Icon(Icons.arrow_forward_ios_rounded),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Positioned _appBar(MediaQueryData mediaQuery, ThemeData theme,
+      BuildContext context, ContentData<List<ImageContent>> data) {
+    return Positioned(
+      top: 0,
+      child: AnimatedContainer(
+        duration: Durations.medium1,
+        height:
+            _isOverlayVisible ? (mediaQuery.padding.top + kToolbarHeight) : 0,
+        width: mediaQuery.size.width,
+        alignment: Alignment.topCenter,
+        child: AppBar(
+          centerTitle: false,
+          automaticallyImplyLeading: false,
+          titleSpacing: 0,
+          backgroundColor: theme.appBarTheme.backgroundColor!.withOpacity(0.8),
+          leading: BackButton(
+            onPressed: () {
+              context.pop();
+            },
+          ),
+          title: ListTile(
+            dense: true,
+            title: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Text(
+                data.syncData.title,
+                style: theme.textTheme.titleLarge,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            subtitle: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Text(
+                'Chapter ${chapters?[current!].number}',
+                style: theme.textTheme.titleSmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
         ),
       ),
     );

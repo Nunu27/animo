@@ -6,7 +6,6 @@ import 'package:encrypt/encrypt.dart' as encrypt;
 
 class CryptoAES {
   static String encryptAESCryptoJS(String plainText, String passphrase) {
-    try {
       final salt = genRandomWithNonZero(8);
       var keyndIV = deriveKeyAndIV(passphrase.trim(), salt);
       final key = encrypt.Key(keyndIV.$1);
@@ -18,9 +17,6 @@ class CryptoAES {
       Uint8List encryptedBytesWithSalt = Uint8List.fromList(
           createUint8ListFromString('Salted__') + salt + encrypted.bytes);
       return base64.encode(encryptedBytesWithSalt);
-    } catch (error) {
-      rethrow;
-    }
   }
 
   static String decryptAESCryptoJS(String encrypted, String passphrase) {

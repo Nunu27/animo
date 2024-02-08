@@ -1,15 +1,11 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
-
 import 'package:hive/hive.dart';
 
-import 'package:animo/models/abstract/mappable.dart';
 import 'package:animo/models/base_data.dart';
 
 part 'media_basic.g.dart';
 
 @HiveType(typeId: 1)
-class MediaBasic implements Mappable {
+class MediaBasic {
   @HiveField(0)
   final String slug;
   @HiveField(1)
@@ -45,7 +41,6 @@ class MediaBasic implements Mappable {
     );
   }
 
-  @override
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'slug': slug,
@@ -65,11 +60,6 @@ class MediaBasic implements Mappable {
       info: map['info'] != null ? map['info'] as String : null,
     );
   }
-
-  String toJson() => json.encode(toMap());
-
-  factory MediaBasic.fromJson(String source) =>
-      MediaBasic.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {

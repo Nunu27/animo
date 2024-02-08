@@ -134,15 +134,15 @@ final mangaContentSorts = [
 final mangaInfo = ProviderInfo(
   name: 'Manga',
   mediaFilters: [
+    InputFilter('From', 'from', title: 'From year, ex: 2010'),
+    InputFilter('To', 'to', title: 'To year, ex: 2021'),
+    InputFilter('Minimum chapters', 'minimum'),
+    SelectFilter('Created at', 'time', mangaCreatedAts),
+    SelectFilter('Status', 'status', mangaStatuses),
+    SelectFilter('Sort', 'sort', mangaSorts),
     MultiSelectFilter('Genres', 'genres', mangaGenres),
     MultiSelectFilter('Demographic', 'demographic', mangaDemographics),
     MultiSelectFilter('Type', 'country', mangaTypes),
-    SelectFilter('Created at', 'time', mangaCreatedAts),
-    InputFilter('Minimum chapters', 'minimum'),
-    SelectFilter('Status', 'status', mangaStatuses),
-    InputFilter('From', 'from', title: 'From year, ex: 2010'),
-    InputFilter('To', 'to', title: 'To year, ex: 2021'),
-    SelectFilter('Sort', 'sort', mangaSorts),
   ],
   contentFilters: [
     SelectFilter('Sort', 'sort', mangaContentSorts),

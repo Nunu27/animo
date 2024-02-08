@@ -10,7 +10,10 @@ abstract class ApiRepository {
     Future<Response<dynamic>> request,
   ) async {
     final raw = await request;
+
+    if (raw.data is String) throw 'Server under maintenance';
     final ApiResponse response = ApiResponse.fromMap(raw.data);
+
     if (!response.success) {
       throw response.message ?? 'Something is wrong';
     }

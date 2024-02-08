@@ -1,17 +1,19 @@
-import 'package:animo/models/abstract/mappable.dart';
+import 'package:animo/models/base_data.dart';
 import 'package:flutter/foundation.dart';
 
-class PaginatedData<T extends Mappable> {
+class PaginatedData<T> {
   final int? total;
   final int currentPage;
   final bool haveMore;
   final List<T> data;
+  final DataSource source;
 
   PaginatedData({
     this.total,
     this.currentPage = 1,
     this.haveMore = false,
     required this.data,
+    this.source = DataSource.animo,
   });
 
   PaginatedData<T> copyWith({
@@ -19,22 +21,15 @@ class PaginatedData<T extends Mappable> {
     int? currentPage,
     bool? haveMore,
     List<T>? data,
+    DataSource? source,
   }) {
     return PaginatedData<T>(
       total: total ?? this.total,
       currentPage: currentPage ?? this.currentPage,
       haveMore: haveMore ?? this.haveMore,
       data: data ?? this.data,
+      source: source ?? this.source,
     );
-  }
-
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'total': total,
-      'currentPage': currentPage,
-      'haveMore': haveMore,
-      'data': data.map((x) => x.toMap()).toList(),
-    };
   }
 
   factory PaginatedData.fromMap(
@@ -53,7 +48,7 @@ class PaginatedData<T extends Mappable> {
 
   @override
   String toString() {
-    return 'PaginatedData(total: $total, currentPage: $currentPage, haveMore: $haveMore, data: $data)';
+    return 'PaginatedData(total: $total, currentPage: $currentPage, haveMore: $haveMore, data: $data, source: $source)';
   }
 
   @override
@@ -63,7 +58,8 @@ class PaginatedData<T extends Mappable> {
     return other.total == total &&
         other.currentPage == currentPage &&
         other.haveMore == haveMore &&
-        listEquals(other.data, data);
+        listEquals(other.data, data) &&
+        other.source == source;
   }
 
   @override
@@ -71,6 +67,9 @@ class PaginatedData<T extends Mappable> {
     return total.hashCode ^
         currentPage.hashCode ^
         haveMore.hashCode ^
-        data.hashCode;
+        data.hashCode ^
+        source.hashCode;
   }
+
+  map(Function(dynamic e) param0) {}
 }

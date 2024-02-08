@@ -1,6 +1,5 @@
-import 'package:animo/models/abstract/mappable.dart';
-
-class MediaContent implements Mappable {
+class MediaContent {
+  final int? index;
   final String slug;
   final String? number;
   final String? parentNumber;
@@ -10,6 +9,7 @@ class MediaContent implements Mappable {
   final String? group;
 
   MediaContent({
+    this.index,
     required this.slug,
     this.number,
     this.parentNumber,
@@ -20,6 +20,7 @@ class MediaContent implements Mappable {
   });
 
   MediaContent copyWith({
+    int? index,
     String? slug,
     String? number,
     String? parentNumber,
@@ -29,6 +30,7 @@ class MediaContent implements Mappable {
     String? group,
   }) {
     return MediaContent(
+      index: index ?? this.index,
       slug: slug ?? this.slug,
       number: number ?? this.number,
       parentNumber: parentNumber ?? this.parentNumber,
@@ -37,19 +39,6 @@ class MediaContent implements Mappable {
       updatedAt: updatedAt ?? this.updatedAt,
       group: group ?? this.group,
     );
-  }
-
-  @override
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'slug': slug,
-      'number': number,
-      'parentNumber': parentNumber,
-      'title': title,
-      'lang': lang,
-      'updatedAt': updatedAt?.millisecondsSinceEpoch,
-      'group': group,
-    };
   }
 
   factory MediaContent.fromMap(Map<String, dynamic> map) {

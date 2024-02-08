@@ -23,6 +23,10 @@ class _SynopsisViewState extends State<SynopsisView> {
   @override
   void initState() {
     super.initState();
+    _handleText();
+  }
+
+  void _handleText() {
     if (widget.text!.length > widget.maxChar && widget.text != null) {
       firstHalf = widget.text!.substring(0, widget.maxChar);
       secondHalf = widget.text!.substring(widget.maxChar, widget.text!.length);
@@ -42,20 +46,24 @@ class _SynopsisViewState extends State<SynopsisView> {
               firstHalf,
               textStyle: theme.textTheme.bodySmall,
             )
-          : Column(
-              children: [
-                AnimatedSize(
-                  duration: Durations.short3,
-                  curve: Curves.easeInOut,
-                  alignment: Alignment.topCenter,
-                  child: HtmlWidget(
-                    expanded ? (firstHalf + secondHalf) : ('$firstHalf...'),
-                    textStyle: theme.textTheme.bodySmall,
+          : GestureDetector(
+              onTap: () {
+                setState(() {
+                  expanded = !expanded;
+                });
+              },
+              child: Column(
+                children: [
+                  AnimatedSize(
+                    duration: Durations.short3,
+                    curve: Curves.easeInOut,
+                    alignment: Alignment.topCenter,
+                    child: HtmlWidget(
+                      expanded ? (firstHalf + secondHalf) : ('$firstHalf...'),
+                      textStyle: theme.textTheme.bodySmall,
+                    ),
                   ),
-                ),
-                InkWell(
-                  borderRadius: BorderRadius.circular(36),
-                  child: Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -76,13 +84,8 @@ class _SynopsisViewState extends State<SynopsisView> {
                       ),
                     ],
                   ),
-                  onTap: () {
-                    setState(() {
-                      expanded = !expanded;
-                    });
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }
