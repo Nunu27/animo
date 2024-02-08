@@ -102,6 +102,7 @@ class MediaRepository extends ApiRepository {
   }) async {
     final request = api.post(
       '/${type.name}/contents',
+      queryParameters: {...options, 'page': page},
       data: identifier.toMap(),
     );
     final response = await handleApi(request);

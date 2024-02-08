@@ -1,6 +1,7 @@
 import 'package:animo/models/identifier.dart';
 import 'package:animo/models/media/media_meta.dart';
 import 'package:animo/models/sync_data.dart';
+import 'package:animo/utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -189,6 +190,9 @@ class Media {
   }
 
   factory Media.fromMap(Map<String, dynamic> map) {
+    final type = MediaType.values.byName(map['type']);
+    final cover = map['cover'] != null ? map['cover'] as String : null;
+
     return Media(
       id: map['id'] as String,
       aniId: map['aniId'] != null ? map['aniId'] as int : null,
@@ -197,9 +201,10 @@ class Media {
       title: map['title'] as String,
       native: map['native'] != null ? map['native'] as String : null,
       synonyms: List<String>.from(map['synonyms']),
-      cover: map['cover'] != null ? map['cover'] as String : null,
+      cover:
+          type == MediaType.novel && cover != null ? getProxyUrl(cover) : cover,
       banner: map['banner'] != null ? map['banner'] as String : null,
-      type: MediaType.values.byName(map['type']),
+      type: type,
       format: MediaFormat.values.byName(map['format']),
       status: MediaStatus.values.byName(map['status']),
       description:

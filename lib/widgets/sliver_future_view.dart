@@ -22,13 +22,9 @@ class SlvierFutureView<T> extends StatelessWidget {
     return FutureBuilder(
       future: future,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          if (refreshController?.isRefresh ?? false) {
-            refreshController!.refreshCompleted();
-          }
+        final isDone = snapshot.connectionState == ConnectionState.done;
 
-          return onData(snapshot.data as T);
-        } else if (snapshot.hasError) {
+        if (snapshot.hasError && isDone) {
           if (refreshController?.isRefresh ?? false) {
             refreshController!.refreshFailed();
           }
@@ -39,6 +35,12 @@ class SlvierFutureView<T> extends StatelessWidget {
               onRetry: onRetry,
             ),
           );
+        } else if (snapshot.hasData && isDone) {
+          if (refreshController?.isRefresh ?? false) {
+            refreshController!.refreshCompleted();
+          }
+
+          return onData(snapshot.data as T);
         } else {
           return const SliverToBoxAdapter(child: Loader());
         }

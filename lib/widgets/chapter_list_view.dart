@@ -10,6 +10,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 class ChapterListView extends ConsumerStatefulWidget {
   const ChapterListView({
     super.key,
+    this.total,
     required this.chapterList,
     required this.parentSlug,
     this.langList,
@@ -18,6 +19,7 @@ class ChapterListView extends ConsumerStatefulWidget {
     this.onTap,
   });
 
+  final int? total;
   final List<MediaContent> chapterList;
   final String parentSlug;
   final bool isModal;
@@ -109,7 +111,7 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
                             style: theme.textTheme.titleMedium,
                           ),
                           Text(
-                            '${widget.chapterList.length} Total chapters found',
+                            '${searchResultList.isEmpty ? widget.total ?? '?' : searchResultList.length} chapters found',
                             style: theme.textTheme.bodySmall,
                           ),
                         ],
@@ -128,9 +130,10 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
                         ),
                         controller: _searchController,
                         onChanged: (value) {
+                          searchResultList.clear();
                           setState(
                             () {
-                              if (value != null) {
+                              if (value != null && value.isNotEmpty) {
                                 // search result
                                 searchResultList = widget.chapterList
                                     .where((chapter) =>

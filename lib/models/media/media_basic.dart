@@ -1,3 +1,4 @@
+import 'package:animo/utils/utils.dart';
 import 'package:hive/hive.dart';
 
 import 'package:animo/models/base_data.dart';
@@ -52,11 +53,15 @@ class MediaBasic {
   }
 
   factory MediaBasic.fromMap(Map<String, dynamic> map) {
+    final type = MediaType.values.byName(map['type']);
+    final cover = map['cover'] != null ? map['cover'] as String : null;
+
     return MediaBasic(
       slug: map['slug'] as String,
-      cover: map['cover'] != null ? map['cover'] as String : null,
+      cover:
+          type == MediaType.novel && cover != null ? getProxyUrl(cover) : cover,
       title: map['title'] as String,
-      type: MediaType.values.byName(map['type']),
+      type: type,
       info: map['info'] != null ? map['info'] as String : null,
     );
   }

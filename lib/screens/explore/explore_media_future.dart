@@ -2,7 +2,7 @@ import 'package:animo/models/base_data.dart';
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/models/paginated_data.dart';
 import 'package:animo/repositories/media_repository.dart';
-import 'package:animo/widgets/cover_card_with_button.dart';
+import 'package:animo/widgets/cover_card_with_text.dart';
 import 'package:animo/widgets/future_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

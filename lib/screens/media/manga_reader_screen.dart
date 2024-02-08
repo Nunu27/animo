@@ -109,6 +109,15 @@ class _MangaReaderScreenState extends ConsumerState<MangaReaderScreen>
     }
   }
 
+  void _retry() {
+    _fetchData(
+      current == null
+          ? widget.baseData
+          : widget.baseData.copyWith(slug: chapters![current!].slug),
+      fetchedIndex: current,
+    );
+  }
+
   void _fetchChapter(int index) {
     _fetchData(
       widget.baseData.copyWith(slug: chapters![index].slug),
@@ -233,6 +242,7 @@ class _MangaReaderScreenState extends ConsumerState<MangaReaderScreen>
           ),
         );
       },
+      onRetry: _retry,
     );
   }
 
@@ -264,6 +274,7 @@ class _MangaReaderScreenState extends ConsumerState<MangaReaderScreen>
                     children: [
                       ChapterListView(
                         mediaType: MediaType.manga,
+                        total: chapters!.length,
                         chapterList: chapters!,
                         parentSlug: data.syncData.slug,
                         isModal: true,

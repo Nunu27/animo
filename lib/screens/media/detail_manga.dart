@@ -39,6 +39,7 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
   bool _isInLibrary = true;
   bool _isDownloaded = false;
   int currentPage = 1;
+  int? totalChapter;
   List<MediaContent> chapterList = [];
   List<String> searchResultList = [];
 
@@ -60,8 +61,10 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
     currentPage++;
     try {
       final data = await ref.read(mediaRepositoryProvider).getMediaContents(
-          media.type, media.getIdentifier(),
-          page: currentPage);
+            media.type,
+            media.getIdentifier(),
+            page: currentPage,
+          );
       if (data.data.isNotEmpty) {
         chapterList.addAll(data.data);
         _refreshController.loadComplete();
@@ -76,11 +79,16 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
 
   void _onRefresh(Media media) async {
     chapterList.clear();
+    totalChapter = null;
     currentPage = 1;
     try {
       final data = await ref.read(mediaRepositoryProvider).getMediaContents(
-          media.type, media.getIdentifier(),
-          page: currentPage);
+            media.type,
+            media.getIdentifier(),
+            page: currentPage,
+          );
+
+      totalChapter = data.total;
       chapterList.addAll(data.data);
       _refreshController.refreshCompleted();
       setState(() {});
@@ -301,6 +309,7 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
                 ),
                 ChapterListView(
                   mediaType: MediaType.manga,
+                  total: totalChapter,
                   parentSlug: media.slug,
                   chapterList: chapterList,
                   langList: media.langList,
