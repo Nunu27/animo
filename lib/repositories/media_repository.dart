@@ -1,3 +1,6 @@
+import 'package:animo/models/abstract/feed.dart';
+import 'package:animo/models/content/video_data.dart';
+import 'package:animo/models/feed/list_feed.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -36,7 +39,50 @@ class MediaRepository extends ApiRepository {
       : _ref = ref,
         super(api);
 
+  Future<List<Feed>> feed(MediaType type) async {
+    final request = api.get('/${type.name}');
+    final response = await handleApi(request);
+
+    return (response.data as List).map((e) {
+      final feedType = FeedType.values.byName(e['type']);
+
+      switch (feedType) {
+        case FeedType.list:
+          return ListFeed.fromMap(e, type);
+        default:
+          throw 'Unsupported feed';
+      }
+    }).toList();
+  }
+
+  Future<PaginatedData<MediaBasic>> explore(
+    MediaType type,
+    String path,
+    Map<String, dynamic> options, {
+    int page = 1,
+  }) async {
+    final info = getProviderInfo(type);
+    if (info.provider != null) {
+      return await _ref.read(info.provider!).filter(options);
+    }
+
+    options = {...options, 'page': page};
+
+    final request = api.get(
+      '/${type.name}/explore/$path',
+      queryParameters: removeNulls(options),
+    );
+    final response = await handleApi(request);
+
+    return PaginatedData<MediaBasic>.fromMap(response.data, MediaBasic.fromMap);
+  }
+
   Future<List<MediaBasic>> basicSearch(String query, MediaType type) async {
+    final info = getProviderInfo(type);
+    if (info.provider != null) {
+      return await _ref.read(info.provider!).basicSearch(query);
+    }
+
     final request = api.post('/basic-search', data: {
       'query': query,
       'type': type.name,
@@ -51,6 +97,11 @@ class MediaRepository extends ApiRepository {
     Map<String, dynamic> options, {
     int page = 1,
   }) async {
+    final info = getProviderInfo(type);
+    if (info.provider != null) {
+      return await _ref.read(info.provider!).filter(options);
+    }
+
     options['page'] = page;
 
     final request = api.get(
@@ -76,9 +127,19 @@ class MediaRepository extends ApiRepository {
   }
 
   Future<Media> getMedia(MediaType type, String slug) async {
-    final request = api.get('/${type.name}/$slug');
-    final response = await handleApi(request);
-    final media = Media.fromMap(response.data);
+    final info = getProviderInfo(type);
+
+    Media media;
+    try {
+      final request = api.get('/${type.name}/$slug');
+      final response = await handleApi(request);
+      media = Media.fromMap(response.data);
+    } catch (e) {
+      if (info.provider == null ||
+          getError(e).message != 'Please fetch it manually') rethrow;
+
+      media = await _ref.read(info.provider!).getMedia(slug);
+    }
 
     final metaProvider = _getMetaProvider(media);
 
@@ -100,6 +161,13 @@ class MediaRepository extends ApiRepository {
     int page = 1,
     Map<String, dynamic> options = const {},
   }) async {
+    final info = getProviderInfo(type);
+    if (info.provider != null) {
+      return await _ref
+          .read(info.provider!)
+          .getMediaContents(identifier, {...options, 'page': page});
+    }
+
     final request = api.post(
       '/${type.name}/contents',
       queryParameters: {...options, 'page': page},
@@ -115,6 +183,12 @@ class MediaRepository extends ApiRepository {
     bool withContentList = false,
     int? current,
   }) async {
+    final info = getProviderInfo(baseContent.type);
+    if (info.provider != null) {
+      return await _ref.read(info.provider!).getContent(baseContent,
+          withContentList: withContentList, current: current) as ContentData<T>;
+    }
+
     final parent = await _ref.read(
       getMediaProvider(type: baseContent.type, slug: baseContent.parentSlug!)
           .future,
@@ -132,6 +206,12 @@ class MediaRepository extends ApiRepository {
     final response = await handleApi(request);
 
     return ContentData.fromMap(response.data, syncData, baseContent.type);
+  }
+
+  Future<VideoData> getSource(VideoServer videoServer) async {
+    final extractor = _getExtractorProvider(videoServer.server);
+
+    return await _ref.read(extractor).extract(videoServer.url);
   }
 
   // Utils

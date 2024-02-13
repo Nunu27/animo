@@ -7,41 +7,41 @@ enum StreamingServer {
 }
 
 class VideoServer {
-  final int id;
+  final String url;
   final StreamingServer server;
 
   VideoServer({
-    required this.id,
+    required this.url,
     required this.server,
   });
 
   VideoServer copyWith({
-    int? id,
+    String? url,
     StreamingServer? server,
   }) {
     return VideoServer(
-      id: id ?? this.id,
+      url: url ?? this.url,
       server: server ?? this.server,
     );
   }
 
   factory VideoServer.fromMap(Map<String, dynamic> map) {
     return VideoServer(
-      id: map['id'] as int,
+      url: map['url'] as String,
       server: StreamingServer.values.byName(map['server']),
     );
   }
 
   @override
-  String toString() => 'VideoServer(id: $id, server: $server)';
+  String toString() => 'VideoServer(url: $url, server: $server)';
 
   @override
   bool operator ==(covariant VideoServer other) {
     if (identical(this, other)) return true;
 
-    return other.id == id && other.server == server;
+    return other.url == url && other.server == server;
   }
 
   @override
-  int get hashCode => id.hashCode ^ server.hashCode;
+  int get hashCode => url.hashCode ^ server.hashCode;
 }

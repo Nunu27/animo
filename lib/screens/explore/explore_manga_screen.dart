@@ -1,5 +1,5 @@
 import 'package:animo/models/base_data.dart';
-import 'package:animo/screens/explore/explore_media_future.dart';
+import 'package:animo/screens/explore/feed_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,24 +12,14 @@ class ExploreMangaScreen extends ConsumerStatefulWidget {
 
 class _ExploreMangaScreenState extends ConsumerState<ExploreMangaScreen>
     with AutomaticKeepAliveClientMixin {
-  final List<Map<String, String>> options = [
-    {'follow': 'Most popular'},
-    {'rating': 'Highest rating'},
-    {'user_follow_count': 'Most follows'},
-    {'created_at': 'Newest'},
-    {'view': 'Most views'},
-    {'uploaded': 'Last updated'},
-  ];
-
   @override
   bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return ExploreMediaFuture(
+    return const FeedView(
       mediaType: MediaType.manga,
-      options: options,
     );
   }
 }

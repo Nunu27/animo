@@ -10,18 +10,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ExploreDetail extends ConsumerWidget {
   const ExploreDetail({
     super.key,
-    required this.filter,
-    required this.mediaType,
     required this.title,
+    required this.path,
+    required this.mediaType,
+    this.options = const {},
   });
 
-  final MediaType mediaType;
-  final String filter;
   final String title;
+  final String path;
+  final MediaType mediaType;
+  final Map<String, dynamic> options;
 
   Future<PaginatedData<MediaBasic>>? _handleSearchType(WidgetRef ref) {
     final mediaRepository = ref.read(mediaRepositoryProvider);
-    return mediaRepository.filter(mediaType, {'sort': filter});
+    return mediaRepository.explore(
+      mediaType,
+      path,
+      options,
+    );
   }
 
   @override
