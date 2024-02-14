@@ -1,6 +1,10 @@
 import 'package:animo/models/base_data.dart';
 import 'package:animo/models/media/media_content.dart';
+import 'package:animo/utils/utils.dart';
+import 'package:animo/widgets/custom_bottom_modal_sheet.dart';
 import 'package:animo/widgets/custom_input_form.dart';
+import 'package:animo/widgets/filter_modal.dart';
+import 'package:animo/widgets/loader.dart';
 import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,17 +15,21 @@ class ChapterListView extends ConsumerStatefulWidget {
   const ChapterListView({
     super.key,
     this.total,
-    required this.chapterList,
+    this.chapterList,
     required this.parentSlug,
     this.langList,
     required this.mediaType,
+    this.options,
     this.isModal = false,
     this.onTap,
+    this.filter,
   });
 
   final int? total;
-  final List<MediaContent> chapterList;
+  final List<MediaContent>? chapterList;
   final String parentSlug;
+  final Function(Map<String, dynamic>)? filter;
+  final Map<String, dynamic>? options;
   final bool isModal;
   final List<String>? langList;
   final MediaType mediaType;
@@ -33,7 +41,8 @@ class ChapterListView extends ConsumerStatefulWidget {
 
 class _ChapterListViewState extends ConsumerState<ChapterListView> {
   late final TextEditingController _searchController;
-  List<MediaContent> searchResultList = [];
+  int currentPage = 1;
+  List<MediaContent>? searchResultList;
 
   @override
   void initState() {
@@ -48,11 +57,27 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
   }
 
   String _handleTitle(MediaContent chapter) {
-    if (chapter.title == null || chapter.title!.isEmpty) {
-      return 'Chapter ${chapter.number}';
-    } else {
-      return 'Ch. ${chapter.number}: ${chapter.title}';
+    List<String> info = [];
+
+    if (chapter.number != null) {
+      info.add('Ch. ${chapter.number}');
     }
+    if (chapter.parentNumber != null) {
+      info.add('Vol. ${chapter.parentNumber}');
+    }
+
+    final String text = info.join(' ');
+
+    info.clear();
+    if (text.isNotEmpty) {
+      info.add(text);
+    }
+
+    if (chapter.title != null) {
+      info.add(chapter.title!);
+    }
+
+    return info.isEmpty ? 'Oneshot' : info.join(': ');
   }
 
   String _getDate(DateTime? time) {
@@ -111,7 +136,7 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
                             style: theme.textTheme.titleMedium,
                           ),
                           Text(
-                            '${searchResultList.isEmpty ? widget.total ?? '?' : searchResultList.length} chapters found',
+                            '${searchResultList == null ? widget.total ?? '?' : searchResultList!.length} chapters found',
                             style: theme.textTheme.bodySmall,
                           ),
                         ],
@@ -129,27 +154,37 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                         controller: _searchController,
-                        onChanged: (value) {
-                          searchResultList.clear();
-                          setState(
-                            () {
-                              if (value != null && value.isNotEmpty) {
-                                // search result
-                                searchResultList = widget.chapterList
-                                    .where((chapter) =>
-                                        chapter.number!.contains(value))
-                                    .toList();
-                              }
-                            },
-                          );
+                        onSubmitted: (value) {
+                          searchResultList = null;
+                          if (widget.filter == null) {
+                            setState(
+                              () {
+                                if (value != null && value.isNotEmpty) {
+                                  // search result
+                                  searchResultList = widget.chapterList!
+                                      .where((chapter) =>
+                                          ((chapter.number?.contains(value) ??
+                                                  false) ||
+                                              (chapter.parentNumber
+                                                      ?.contains(value) ??
+                                                  false)))
+                                      .toList();
+                                }
+                              },
+                            );
+                          } else if (widget.options != null &&
+                              widget.filter != null) {
+                            widget.options!['query'] = value;
+                            widget.filter!(widget.options!);
+                          }
                         },
                         suffixIcon: _searchController.text.isEmpty
                             ? const Icon(Icons.search)
                             : IconButton(
                                 onPressed: () {
+                                  searchResultList = null;
                                   setState(() {
                                     _searchController.text = '';
-                                    searchResultList.clear();
                                   });
                                 },
                                 icon: const Icon(Icons.close),
@@ -168,8 +203,7 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
           SliverClip(
             child: MultiSliver(
               children: [
-                if (widget.langList != null &&
-                    widget.mediaType != MediaType.anime)
+                if (!widget.isModal)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -178,60 +212,79 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
                         style: theme.textTheme.bodyMedium,
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showFilterModal(context, theme);
+                        },
                         icon: const Icon(Icons.filter_list),
                       ),
                     ],
                   ),
-                SliverList.builder(
-                  itemCount: searchResultList.isEmpty
-                      ? widget.chapterList.length
-                      : searchResultList.length,
-                  itemBuilder: (context, index) {
-                    final MediaContent currentChapter =
-                        widget.chapterList[index];
-                    return ListTile(
-                      onTap: () {
-                        _handleOnTap(currentChapter);
-                      },
-                      title: Text(
-                        searchResultList.isEmpty
-                            ? _handleTitle(currentChapter)
-                            : _handleTitle(searchResultList[index]),
-                        style: theme.textTheme.titleMedium,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: Text(
-                        _handleSubtitle(
-                          currentChapter.updatedAt,
-                          currentChapter.group,
-                        ),
-                        style: theme.textTheme.bodySmall,
-                      ),
-                      trailing: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.download_for_offline_outlined,
-                          size: 24,
-                        ),
-                      ),
-                      leading: currentChapter.lang == null
-                          ? null
-                          : Flag.fromString(
-                              currentChapter.lang!,
-                              height: 24,
-                              width: 24,
+                widget.chapterList == null
+                    ? const Expanded(
+                        child: Loader(),
+                      )
+                    : SliverList.builder(
+                        itemCount: searchResultList == null
+                            ? widget.chapterList!.length
+                            : searchResultList!.length,
+                        itemBuilder: (context, index) {
+                          final MediaContent chapter =
+                              widget.chapterList![index];
+                          return ListTile(
+                            onTap: () {
+                              _handleOnTap(chapter);
+                            },
+                            title: Text(
+                              _handleTitle(chapter),
+                              style: theme.textTheme.titleMedium,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-                    );
-                  },
-                )
+                            subtitle: Text(
+                              _handleSubtitle(
+                                chapter.updatedAt,
+                                chapter.group,
+                              ),
+                              style: theme.textTheme.bodySmall,
+                            ),
+                            trailing: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.download_for_offline_outlined,
+                                size: 24,
+                              ),
+                            ),
+                            leading: chapter.lang == null
+                                ? null
+                                : Flag.fromString(
+                                    getCountryCode(chapter.lang!),
+                                    height: 24,
+                                    width: 24,
+                                  ),
+                            contentPadding:
+                                const EdgeInsets.symmetric(horizontal: 0),
+                          );
+                        },
+                      )
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _showFilterModal(BuildContext context, ThemeData theme) async {
+    final Map<String, dynamic>? data = await CustomBottomModalSheet(
+      context: context,
+      maxChildExpand: 1,
+      children: [
+        FilterModal(
+            options: widget.options ?? {},
+            filters: getProviderInfo(MediaType.manga).contentFilters!),
+      ],
+    ).showModal();
+
+    if (data != null && widget.filter != null) widget.filter!(data);
   }
 }

@@ -1,11 +1,24 @@
-import 'package:animo/widgets/error_view.dart';
+import 'package:animo/models/base_data.dart';
+import 'package:animo/screens/explore/feed_view.dart';
 import 'package:flutter/material.dart';
 
-class ExploreNovelScreen extends StatelessWidget {
+class ExploreNovelScreen extends StatefulWidget {
   const ExploreNovelScreen({super.key});
 
   @override
+  State<ExploreNovelScreen> createState() => _ExploreNovelScreenState();
+}
+
+class _ExploreNovelScreenState extends State<ExploreNovelScreen>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
-    return const ErrorView(message: 'This feature is under construction');
+    super.build(context);
+    return const FeedView(
+      mediaType: MediaType.novel,
+    );
   }
 }

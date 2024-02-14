@@ -1,3 +1,4 @@
+import 'package:animo/constants/constants.dart';
 import 'package:animo/models/abstract/provider_info.dart';
 import 'package:animo/models/base_data.dart';
 import 'package:animo/models/failure.dart';
@@ -39,4 +40,15 @@ ProviderInfo getProviderInfo(MediaType type) {
 
 String getProxyUrl(String url) {
   return 'https://wsrv.nl/?url=${Uri.encodeComponent('http://translate.google.com/translate?sl=ja&tl=en&u=${Uri.encodeComponent(url)}')}';
+}
+
+String getCountryCode(String lang) {
+  final splitted = lang.split('-');
+  final a = splitted.elementAt(0);
+  final b = splitted.elementAtOrNull(1);
+
+  if (b == null) return Constants.languageMap[a] ?? a;
+  if (b == '419') return 'mx';
+
+  return b;
 }

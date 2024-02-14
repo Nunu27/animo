@@ -1,5 +1,4 @@
-import 'package:animo/models/base_data.dart';
-import 'package:animo/utils/utils.dart';
+import 'package:animo/models/abstract/filter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -9,10 +8,10 @@ class FilterModal extends ConsumerStatefulWidget {
   const FilterModal({
     super.key,
     required this.options,
-    required this.mediaType,
+    required this.filters,
   });
 
-  final MediaType mediaType;
+  final List<Filter> filters;
   final Map<String, dynamic> options;
 
   @override
@@ -66,10 +65,8 @@ class _FilterModalState extends ConsumerState<FilterModal> {
           ),
           SliverClip(
             child: MultiSliver(
-              children: getProviderInfo(widget.mediaType)
-                  .mediaFilters
-                  .map((e) => e.build(currentOptions))
-                  .toList(),
+              children:
+                  widget.filters.map((e) => e.build(currentOptions)).toList(),
             ),
           ),
         ],
