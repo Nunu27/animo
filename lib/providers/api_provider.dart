@@ -16,7 +16,7 @@ Future<List<Feed>> getFeed(
   required MediaType type,
 }) async {
   final feed = await ref.watch(mediaRepositoryProvider).feed(type);
-  ref.cacheFor(const Duration(hours: 3));
+  ref.cacheFor(const Duration(hours: 5));
 
   return feed;
 }
@@ -28,7 +28,8 @@ Future<Media> getMedia(
   required String slug,
 }) async {
   final media = await ref.watch(mediaRepositoryProvider).getMedia(type, slug);
-  ref.cacheFor(const Duration(hours: 1));
+  ref.cacheFor(const Duration(hours: 3));
+
   return media;
 }
 
@@ -52,7 +53,7 @@ Future<VideoData> getSource(GetSourceRef ref,
     {required VideoServer videoServer}) async {
   final result =
       await ref.watch(mediaRepositoryProvider).getSource(videoServer);
-  ref.keepAlive();
+  ref.cacheFor(const Duration(hours: 1));
 
   return result;
 }

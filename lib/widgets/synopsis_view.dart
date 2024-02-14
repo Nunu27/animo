@@ -27,11 +27,13 @@ class _SynopsisViewState extends State<SynopsisView> {
   }
 
   void _handleText() {
-    if (widget.text!.length > widget.maxChar && widget.text != null) {
-      firstHalf = widget.text!.substring(0, widget.maxChar);
-      secondHalf = widget.text!.substring(widget.maxChar, widget.text!.length);
-    } else if (widget.text!.length < widget.maxChar && widget.text != null) {
-      firstHalf = widget.text!;
+    final text = widget.text ?? 'Not available';
+
+    if (text.length > widget.maxChar) {
+      firstHalf = text.substring(0, widget.maxChar);
+      secondHalf = text.substring(widget.maxChar, text.length);
+    } else if (text.length < widget.maxChar) {
+      firstHalf = text;
       secondHalf = '';
     }
   }

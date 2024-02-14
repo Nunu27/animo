@@ -1,16 +1,16 @@
-import 'package:animo/models/abstract/feed.dart';
-import 'package:animo/models/content/video_data.dart';
-import 'package:animo/models/feed/list_feed.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:animo/models/abstract/api_repository.dart';
+import 'package:animo/models/abstract/feed.dart';
 import 'package:animo/models/abstract/meta_provider.dart';
 import 'package:animo/models/abstract/video_extractor.dart';
 import 'package:animo/models/base_data.dart';
 import 'package:animo/models/content/content_data.dart';
+import 'package:animo/models/content/video_data.dart';
 import 'package:animo/models/content/video_server.dart';
+import 'package:animo/models/feed/list_feed.dart';
 import 'package:animo/models/identifier.dart';
 import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_basic.dart';

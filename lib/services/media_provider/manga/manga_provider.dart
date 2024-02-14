@@ -68,7 +68,7 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
     );
 
     return PaginatedData(
-      haveMore: false,
+      haveMore: response.data!.length == options['limit'],
       data: response.data!.map(formatMangaFilter).toList(),
     );
   }

@@ -6,7 +6,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class FutureView<T> extends StatelessWidget {
   final Future<T>? future;
   final RefreshController? refreshController;
-  final Widget Function(T) onData;
+  final Widget Function(T data) onData;
+  final Widget Function()? onLoading;
   final VoidCallback? onRetry;
 
   const FutureView({
@@ -14,6 +15,7 @@ class FutureView<T> extends StatelessWidget {
     this.refreshController,
     required this.future,
     required this.onData,
+    this.onLoading,
     this.onRetry,
   });
 
@@ -25,22 +27,14 @@ class FutureView<T> extends StatelessWidget {
         final isDone = snapshot.connectionState == ConnectionState.done;
 
         if (snapshot.hasError && isDone) {
-          if (refreshController?.isRefresh ?? false) {
-            refreshController!.refreshFailed();
-          }
-
           return ErrorView(
             message: snapshot.error.toString(),
             onRetry: onRetry,
           );
         } else if (snapshot.hasData && isDone) {
-          if (refreshController?.isRefresh ?? false) {
-            refreshController!.refreshCompleted();
-          }
-
           return onData(snapshot.data as T);
         } else {
-          return const Loader();
+          return onLoading == null ? const Loader() : onLoading!();
         }
       },
     );
