@@ -3,6 +3,7 @@ import 'package:animo/models/filter/input_filter.dart';
 import 'package:animo/models/filter/multiselect_filter.dart';
 import 'package:animo/models/filter/select_option.dart';
 import 'package:animo/models/filter/select_filter.dart';
+import 'package:animo/services/media_provider/manga/manga_provider.dart';
 
 final mangaGenres = [
   SelectOption('4-Koma', '4-koma'),
@@ -148,4 +149,5 @@ final mangaInfo = ProviderInfo(
     SelectFilter('Sort', 'sort', mangaContentSorts),
   ],
   useFetchGroup: false,
+  provider: mangaProvider,
 );

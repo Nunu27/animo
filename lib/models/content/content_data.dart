@@ -57,14 +57,12 @@ class ContentData<T> {
   }
 
   static dynamic _parseData(MediaType type, dynamic data) {
-    switch (type) {
-      case MediaType.anime:
-        return VideoContent.fromMap(data);
-      case MediaType.manga:
-        return (data as List).map((e) => ImageContent.fromMap(e)).toList();
-      default:
-        throw UnimplementedError();
-    }
+    return switch (type) {
+      MediaType.anime => VideoContent.fromMap(data),
+      MediaType.manga =>
+        (data as List).map((e) => ImageContent.fromMap(e)).toList(),
+      MediaType.novel => data as String,
+    };
   }
 
   @override

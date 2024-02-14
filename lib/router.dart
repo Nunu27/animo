@@ -1,4 +1,9 @@
+import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
 import 'package:animo/models/base_data.dart';
+import 'package:animo/screens/auth/signin_screen.dart';
 import 'package:animo/screens/explore/explore.dart';
 import 'package:animo/screens/explore/explore_detail.dart';
 import 'package:animo/screens/explore/search_screen.dart';
@@ -7,13 +12,9 @@ import 'package:animo/screens/media/detail_anime.dart';
 import 'package:animo/screens/media/detail_manga.dart';
 import 'package:animo/screens/media/manga_reader_screen.dart';
 import 'package:animo/screens/profile/profile.dart';
+import 'package:animo/screens/splash_screen.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/scaffold_with_bar.dart';
-import 'package:animo/screens/auth/signin_screen.dart';
-import 'package:animo/screens/splash_screen.dart';
-import 'package:bot_toast/bot_toast.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
 
@@ -98,13 +99,13 @@ final router = GoRouter(
                   },
                 ),
                 GoRoute(
-                  path: ':type/:filter',
+                  path: ':type/:path',
                   name: 'explore-detail',
                   parentNavigatorKey: _rootNavigator,
                   builder: (context, state) {
                     final MediaType mediaType =
                         MediaType.values.byName(state.pathParameters['type']!);
-                    final String filter = state.pathParameters['filter']!;
+                    final String path = state.pathParameters['path']!;
                     final String title = state.extra as String;
 
                     if (state.error != null) {
@@ -113,7 +114,9 @@ final router = GoRouter(
 
                     return ExploreDetail(
                       mediaType: mediaType,
-                      filter: filter,
+                      path: path,
+                      options:
+                          Map<String, dynamic>.from(state.uri.queryParameters),
                       title: title,
                     );
                   },
