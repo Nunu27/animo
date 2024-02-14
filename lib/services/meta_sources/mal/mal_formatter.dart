@@ -2,7 +2,7 @@ import 'package:animo/models/media/media_character.dart';
 import 'package:animo/models/media/media_trailer.dart';
 import 'package:animo/services/meta_sources/mal/mal_lut.dart';
 
-MediaTrailer? formatMALTrailer(trailer) => trailer['youtube_id'] == null
+MediaTrailer? formatMALTrailer(trailer) => trailer?['youtube_id'] == null
     ? null
     : MediaTrailer(
         id: trailer['youtube_id'],

@@ -14,6 +14,7 @@ class CustomInputForm extends StatelessWidget {
       this.maxLines = 1,
       this.obscureText = false,
       this.onChanged,
+      this.onSubmitted,
       this.contentPadding,
       this.initialValue,
       this.textStyle,
@@ -25,6 +26,7 @@ class CustomInputForm extends StatelessWidget {
   final String? initialValue;
   final String? Function(String?)? validator;
   final Function(String?)? onChanged;
+  final Function(String?)? onSubmitted;
   final bool obscureText;
   final Widget? suffixIcon;
   final List<TextInputFormatter>? inputFormatters;
@@ -47,11 +49,11 @@ class CustomInputForm extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       validator: validator,
+      onFieldSubmitted: onSubmitted,
       style: textStyle ??
           theme.textTheme.bodyMedium!.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
-      onChanged: onChanged,
       decoration: InputDecoration(
         filled: true,
         hintText: hintText,

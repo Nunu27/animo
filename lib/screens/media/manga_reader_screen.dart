@@ -274,7 +274,6 @@ class _MangaReaderScreenState extends ConsumerState<MangaReaderScreen>
                     children: [
                       ChapterListView(
                         mediaType: MediaType.manga,
-                        total: chapters!.length,
                         chapterList: chapters!,
                         parentSlug: data.syncData.slug,
                         isModal: true,

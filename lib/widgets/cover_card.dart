@@ -31,7 +31,7 @@ class CoverCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Cover(
-              imageUrl: media.cover!,
+              imageUrl: media.cover,
             ),
             const SizedBox(
               height: 4,

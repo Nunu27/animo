@@ -40,8 +40,8 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
   bool _isDownloaded = false;
   int currentPage = 1;
   int? totalChapter;
-  List<MediaContent> chapterList = [];
-  List<String> searchResultList = [];
+  List<MediaContent>? chapterList = [];
+  Map<String, dynamic> options = {};
 
   @override
   void initState() {
@@ -57,44 +57,53 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
     super.dispose();
   }
 
-  void _onLoading(Media media) async {
-    currentPage++;
+  void _fetchContents(Media media) async {
     try {
       final data = await ref.read(mediaRepositoryProvider).getMediaContents(
             media.type,
             media.getIdentifier(),
             page: currentPage,
+            options: options,
           );
-      if (data.data.isNotEmpty) {
-        chapterList.addAll(data.data);
-        _refreshController.loadComplete();
+
+      totalChapter ??= data.total;
+      if (currentPage == 1) {
+        chapterList = data.data;
       } else {
-        _refreshController.loadNoData();
+        chapterList!.addAll(data.data);
+      }
+
+      if (_refreshController.isLoading) {
+        if (data.data.isNotEmpty) {
+          _refreshController.loadComplete();
+        } else {
+          _refreshController.loadNoData();
+        }
+      } else if (_refreshController.isRefresh) {
+        _refreshController.refreshCompleted();
       }
     } catch (error) {
-      _refreshController.loadFailed();
+      if (_refreshController.isLoading) {
+        _refreshController.loadFailed();
+      } else if (_refreshController.isRefresh) {
+        _refreshController.refreshFailed();
+      }
     }
     setState(() {});
   }
 
+  void _onLoading(Media media) {
+    currentPage++;
+    _fetchContents(media);
+  }
+
   void _onRefresh(Media media) async {
-    chapterList.clear();
+    setState(() {
+      chapterList!.clear();
+    });
     totalChapter = null;
     currentPage = 1;
-    try {
-      final data = await ref.read(mediaRepositoryProvider).getMediaContents(
-            media.type,
-            media.getIdentifier(),
-            page: currentPage,
-          );
-
-      totalChapter = data.total;
-      chapterList.addAll(data.data);
-      _refreshController.refreshCompleted();
-      setState(() {});
-    } catch (error) {
-      _refreshController.refreshFailed();
-    }
+    _fetchContents(media);
   }
 
   @override
@@ -114,6 +123,9 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
           backgroundColor: theme.colorScheme.background,
           body: SmartRefresher(
             header: const WaterDropMaterialHeader(),
+            footer: const ClassicFooter(
+              loadStyle: LoadStyle.ShowWhenLoading,
+            ),
             enablePullUp: true,
             controller: _refreshController,
             onRefresh: () {
@@ -150,7 +162,7 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
                                   SizedBox(
                                     width: 100,
                                     child: Cover(
-                                      imageUrl: media.cover!,
+                                      imageUrl: media.cover,
                                     ),
                                   ),
                                   const SizedBox(
@@ -308,11 +320,16 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
                   ),
                 ),
                 ChapterListView(
-                  mediaType: MediaType.manga,
                   total: totalChapter,
+                  mediaType: MediaType.manga,
                   parentSlug: media.slug,
                   chapterList: chapterList,
                   langList: media.langList,
+                  options: options,
+                  filter: (newOptions) {
+                    options = newOptions;
+                    _onRefresh(media);
+                  },
                 ),
               ],
             ),
@@ -323,7 +340,8 @@ class _DetailMangaState extends ConsumerState<DetailManga> {
         return ErrorView(
           message: getError(error).message,
           onRetry: () => ref.invalidate(
-              getMediaProvider(type: widget.type, slug: widget.slug)),
+            getMediaProvider(type: widget.type, slug: widget.slug),
+          ),
         );
       },
       loading: () {

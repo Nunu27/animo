@@ -9,7 +9,7 @@ class ErrorView extends StatelessWidget {
     super.key,
     this.icon = const Icon(
       Icons.error_outline_outlined,
-      size: 100,
+      size: 24,
     ),
     required this.message,
     this.onRetry,

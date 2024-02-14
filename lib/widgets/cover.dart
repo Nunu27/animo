@@ -2,22 +2,56 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:animo/constants/constants.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Cover extends StatelessWidget {
-  final String imageUrl;
+  const Cover({
+    super.key,
+    required this.imageUrl,
+  });
 
-  const Cover({super.key, required this.imageUrl});
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return AspectRatio(
       aspectRatio: Constants.coverRatio,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(4),
-        child: CachedNetworkImage(
-          imageUrl: imageUrl,
-          fit: BoxFit.cover,
-        ),
+        child: imageUrl != null
+            ? CachedNetworkImage(
+                imageUrl: imageUrl!,
+                fit: BoxFit.cover,
+                errorWidget: (context, url, error) {
+                  return _errorView(theme);
+                },
+                placeholder: (context, url) {
+                  return Shimmer.fromColors(
+                    baseColor: theme.colorScheme.onBackground.withOpacity(0.05),
+                    highlightColor:
+                        theme.colorScheme.onBackground.withOpacity(0.3),
+                    child: Container(
+                      color: theme.colorScheme.background,
+                    ),
+                  );
+                },
+              )
+            : _errorView(theme),
+      ),
+    );
+  }
+
+  Container _errorView(ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.onBackground.withOpacity(0.05),
+      ),
+      child: Icon(
+        Icons.broken_image_outlined,
+        size: 36,
+        color: theme.colorScheme.onBackground.withOpacity(0.5),
       ),
     );
   }

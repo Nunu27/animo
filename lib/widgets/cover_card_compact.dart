@@ -41,7 +41,7 @@ class CoverCardCompact extends StatelessWidget {
               SizedBox(
                 height: double.infinity,
                 child: Cover(
-                  imageUrl: media.cover!,
+                  imageUrl: media.cover,
                 ),
               ),
               ClipRRect(
