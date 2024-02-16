@@ -20,19 +20,29 @@ class CustomSelectFilter extends StatefulWidget {
 }
 
 class _CustomSelectFilterState extends State<CustomSelectFilter> {
+  late SelectOption current = widget.options.firstWhere(
+    (element) =>
+        widget.optionValue[element.key ?? widget.filterKey] == element.value,
+    orElse: () => widget.options.first,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DropdownMenu(
         expandedInsets: EdgeInsets.zero,
-        initialSelection: widget.optionValue[widget.filterKey],
+        initialSelection: current,
         dropdownMenuEntries: widget.options
-            .map((e) => DropdownMenuEntry(value: e.value, label: e.text))
+            .map((e) => DropdownMenuEntry(value: e, label: e.text))
             .toList(),
         label: Text(widget.label),
         onSelected: (value) {
-          widget.optionValue[widget.filterKey] = value;
+          if (value == null) return;
+
+          widget.optionValue.remove(current.key ?? widget.filterKey);
+          current = value;
+          widget.optionValue[current.key ?? widget.filterKey] = current.value;
           setState(() {});
         },
       ),

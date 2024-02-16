@@ -70,6 +70,4 @@ class PaginatedData<T> {
         data.hashCode ^
         source.hashCode;
   }
-
-  map(Function(dynamic e) param0) {}
 }

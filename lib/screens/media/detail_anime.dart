@@ -1,14 +1,11 @@
 import 'package:animo/models/base_data.dart';
 import 'package:animo/providers/api_provider.dart';
-import 'package:animo/repositories/media_repository.dart';
-import 'package:animo/widgets/chapter_list_view.dart';
 import 'package:animo/widgets/character_list_view.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/genre_list_view.dart';
 import 'package:animo/widgets/header_detail_screen.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:animo/widgets/relation_view.dart';
-import 'package:animo/widgets/sliver_future_view.dart';
 import 'package:animo/widgets/synopsis_view.dart';
 import 'package:animo/widgets/video_player_view.dart';
 import 'package:flutter/material.dart';
@@ -183,11 +180,13 @@ class _DetailAnimeState extends ConsumerState<DetailAnime> {
                       const SizedBox(
                         height: 14,
                       ),
-                      CharacterListView(characters: media.characters),
+                      if (media.characters != null)
+                        CharacterListView(characters: media.characters!),
                       const SizedBox(
                         height: 14,
                       ),
-                      RelationView(data: media.relations),
+                      if (media.relations != null)
+                        RelationView(data: media.relations!),
                       const SizedBox(
                         height: 14,
                       ),
@@ -198,17 +197,6 @@ class _DetailAnimeState extends ConsumerState<DetailAnime> {
                       ),
                     ],
                   ),
-                ),
-              ),
-              SlvierFutureView(
-                future: ref
-                    .read(mediaRepositoryProvider)
-                    .getMediaContents(media.type, media.getIdentifier()),
-                onData: (data) => ChapterListView(
-                  mediaType: MediaType.anime,
-                  parentSlug: media.slug,
-                  chapterList: data.data,
-                  langList: media.langList,
                 ),
               ),
             ],

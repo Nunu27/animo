@@ -6,6 +6,9 @@ import 'package:animo/services/media_provider/anime.dart';
 import 'package:animo/services/media_provider/manga.dart';
 import 'package:animo/services/media_provider/novel.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
+
+final dateFormatter = DateFormat('yyyy/MM/dd');
 
 Failure getError(error) {
   if (error is DioException) {

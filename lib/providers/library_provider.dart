@@ -29,7 +29,7 @@ bool isInLibrary(
 }) {
   ref.watch(libraryProvider(type: type));
 
-  return Hive.box(BoxConstants.library(type)).containsKey(slug);
+  return Hive.box<MediaBasic>(BoxConstants.library(type)).containsKey(slug);
 }
 
 class LibraryManager {

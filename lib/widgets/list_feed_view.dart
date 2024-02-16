@@ -74,7 +74,7 @@ class ListFeedView extends StatelessWidget {
         SizedBox(
           height: _calculateListHeight(theme),
           child: ListView.builder(
-            padding: const EdgeInsets.all(14).copyWith(top: 0),
+            padding: const EdgeInsets.all(10).copyWith(top: 0),
             scrollDirection: Axis.horizontal,
             itemCount: data.length,
             itemBuilder: (context, index) {

@@ -57,10 +57,12 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
   @override
   Future<PaginatedData<MediaBasic>> filter(Map<String, dynamic> options) async {
     options.addAll({
+      'q': options['query'],
       'type': 'comic',
       'tachiyomi': true,
       'limit': options['limit'] ?? 36,
     });
+    options.remove('query');
 
     final response = await _dio.get<List<dynamic>>(
       '/v1.0/search',
@@ -109,7 +111,7 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
               ? MediaFormat.oneShot
               : MediaFormat.manga,
       status: mangaStatus[comic['status']] ?? MediaStatus.unknown,
-      description: comic['desc'],
+      description: comic['parsed'],
       year: comic['year'],
       genres: genres,
       rating: comic['bayesian_rating'] == null
@@ -133,7 +135,8 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
   ) async {
     final page = options['page'] ?? 1;
 
-    options = {...options, 'limit': 100};
+    options = {...options, 'chap': options['query'], 'limit': 100};
+    options.remove('query');
 
     final response = await _dio.get<Map<String, dynamic>>(
       '/comic/${identifier.id}/chapters',
@@ -146,7 +149,7 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
     return PaginatedData(
       currentPage: page,
       total: total,
-      haveMore: page < total ~/ 100,
+      haveMore: contents.length == options['limit'],
       data: contents.mapWithIndex(formatMangaContent).toList(),
     );
   }

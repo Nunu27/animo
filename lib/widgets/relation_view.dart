@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RelationView extends ConsumerWidget {
-  final PaginatedData<BaseData>? data;
+  final PaginatedData<BaseData> data;
 
   const RelationView({
     super.key,
@@ -17,47 +17,48 @@ class RelationView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return data == null
-        ? const SizedBox()
-        : ref
-            .watch(getMediaBasicProvider(
-              list: data!.data,
-              source: data!.source,
-            ))
-            .when(
-              data: (relations) {
-                return relations.isEmpty
-                    ? const SizedBox()
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Relations',
-                            style: Theme.of(context).textTheme.labelLarge,
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          SizedBox(
-                            height: 180,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: relations.length,
-                              itemBuilder: (context, index) {
-                                return CoverCardCompact(
-                                  media: relations[index],
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      );
-              },
-              error: (error, stackTrace) => ErrorView(
-                message: error.toString(),
-              ),
-              loading: () => const Loader(),
-            );
+    return ref
+        .watch(getMediaBasicProvider(
+          list: data.data,
+          source: data.source,
+        ))
+        .when(
+          data: (relations) {
+            return relations.isEmpty
+                ? const SizedBox()
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                        child: Text(
+                          'Relations',
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 196,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: relations.length,
+                          padding: const EdgeInsets.all(8),
+                          itemBuilder: (context, index) {
+                            return CoverCardCompact(
+                              media: relations[index],
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+          },
+          error: (error, stackTrace) => ErrorView(
+            message: error.toString(),
+          ),
+          loading: () => const SizedBox(
+            height: 196,
+            child: Loader(),
+          ),
+        );
   }
 }

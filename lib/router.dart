@@ -1,3 +1,5 @@
+import 'package:animo/screens/media/detail_screen.dart';
+import 'package:animo/screens/media/manga_reader_screen.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,8 +11,6 @@ import 'package:animo/screens/explore/explore_detail.dart';
 import 'package:animo/screens/explore/search_screen.dart';
 import 'package:animo/screens/library/library.dart';
 import 'package:animo/screens/media/detail_anime.dart';
-import 'package:animo/screens/media/detail_manga.dart';
-import 'package:animo/screens/media/manga_reader_screen.dart';
 import 'package:animo/screens/profile/profile.dart';
 import 'package:animo/screens/splash_screen.dart';
 import 'package:animo/widgets/error_view.dart';
@@ -34,49 +34,49 @@ final router = GoRouter(
       pageBuilder: (context, state) =>
           const NoTransitionPage(child: SignInScreen()),
     ),
-    GoRoute(
-      path: '/manga/:slug',
-      name: 'manga',
-      builder: (context, state) {
-        String slug = state.pathParameters['slug']!;
-        return DetailManga(
-          slug: slug,
-          type: MediaType.manga,
-        );
-      },
-      routes: [
-        GoRoute(
-          parentNavigatorKey: _rootNavigator,
-          path: 'chapter/:ch',
-          name: 'chapter',
-          builder: (context, state) {
-            String slug = state.pathParameters['slug']!;
-            String ch = state.pathParameters['ch']!;
+    // GoRoute(
+    //   path: '/manga/:slug',
+    //   name: 'manga',
+    //   builder: (context, state) {
+    //     String slug = state.pathParameters['slug']!;
+    //     return DetailScreenOld(
+    //       slug: slug,
+    //       type: MediaType.manga,
+    //     );
+    //   },
+    //   routes: [
+    //     GoRoute(
+    //       parentNavigatorKey: _rootNavigator,
+    //       path: 'chapter/:ch',
+    //       name: 'chapter',
+    //       builder: (context, state) {
+    //         String slug = state.pathParameters['slug']!;
+    //         String ch = state.pathParameters['ch']!;
 
-            return MangaReaderScreen(
-              baseData:
-                  BaseData(slug: ch, type: MediaType.manga, parentSlug: slug),
-            );
-          },
-        ),
-        // GoRoute(
-        //   path: 'characters',
-        //   builder: (context, state) {},
-        // ),
-      ],
-    ),
-    GoRoute(
-      path: '/anime/:slug',
-      name: 'anime',
-      builder: (context, state) {
-        String slug = state.pathParameters['slug']!;
+    //         return MangaReaderScreen(
+    //           baseData:
+    //               BaseData(slug: ch, type: MediaType.manga, parentSlug: slug),
+    //         );
+    //       },
+    //     ),
+    //     // GoRoute(
+    //     //   path: 'characters',
+    //     //   builder: (context, state) {},
+    //     // ),
+    //   ],
+    // ),
+    // GoRoute(
+    //   path: '/anime/:slug',
+    //   name: 'anime',
+    //   builder: (context, state) {
+    //     String slug = state.pathParameters['slug']!;
 
-        return DetailAnime(
-          slug: slug,
-          type: MediaType.anime,
-        );
-      },
-    ),
+    //     return DetailAnime(
+    //       slug: slug,
+    //       type: MediaType.anime,
+    //     );
+    //   },
+    // ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return ScaffoldWithBar(navigationShell: navigationShell);
@@ -144,6 +144,44 @@ final router = GoRouter(
           ],
         )
       ],
-    )
+    ),
+
+    GoRoute(
+        path: '/:type/:slug',
+        builder: (context, state) {
+          final slug = state.pathParameters['slug']!;
+          final type = MediaType.values.byName(state.pathParameters['type']!);
+
+          if (type == MediaType.anime) {
+            return DetailAnime(type: type, slug: slug);
+          } else {
+            return DetailScreen(
+              slug: slug,
+              type: type,
+            );
+          }
+        },
+        routes: [
+          GoRoute(
+            path: 'read/:chapter',
+            name: 'read',
+            builder: (context, state) {
+              final parentSlug = state.pathParameters['slug']!;
+              final type =
+                  MediaType.values.byName(state.pathParameters['type']!);
+              final slug = state.pathParameters['chapter']!;
+
+              if (type == MediaType.anime) {
+                throw 'Unsupported';
+              } else if (type == MediaType.manga) {
+                return MangaReaderScreen(
+                    baseData: BaseData(
+                        slug: slug, parentSlug: parentSlug, type: type));
+              } else {
+                throw 'Unsupported';
+              }
+            },
+          )
+        ]),
   ],
 );

@@ -24,30 +24,73 @@ class RapidCloud implements VideoExtractor {
     ),
   );
 
-  Future<List<List<int>>> getIndexPairs() async {
-    final res = await _dio.get<String>(
-      'https://raw.githubusercontent.com/theonlymo/keys/e1/key',
-    );
+  final serverUrl = ['https://megacloud.tv', 'https://rapid-cloud.co'];
 
-    return List.from(
-      (jsonDecode(res.data!) as List).map((e) => List<int>.from(e)),
-    );
+  final jsPlayerUrl = [
+    'https://megacloud.tv/js/player/a/prod/e1-player.min.js',
+    'https://rapid-cloud.co/js/player/prod/e6-player-v2.min.js'
+  ];
+  final sourceUrl = [
+    '/embed-2/ajax/e-1/getSources?id=',
+    '/ajax/embed-6-v2/getSources?id='
+  ];
+
+  List<List<int>> chunked(List<int> list, int size) {
+    List<List<int>> chunks = [];
+    for (int i = 0; i < list.length; i += size) {
+      int end = list.length;
+      if (i + size < list.length) {
+        end = i + size;
+      }
+      chunks.add(list.sublist(i, end));
+    }
+    return chunks;
+  }
+
+  Future<List<List<int>>> generateIndexPairs(int serverType) async {
+    final scriptText = (await _dio.get<String>(jsPlayerUrl[serverType])).data;
+
+    if (scriptText == null) throw 'Failed';
+
+    final switchCode = scriptText.substring(
+        scriptText.lastIndexOf('switch'), scriptText.indexOf('=partKey'));
+
+    List<int> indexes = [];
+    for (var variableMatch
+        in RegExp(r'=(\w+)').allMatches(switchCode).toList()) {
+      final regex =
+          RegExp(',${(variableMatch).group(1)}=((?:0x)?([0-9a-fA-F]+))');
+      Match? match = regex.firstMatch(scriptText);
+
+      if (match != null) {
+        String value = match.group(1)!;
+        if (value.contains('0x')) {
+          indexes.add(
+              int.parse(value.substring(value.indexOf('0x') + 2), radix: 16));
+        } else {
+          indexes.add(int.parse(value));
+        }
+      }
+    }
+
+    return chunked(indexes, 2);
   }
 
   @override
   Future<VideoData> extract(String url) async {
-    final uri = Uri.parse(url);
+    final serverType = url.startsWith('https://megacloud.tv') ? 0 : 1;
     final id = url.split('/').last.split('?').first;
+
     final res = await _dio.get(
-      'https://${uri.host}/embed-2/ajax/e-1/getSources?id=$id',
+      serverUrl[serverType] + sourceUrl[serverType] + id,
     );
     final resData = res.data!;
     final tracks = resData['tracks'] as List;
     final List<Map<String, dynamic>> sourcesRaw;
 
     if (resData!['encrypted']) {
-      final ciphered = resData['sources'];
-      final indexPairs = await getIndexPairs();
+      final String ciphered = resData['sources'];
+      final indexPairs = await generateIndexPairs(serverType);
       String password = '';
       String ciphertext = ciphered;
       int index = 0;

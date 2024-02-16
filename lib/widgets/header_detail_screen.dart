@@ -10,7 +10,7 @@ class HeaderDetailScreen extends StatelessWidget {
   });
 
   final double height;
-  final String url;
+  final String? url;
   final Widget? child;
 
   @override
@@ -20,12 +20,13 @@ class HeaderDetailScreen extends StatelessWidget {
 
     return Stack(
       children: [
-        CachedNetworkImage(
-          height: height - 2,
-          width: size.width,
-          imageUrl: url,
-          fit: BoxFit.cover,
-        ),
+        if (url != null)
+          CachedNetworkImage(
+            height: height - 2,
+            width: size.width,
+            imageUrl: url!,
+            fit: BoxFit.cover,
+          ),
         Container(
           height: height,
           decoration: BoxDecoration(

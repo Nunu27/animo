@@ -17,19 +17,15 @@ class CoverCardCompactGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: column,
-      padding: const EdgeInsets.all(6),
-      physics: isScrollable ? null : const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      childAspectRatio: Constants.coverRatio,
-      children: data
-          .map(
-            (e) => CoverCardCompact(
-              media: e,
-            ),
-          )
-          .toList(),
-    );
+    return SliverGrid.count(
+        crossAxisCount: column,
+        childAspectRatio: Constants.coverRatio,
+        children: data
+            .map(
+              (e) => CoverCardCompact(
+                media: e,
+              ),
+            )
+            .toList());
   }
 }

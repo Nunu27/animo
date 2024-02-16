@@ -1,12 +1,3 @@
-import 'package:animo/models/base_data.dart';
-import 'package:animo/models/content/content_data.dart';
-import 'package:animo/models/content/image_content.dart';
-import 'package:animo/models/media/media_content.dart';
-import 'package:animo/repositories/media_repository.dart';
-import 'package:animo/widgets/chapter_list_view.dart';
-import 'package:animo/widgets/custom_bottom_modal_sheet.dart';
-import 'package:animo/widgets/future_view.dart';
-import 'package:animo/widgets/loader.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+
+import 'package:animo/models/base_data.dart';
+import 'package:animo/models/content/content_data.dart';
+import 'package:animo/models/content/image_content.dart';
+import 'package:animo/models/media/media_content.dart';
+import 'package:animo/repositories/media_repository.dart';
+import 'package:animo/widgets/chapter_list/chapter_list_view.dart';
+import 'package:animo/widgets/custom_bottom_modal_sheet.dart';
+import 'package:animo/widgets/future_view.dart';
+import 'package:animo/widgets/loader.dart';
 
 class MangaReaderScreen extends ConsumerStatefulWidget {
   const MangaReaderScreen({
@@ -273,7 +274,8 @@ class _MangaReaderScreenState extends ConsumerState<MangaReaderScreen>
                     context: context,
                     children: [
                       ChapterListView(
-                        mediaType: MediaType.manga,
+                        type: MediaType.manga,
+                        total: chapters!.length,
                         chapterList: chapters!,
                         parentSlug: data.syncData.slug,
                         isModal: true,

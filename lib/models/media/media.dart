@@ -218,7 +218,7 @@ class Media {
           (x) => SelectOption.fromMap(x as Map<String, dynamic>),
         ),
       ),
-      rating: map['rating'] != null ? map['rating'] as double : null,
+      rating: map['rating'] != null ? map['rating'] + 0.0 : null,
       characters: map['characters'] != null
           ? PaginatedData<MediaCharacter>.fromMap(
               map['characters'] as Map<String, dynamic>, MediaCharacter.fromMap)

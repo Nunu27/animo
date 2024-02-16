@@ -1,3 +1,7 @@
+import 'package:animo/utils/utils.dart';
+import 'package:flag/flag_widget.dart';
+import 'package:flutter/material.dart';
+
 class MediaContent {
   final int? index;
   final String slug;
@@ -18,6 +22,49 @@ class MediaContent {
     this.updatedAt,
     this.group,
   });
+
+  String getTitle() {
+    List<String> info = [];
+
+    if (parentNumber != null) {
+      info.add('Vol. $parentNumber');
+    }
+    if (number != null) {
+      info.add('Ch. $number');
+    }
+
+    final String text = info.join(' ');
+
+    info.clear();
+    if (text.isNotEmpty) {
+      info.add(text);
+    }
+
+    if (title != null) {
+      info.add(title!);
+    }
+
+    return info.isEmpty ? 'Oneshot' : info.join(': ');
+  }
+
+  String getSubtitle() {
+    final List<String> info = [];
+
+    if (updatedAt != null) info.add(dateFormatter.format(updatedAt!));
+    if (group != null) info.add(group!);
+
+    return info.join(' • ');
+  }
+
+  Widget? getFlag() {
+    return lang == null
+        ? null
+        : Flag.fromString(
+            getCountryCode(lang!),
+            height: 24,
+            width: 24,
+          );
+  }
 
   MediaContent copyWith({
     int? index,

@@ -1,10 +1,9 @@
-import 'package:animo/models/base_data.dart';
-import 'package:animo/screens/explore/explore_anime_screen.dart';
-import 'package:animo/screens/explore/explore_manga_screen.dart';
-import 'package:animo/screens/explore/explore_novel_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
+import 'package:animo/models/base_data.dart';
+import 'package:animo/screens/explore/explore_view.dart';
 
 class Explore extends ConsumerStatefulWidget {
   const Explore({super.key});
@@ -77,9 +76,9 @@ class _ExploreState extends ConsumerState<Explore>
       body: TabBarView(
         controller: _tabController,
         children: const [
-          ExploreAnimeScreen(),
-          ExploreMangaScreen(),
-          ExploreNovelScreen(),
+          ExploreView(mediaType: MediaType.anime),
+          ExploreView(mediaType: MediaType.manga),
+          ExploreView(mediaType: MediaType.novel),
         ],
       ),
     );

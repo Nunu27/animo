@@ -61,12 +61,12 @@ class MediaRepository extends ApiRepository {
     Map<String, dynamic> options, {
     int page = 1,
   }) async {
+    options = {...options, 'page': page};
+
     final info = getProviderInfo(type);
     if (info.provider != null) {
       return await _ref.read(info.provider!).filter(options);
     }
-
-    options = {...options, 'page': page};
 
     final request = api.get(
       '/${type.name}/explore/$path',
@@ -97,12 +97,12 @@ class MediaRepository extends ApiRepository {
     Map<String, dynamic> options, {
     int page = 1,
   }) async {
+    options['page'] = page;
+
     final info = getProviderInfo(type);
     if (info.provider != null) {
       return await _ref.read(info.provider!).filter(options);
     }
-
-    options['page'] = page;
 
     final request = api.get(
       '/${type.name}/filter',
@@ -161,16 +161,18 @@ class MediaRepository extends ApiRepository {
     int page = 1,
     Map<String, dynamic> options = const {},
   }) async {
+    options = {...options, 'page': page};
+
     final info = getProviderInfo(type);
     if (info.provider != null) {
       return await _ref
           .read(info.provider!)
-          .getMediaContents(identifier, {...options, 'page': page});
+          .getMediaContents(identifier, options);
     }
 
     final request = api.post(
       '/${type.name}/contents',
-      queryParameters: {...options, 'page': page},
+      queryParameters: options,
       data: identifier.toMap(),
     );
     final response = await handleApi(request);
@@ -185,13 +187,18 @@ class MediaRepository extends ApiRepository {
   }) async {
     final info = getProviderInfo(baseContent.type);
     if (info.provider != null) {
-      return await _ref.read(info.provider!).getContent(baseContent,
-          withContentList: withContentList, current: current) as ContentData<T>;
+      return await _ref.read(info.provider!).getContent(
+            baseContent,
+            withContentList: withContentList,
+            current: current,
+          ) as ContentData<T>;
     }
 
     final parent = await _ref.read(
-      getMediaProvider(type: baseContent.type, slug: baseContent.parentSlug!)
-          .future,
+      getMediaProvider(
+        type: baseContent.type,
+        slug: baseContent.parentSlug!,
+      ).future,
     );
     final syncData = parent.toSyncData();
     final request = api.get(

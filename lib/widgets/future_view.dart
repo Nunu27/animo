@@ -2,11 +2,9 @@ import 'package:animo/utils/utils.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class FutureView<T> extends StatelessWidget {
   final Future<T>? future;
-  final RefreshController? refreshController;
   final Widget Function(T data) onData;
   final Widget Function()? onLoading;
   final VoidCallback? onRetry;
@@ -14,7 +12,6 @@ class FutureView<T> extends StatelessWidget {
 
   const FutureView({
     super.key,
-    this.refreshController,
     required this.future,
     required this.onData,
     this.onLoading,
@@ -32,13 +29,6 @@ class FutureView<T> extends StatelessWidget {
             : true;
 
         if (snapshot.hasError && isDone) {
-          if (refreshController?.isRefresh ?? false) {
-            refreshController!.refreshFailed();
-          }
-          if (refreshController?.isLoading ?? false) {
-            refreshController!.loadFailed();
-          }
-
           return ErrorView(
             message: getError(snapshot.error).message,
             onRetry: onRetry,

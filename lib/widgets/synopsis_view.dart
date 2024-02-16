@@ -42,7 +42,8 @@ class _SynopsisViewState extends State<SynopsisView> {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 
-    return SizedBox(
+    return Padding(
+      padding: const EdgeInsets.all(14),
       child: secondHalf.isEmpty
           ? HtmlWidget(
               firstHalf,
