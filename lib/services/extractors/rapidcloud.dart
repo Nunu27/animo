@@ -130,7 +130,7 @@ class RapidCloud implements VideoExtractor {
 
         if (!videoUrl.startsWith('http')) {
           videoUrl =
-              masterUrl.substring(0, masterUrl.lastIndexOf('/') - 1) + videoUrl;
+              masterUrl.substring(0, masterUrl.lastIndexOf('/') + 1) + videoUrl;
         }
 
         sources.add(

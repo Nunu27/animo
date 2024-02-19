@@ -24,9 +24,9 @@ class CoverCardCompact extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    var brightness = Theme.of(context).brightness;
-    bool isDarkMode = brightness == Brightness.dark;
+    final ThemeData theme = Theme.of(context);
+    final Brightness brightness = Theme.of(context).brightness;
+    final bool isDarkMode = brightness == Brightness.dark;
 
     return InkWell(
       onTap: () => goToDetail(context),

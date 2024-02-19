@@ -83,6 +83,18 @@ class AnimoTheme {
           foregroundColor: colorScheme.onBackground,
         ),
       ),
+      chipTheme: ChipThemeData(
+        color: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return colorScheme.primaryContainer;
+          }
+        }),
+        shape: StadiumBorder(
+          side: BorderSide(
+            color: colorScheme.outlineVariant,
+          ),
+        ),
+      ),
     );
   }
 }

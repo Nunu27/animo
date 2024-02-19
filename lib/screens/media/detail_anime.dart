@@ -1,15 +1,24 @@
 import 'package:animo/models/base_data.dart';
+import 'package:animo/models/content/video_content.dart';
+import 'package:animo/models/content/video_data.dart';
+import 'package:animo/models/media/media.dart';
+import 'package:animo/models/media/media_basic.dart';
+import 'package:animo/models/media/media_content.dart';
 import 'package:animo/providers/api_provider.dart';
+import 'package:animo/providers/library_provider.dart';
+import 'package:animo/providers/user_provider.dart';
+import 'package:animo/widgets/chapter_list/episode_list_anime.dart';
 import 'package:animo/widgets/character_list_view.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/genre_list_view.dart';
-import 'package:animo/widgets/header_detail_screen.dart';
 import 'package:animo/widgets/loader.dart';
 import 'package:animo/widgets/relation_view.dart';
 import 'package:animo/widgets/synopsis_view.dart';
+import 'package:animo/widgets/trailer_view.dart';
 import 'package:animo/widgets/video_player_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:animo/repositories/media_repository.dart';
 
 class DetailAnime extends ConsumerStatefulWidget {
   final MediaType type;
@@ -22,184 +31,233 @@ class DetailAnime extends ConsumerStatefulWidget {
 }
 
 class _DetailAnimeState extends ConsumerState<DetailAnime> {
-  bool _isInLibrary = true;
-  bool _isDownloaded = false;
+  late final ScrollController _scrollController;
   GlobalKey titleKey = GlobalKey();
-
-  final List<String> chapterList =
-      List.generate(100, (index) => 'Chapter $index');
+  MediaContent? _videoMediaContent;
+  VideoContent? _videoContent;
+  List<MediaContent>? _episodeList;
+  VideoData? _videoData;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
   }
 
   @override
   void dispose() {
     super.dispose();
+    _scrollController.dispose();
+  }
+
+  void _toggleLibrary(MediaBasic media) {
+    final manager = ref.read(libraryManagerProvider);
+
+    if (ref.read(isInLibraryProvider(slug: widget.slug, type: widget.type))) {
+      manager.remove([media]);
+    } else {
+      manager.add([media]);
+    }
+  }
+
+  Future<void> _fetchChapterList(Media media) async {
+    final data = await ref.read(mediaRepositoryProvider).getMediaContents(
+          media.type,
+          media.getIdentifier(),
+        );
+
+    if (mounted) {
+      setState(() {
+        _episodeList = data.data;
+      });
+    }
+    _fetchVideoContent(media);
+  }
+
+  void _fetchVideoContent(Media media) async {
+    if (mounted) {
+      setState(() {
+        _videoData = null;
+      });
+    }
+    if (_videoMediaContent != null) {
+      BaseData baseData = BaseData(
+        slug: _videoMediaContent!.slug,
+        type: MediaType.anime,
+        parentSlug: media.slug,
+      );
+      final futureContentData =
+          ref.read(mediaRepositoryProvider).getContent(baseData);
+
+      final data = await futureContentData;
+
+      _videoContent = data.data;
+
+      if (_videoContent != null) {
+        final futureVideoContent = ref.read(
+            getSourceProvider(videoServer: _videoContent!.sub.first).future);
+
+        _videoData = await futureVideoContent;
+        setState(() {});
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final double sliverHeight = MediaQuery.of(context).size.width / 16 * 9;
+    final user = ref.watch(userStateProvider);
+    final inLibrary = ref.watch(
+      isInLibraryProvider(slug: widget.slug, type: widget.type),
+    );
 
     return ref
         .watch(getMediaProvider(type: widget.type, slug: widget.slug))
         .when(
       data: (media) {
+        if (_episodeList == null) {
+          _fetchChapterList(media);
+        }
         return Scaffold(
-          floatingActionButton: FilledButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.play_arrow_rounded),
-            label: const Text('Read'),
-          ),
           backgroundColor: theme.colorScheme.background,
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                title: Text(media.title),
-                pinned: true,
-              ),
-              SliverToBoxAdapter(
-                child: VideoPlayerView(
-                  url:
-                      'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4',
-                  placeholder: HeaderDetailScreen(
-                    height: sliverHeight,
-                    url: media.trailer?.thumbnail ?? media.cover!,
+          body: RefreshIndicator(
+            onRefresh: () => _fetchChapterList(media),
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                SliverAppBar(
+                  title: Text(media.title),
+                  pinned: true,
+                ),
+                SliverToBoxAdapter(
+                  child: VideoPlayerView(
+                    videoData: _videoData,
+                    thumbnail: media.trailer?.thumbnail ?? media.cover,
                   ),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: Container(
-                  padding: const EdgeInsets.all(14),
-                  key: titleKey,
+                SliverToBoxAdapter(
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    key: titleKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          media.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleLarge,
+                        ),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Anime',
+                              style: theme.textTheme.titleSmall,
+                            ),
+                            const SizedBox(
+                              width: 6,
+                            ),
+                            const Text('•'),
+                            const SizedBox(
+                              width: 6,
+                            ),
+                            Text(
+                              media.year.toString(),
+                              style: theme.textTheme.titleSmall,
+                            ),
+                            const SizedBox(
+                              width: 6,
+                            ),
+                            const Text('•'),
+                            const SizedBox(
+                              width: 6,
+                            ),
+                            Text(
+                              media.rating.toString(),
+                              style: theme.textTheme.titleSmall,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        media.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleLarge,
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
-                            'Anime',
-                            style: theme.textTheme.titleSmall,
-                          ),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          const Text('•'),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          Text(
-                            media.year.toString(),
-                            style: theme.textTheme.titleSmall,
-                          ),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          const Text('•'),
-                          const SizedBox(
-                            width: 6,
-                          ),
-                          Text(
-                            media.rating.toString(),
-                            style: theme.textTheme.titleSmall,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    TextButton.icon(
-                        onPressed: () {
-                          setState(() {
-                            _isInLibrary = !_isInLibrary;
-                          });
-                        },
-                        style: _isInLibrary
-                            ? theme.textButtonTheme.style!.copyWith(
-                                foregroundColor: MaterialStatePropertyAll(
-                                  theme.colorScheme.primary,
-                                ),
-                              )
-                            : null,
-                        icon: _isInLibrary
-                            ? const Icon(Icons.bookmark)
-                            : const Icon(Icons.bookmark_outline),
-                        label: const Text('Library')),
-                    TextButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          _isDownloaded = !_isDownloaded;
-                        });
-                      },
-                      style: _isDownloaded
-                          ? theme.textButtonTheme.style!.copyWith(
+                          TextButton.icon(
+                              onPressed: user == null
+                                  ? null
+                                  : () => _toggleLibrary(media.toMediaBasic()),
+                              style: inLibrary
+                                  ? theme.textButtonTheme.style!.copyWith(
+                                      foregroundColor: MaterialStatePropertyAll(
+                                        theme.colorScheme.primary,
+                                      ),
+                                    )
+                                  : null,
+                              icon: inLibrary
+                                  ? const Icon(Icons.bookmark)
+                                  : const Icon(Icons.bookmark_outline),
+                              label: const Text('Library')),
+                          TextButton.icon(
+                            onPressed: user == null
+                                ? null
+                                : () {
+                                    // setState(() {
+                                    //   _isDownloaded = !_isDownloaded;
+                                    // });
+                                  },
+
+                            style: theme.textButtonTheme.style!.copyWith(
                               foregroundColor: MaterialStatePropertyAll(
                                 theme.colorScheme.primary,
                               ),
-                            )
-                          : null,
-                      icon: _isDownloaded
-                          ? const Icon(Icons.download_done)
-                          : const Icon(Icons.download_outlined),
-                      label: const Text('Download'),
-                    ),
-                    TextButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.share),
-                      label: const Text('Share'),
-                    ),
-                  ],
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                ),
-                sliver: SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SynopsisView(text: media.description),
-                      const SizedBox(
-                        height: 14,
+                            ),
+                            // : null,
+                            icon: const Icon(Icons.download_done),
+                            // : const Icon(Icons.download_outlined),
+                            label: const Text('Download'),
+                          ),
+                          TextButton.icon(
+                            onPressed: () {},
+                            icon: const Icon(Icons.share),
+                            label: const Text('Share'),
+                          ),
+                        ],
                       ),
+                      SynopsisView(text: media.description),
+                      if (media.trailer != null)
+                        TrailerView(trailer: media.trailer!),
                       if (media.characters != null)
                         CharacterListView(characters: media.characters!),
-                      const SizedBox(
-                        height: 14,
-                      ),
                       if (media.relations != null)
                         RelationView(data: media.relations!),
-                      const SizedBox(
-                        height: 14,
-                      ),
                       GenreListView(
-                          genres: media.genres.map((e) => e.text).toList()),
-                      const SizedBox(
-                        height: 14,
+                        genres: media.genres.map((e) => e.text).toList(),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
+                EpisodeListAnime(
+                  episodeList: _episodeList ?? [],
+                  parentSlug: media.slug,
+                  onTap: (value) {
+                    _scrollController.animateTo(0,
+                        duration: Durations.long3, curve: Curves.easeInOut);
+                    _videoMediaContent = value;
+                    _fetchVideoContent(media);
+                  },
+                )
+              ],
+            ),
           ),
         );
       },
@@ -209,7 +267,10 @@ class _DetailAnimeState extends ConsumerState<DetailAnime> {
         );
       },
       loading: () {
-        return const Loader();
+        return Scaffold(
+          appBar: AppBar(),
+          body: const Loader(),
+        );
       },
     );
   }

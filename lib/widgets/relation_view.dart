@@ -1,9 +1,10 @@
+import 'package:animo/constants/constants.dart';
 import 'package:animo/models/base_data.dart';
 import 'package:animo/models/paginated_data.dart';
 import 'package:animo/providers/api_provider.dart';
 import 'package:animo/widgets/cover_card_compact.dart';
 import 'package:animo/widgets/error_view.dart';
-import 'package:animo/widgets/loader.dart';
+import 'package:animo/widgets/loading_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -55,9 +56,25 @@ class RelationView extends ConsumerWidget {
           error: (error, stackTrace) => ErrorView(
             message: error.toString(),
           ),
-          loading: () => const SizedBox(
+          loading: () => SizedBox(
             height: 196,
-            child: Loader(),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 4,
+              padding: const EdgeInsets.all(8),
+              itemBuilder: (context, index) {
+                return Container(
+                  padding: const EdgeInsets.all(6),
+                  child: AspectRatio(
+                    aspectRatio: Constants.coverRatio,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: const LoadingShimmer(),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         );
   }

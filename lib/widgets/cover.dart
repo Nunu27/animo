@@ -1,8 +1,8 @@
+import 'package:animo/widgets/loading_shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:animo/constants/constants.dart';
-import 'package:shimmer/shimmer.dart';
 
 class Cover extends StatelessWidget {
   const Cover({
@@ -28,14 +28,7 @@ class Cover extends StatelessWidget {
                   return _errorView(theme);
                 },
                 placeholder: (context, url) {
-                  return Shimmer.fromColors(
-                    baseColor: theme.colorScheme.onBackground.withOpacity(0.05),
-                    highlightColor:
-                        theme.colorScheme.onBackground.withOpacity(0.3),
-                    child: Container(
-                      color: theme.colorScheme.background,
-                    ),
-                  );
+                  return const LoadingShimmer();
                 },
               )
             : _errorView(theme),

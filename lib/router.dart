@@ -34,49 +34,6 @@ final router = GoRouter(
       pageBuilder: (context, state) =>
           const NoTransitionPage(child: SignInScreen()),
     ),
-    // GoRoute(
-    //   path: '/manga/:slug',
-    //   name: 'manga',
-    //   builder: (context, state) {
-    //     String slug = state.pathParameters['slug']!;
-    //     return DetailScreenOld(
-    //       slug: slug,
-    //       type: MediaType.manga,
-    //     );
-    //   },
-    //   routes: [
-    //     GoRoute(
-    //       parentNavigatorKey: _rootNavigator,
-    //       path: 'chapter/:ch',
-    //       name: 'chapter',
-    //       builder: (context, state) {
-    //         String slug = state.pathParameters['slug']!;
-    //         String ch = state.pathParameters['ch']!;
-
-    //         return MangaReaderScreen(
-    //           baseData:
-    //               BaseData(slug: ch, type: MediaType.manga, parentSlug: slug),
-    //         );
-    //       },
-    //     ),
-    //     // GoRoute(
-    //     //   path: 'characters',
-    //     //   builder: (context, state) {},
-    //     // ),
-    //   ],
-    // ),
-    // GoRoute(
-    //   path: '/anime/:slug',
-    //   name: 'anime',
-    //   builder: (context, state) {
-    //     String slug = state.pathParameters['slug']!;
-
-    //     return DetailAnime(
-    //       slug: slug,
-    //       type: MediaType.anime,
-    //     );
-    //   },
-    // ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return ScaffoldWithBar(navigationShell: navigationShell);
@@ -145,7 +102,6 @@ final router = GoRouter(
         )
       ],
     ),
-
     GoRoute(
         path: '/:type/:slug',
         builder: (context, state) {

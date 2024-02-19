@@ -16,9 +16,11 @@ import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/genre_list_view.dart';
 import 'package:animo/widgets/header_detail_screen.dart';
 import 'package:animo/widgets/loader.dart';
+import 'package:animo/widgets/loading_listtile.dart';
 import 'package:animo/widgets/paginated_view.dart';
 import 'package:animo/widgets/relation_view.dart';
 import 'package:animo/widgets/synopsis_view.dart';
+import 'package:animo/widgets/trailer_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -132,9 +134,14 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                       title: LayoutBuilder(
                         builder: (context, constraints) {
                           final top = constraints.biggest.height;
+                          print(top);
 
                           return AnimatedOpacity(
-                            opacity: top > 64 ? 0 : 1,
+                            opacity: top >
+                                    kToolbarHeight +
+                                        MediaQuery.of(context).padding.top
+                                ? 0
+                                : 1,
                             duration: const Duration(milliseconds: 100),
                             child: Text(media.title,
                                 maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -286,6 +293,8 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                           ],
                         ),
                         SynopsisView(text: media.description),
+                        if (media.trailer != null)
+                          TrailerView(trailer: media.trailer!),
                         if (media.characters != null)
                           CharacterListView(characters: media.characters!),
                         if (media.relations != null)
@@ -306,6 +315,17 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                       _pagingController.refresh();
                     },
                   ),
+                  if (_pagingController.value.status ==
+                      PagingStatus.loadingFirstPage)
+                    SliverList.builder(
+                      itemCount: 10,
+                      itemBuilder: (context, index) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 14),
+                          child: LoadingListTile(),
+                        );
+                      },
+                    ),
                   PagedSliverList(
                     pagingController: _pagingController,
                     builderDelegate: PagedChildBuilderDelegate<MediaContent>(
@@ -323,7 +343,10 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
           error: (error, stackTrace) {
             return ErrorView(message: getError(error).message);
           },
-          loading: () => const Loader(),
+          loading: () => Scaffold(
+            appBar: AppBar(),
+            body: const Loader(),
+          ),
         );
   }
 }

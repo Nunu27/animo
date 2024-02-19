@@ -1,5 +1,6 @@
 import 'package:animo/models/media/media_character.dart';
 import 'package:animo/models/paginated_data.dart';
+import 'package:animo/widgets/loading_shimmer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -44,9 +45,12 @@ class CharacterListView extends StatelessWidget {
                     SizedBox(
                       height: 64,
                       width: 64,
-                      child: CircleAvatar(
-                        backgroundImage: CachedNetworkImageProvider(
-                          character.cover ?? imgPlaceholder,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: character.cover ?? imgPlaceholder,
+                          placeholder: (context, url) => const LoadingShimmer(),
                         ),
                       ),
                     ),

@@ -26,9 +26,13 @@ class _LibraryMangaScreenState extends ConsumerState<LibraryMangaScreen>
           .filter(MediaType.manga, {'sort': 'rating'}),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CoverCardCompactGridView(data: snapshot.data!.data),
+          return CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.all(8),
+                sliver: CoverCardCompactGridView(data: snapshot.data!.data),
+              )
+            ],
           );
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());

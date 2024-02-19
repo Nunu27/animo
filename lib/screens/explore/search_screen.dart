@@ -57,115 +57,116 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-        appBar: AppBar(
-          title: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              suffixIcon: _searchController.text.isEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: () {},
-                    )
-                  : IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        setState(() {
-                          _searchController.clear();
-                        });
-                      },
-                    ),
-              hintText: 'Search',
-            ),
-            onSubmitted: (value) {
-              if (_pagingController.itemList == null) {
-                setState(() {});
-              } else {
-                _pagingController.refresh();
-              }
-            },
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(50),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14)
-                  .copyWith(bottom: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SegmentedButton(
-                    showSelectedIcon: false,
-                    segments: const [
-                      ButtonSegment(
-                        value: MediaType.anime,
-                        label: Text('Anime'),
-                      ),
-                      ButtonSegment(
-                        value: MediaType.manga,
-                        label: Text('Manga'),
-                      ),
-                      ButtonSegment(
-                        value: MediaType.novel,
-                        label: Text('Novel'),
-                      ),
-                    ],
-                    selected: <MediaType>{selectedMediaType},
-                    onSelectionChanged: (p0) {
-                      options.clear();
+      appBar: AppBar(
+        title: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            suffixIcon: _searchController.text.isEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {},
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
                       setState(() {
-                        selectedMediaType = p0.first;
+                        _searchController.clear();
                       });
-                      _pagingController.refresh();
                     },
                   ),
-                  FilledButton.icon(
-                    onPressed: () {
-                      _showFilterModal(context, theme);
-                    },
-                    icon: const Icon(Icons.filter_list_rounded),
-                    label: const Text('Filter'),
-                    style: Theme.of(context).filledButtonTheme.style!.copyWith(
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          padding: const MaterialStatePropertyAll(
-                            EdgeInsets.symmetric(
-                              vertical: 4,
-                              horizontal: 14,
-                            ),
+            hintText: 'Search',
+          ),
+          onSubmitted: (value) {
+            if (_pagingController.itemList == null) {
+              setState(() {});
+            } else {
+              _pagingController.refresh();
+            }
+          },
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50),
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 14).copyWith(bottom: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SegmentedButton(
+                  showSelectedIcon: false,
+                  segments: const [
+                    ButtonSegment(
+                      value: MediaType.anime,
+                      label: Text('Anime'),
+                    ),
+                    ButtonSegment(
+                      value: MediaType.manga,
+                      label: Text('Manga'),
+                    ),
+                    ButtonSegment(
+                      value: MediaType.novel,
+                      label: Text('Novel'),
+                    ),
+                  ],
+                  selected: <MediaType>{selectedMediaType},
+                  onSelectionChanged: (p0) {
+                    options.clear();
+                    setState(() {
+                      selectedMediaType = p0.first;
+                    });
+                    _pagingController.refresh();
+                  },
+                ),
+                FilledButton.icon(
+                  onPressed: () {
+                    _showFilterModal(context, theme);
+                  },
+                  icon: const Icon(Icons.filter_list_rounded),
+                  label: const Text('Filter'),
+                  style: Theme.of(context).filledButtonTheme.style!.copyWith(
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        padding: const MaterialStatePropertyAll(
+                          EdgeInsets.symmetric(
+                            vertical: 4,
+                            horizontal: 14,
                           ),
                         ),
-                  )
-                ],
-              ),
+                      ),
+                )
+              ],
             ),
           ),
         ),
-        body: PaginatedView(
-          pagingController: _pagingController,
-          fetcher: _fetch,
-          child: _searchController.text.isEmpty && options.isEmpty
-              ? const ErrorView(message: 'Search something here')
-              : PagedGridView(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  showNewPageProgressIndicatorAsGridChild: false,
-                  showNewPageErrorIndicatorAsGridChild: false,
-                  showNoMoreItemsIndicatorAsGridChild: false,
-                  pagingController: _pagingController,
-                  builderDelegate: PagedChildBuilderDelegate<MediaBasic>(
-                    newPageErrorIndicatorBuilder: (context) => ErrorView(
-                      message: getError(_pagingController.error).message,
-                      onRetry: _pagingController.refresh,
-                    ),
-                    itemBuilder: (context, item, index) => CoverCardCompact(
-                      media: item,
-                    ),
+      ),
+      body: PaginatedView(
+        pagingController: _pagingController,
+        fetcher: _fetch,
+        child: _searchController.text.isEmpty && options.isEmpty
+            ? const ErrorView(message: 'Search something here')
+            : PagedGridView(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                showNewPageProgressIndicatorAsGridChild: false,
+                showNewPageErrorIndicatorAsGridChild: false,
+                showNoMoreItemsIndicatorAsGridChild: false,
+                pagingController: _pagingController,
+                builderDelegate: PagedChildBuilderDelegate<MediaBasic>(
+                  newPageErrorIndicatorBuilder: (context) => ErrorView(
+                    message: getError(_pagingController.error).message,
+                    onRetry: _pagingController.refresh,
                   ),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    childAspectRatio: Constants.coverRatio,
-                    crossAxisCount: 3,
+                  itemBuilder: (context, item, index) => CoverCardCompact(
+                    media: item,
                   ),
                 ),
-        ));
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: Constants.coverRatio,
+                  crossAxisCount: 3,
+                ),
+              ),
+      ),
+    );
   }
 
   void _showFilterModal(BuildContext context, ThemeData theme) async {
