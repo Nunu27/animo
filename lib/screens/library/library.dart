@@ -1,4 +1,5 @@
-import 'package:animo/screens/library/library_manga_screen.dart';
+import 'package:animo/widgets/not_login_view.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 
 class Library extends StatelessWidget {
@@ -26,17 +27,31 @@ class Library extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                BotToast.showText(
+                  text: 'this feature is not yet implemented',
+                );
+              },
               icon: const Icon(Icons.search),
             ),
             PopupMenuButton(
               itemBuilder: (context) {
                 return [
-                  const PopupMenuItem(
-                    child: Text('Update library'),
+                  PopupMenuItem(
+                    child: const Text('Update library'),
+                    onTap: () {
+                      BotToast.showText(
+                        text: 'this feature is not yet implemented',
+                      );
+                    },
                   ),
-                  const PopupMenuItem(
-                    child: Text('Update category'),
+                  PopupMenuItem(
+                    child: const Text('Update category'),
+                    onTap: () {
+                      BotToast.showText(
+                        text: 'this feature is not yet implemented',
+                      );
+                    },
                   ),
                 ];
               },
@@ -45,9 +60,12 @@ class Library extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
-            LibraryMangaScreen(),
-            LibraryMangaScreen(),
-            LibraryMangaScreen(),
+            NotLoginView(),
+            NotLoginView(),
+            NotLoginView(),
+            // LibraryMangaScreen(),
+            // LibraryMangaScreen(),
+            // LibraryMangaScreen(),
           ],
         ),
       ),

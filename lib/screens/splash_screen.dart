@@ -17,7 +17,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   void checkState() async {
     final user = ref.read(userStateProvider);
     if (user == null) {
-      context.go('/signin');
+      context.go('/explore');
     } else {
       context.go('/explore');
     }

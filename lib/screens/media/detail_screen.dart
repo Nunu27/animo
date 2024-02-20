@@ -21,6 +21,7 @@ import 'package:animo/widgets/paginated_view.dart';
 import 'package:animo/widgets/relation_view.dart';
 import 'package:animo/widgets/synopsis_view.dart';
 import 'package:animo/widgets/trailer_view.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -115,7 +116,11 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
         .when(
           data: (media) => Scaffold(
             floatingActionButton: FilledButton.icon(
-              onPressed: () => {},
+              onPressed: () {
+                BotToast.showText(
+                  text: 'this feature is not yet implemented',
+                );
+              },
               icon: const Icon(Icons.import_contacts),
               label: const Text('Read'),
             ),
@@ -134,7 +139,6 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                       title: LayoutBuilder(
                         builder: (context, constraints) {
                           final top = constraints.biggest.height;
-                          print(top);
 
                           return AnimatedOpacity(
                             opacity: top >
@@ -143,8 +147,11 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                                 ? 0
                                 : 1,
                             duration: const Duration(milliseconds: 100),
-                            child: Text(media.title,
-                                maxLines: 1, overflow: TextOverflow.ellipsis),
+                            child: Text(
+                              media.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           );
                         },
                       ),
@@ -286,7 +293,11 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
                               label: const Text('Download'),
                             ),
                             TextButton.icon(
-                              onPressed: () {},
+                              onPressed: () {
+                                BotToast.showText(
+                                  text: 'this feature is not yet implemented',
+                                );
+                              },
                               icon: const Icon(Icons.share),
                               label: const Text('Share'),
                             ),
@@ -341,7 +352,12 @@ class _DetailScreenState extends ConsumerState<DetailScreen> {
             ),
           ),
           error: (error, stackTrace) {
-            return ErrorView(message: getError(error).message);
+            return Scaffold(
+              appBar: AppBar(),
+              body: ErrorView(
+                message: getError(error).message,
+              ),
+            );
           },
           loading: () => Scaffold(
             appBar: AppBar(),

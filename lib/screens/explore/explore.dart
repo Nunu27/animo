@@ -55,22 +55,22 @@ class _ExploreState extends ConsumerState<Explore>
             },
             icon: const Icon(Icons.search),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.filter_list_rounded),
-          ),
-          PopupMenuButton(
-            itemBuilder: (context) {
-              return [
-                const PopupMenuItem(
-                  child: Text('Update library'),
-                ),
-                const PopupMenuItem(
-                  child: Text('Update category'),
-                ),
-              ];
-            },
-          )
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: const Icon(Icons.filter_list_rounded),
+          // ),
+          // PopupMenuButton(
+          //   itemBuilder: (context) {
+          //     return [
+          //       const PopupMenuItem(
+          //         child: Text('Update library'),
+          //       ),
+          //       const PopupMenuItem(
+          //         child: Text('Update category'),
+          //       ),
+          //     ];
+          //   },
+          // )
         ],
       ),
       body: TabBarView(

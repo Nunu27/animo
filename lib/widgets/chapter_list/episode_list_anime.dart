@@ -1,8 +1,6 @@
 import 'package:animo/models/media/media_content.dart';
 import 'package:animo/widgets/custom_input_form.dart';
 import 'package:animo/widgets/loading_gridtile.dart';
-import 'package:animo/widgets/loading_listtile.dart';
-import 'package:animo/widgets/loading_shimmer.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

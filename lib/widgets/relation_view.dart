@@ -56,25 +56,37 @@ class RelationView extends ConsumerWidget {
           error: (error, stackTrace) => ErrorView(
             message: error.toString(),
           ),
-          loading: () => SizedBox(
-            height: 196,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 4,
-              padding: const EdgeInsets.all(8),
-              itemBuilder: (context, index) {
-                return Container(
-                  padding: const EdgeInsets.all(6),
-                  child: AspectRatio(
-                    aspectRatio: Constants.coverRatio,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: const LoadingShimmer(),
-                    ),
-                  ),
-                );
-              },
-            ),
+          loading: () => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                child: Text(
+                  'Relations',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+              ),
+              SizedBox(
+                height: 196,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 4,
+                  padding: const EdgeInsets.all(8),
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: const EdgeInsets.all(6),
+                      child: AspectRatio(
+                        aspectRatio: Constants.coverRatio,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: const LoadingShimmer(),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         );
   }

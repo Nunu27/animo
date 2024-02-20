@@ -1,5 +1,6 @@
 import 'package:animo/models/base_data.dart';
 import 'package:animo/models/media/media_content.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -55,7 +56,11 @@ class ChapterTile extends StatelessWidget {
               style: theme.textTheme.bodySmall,
             ),
       trailing: IconButton(
-        onPressed: () {},
+        onPressed: () {
+          BotToast.showText(
+            text: 'this feature is not yet implemented',
+          );
+        },
         icon: const Icon(
           Icons.download_for_offline_outlined,
           size: 24,

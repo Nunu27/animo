@@ -7,6 +7,7 @@ import 'package:animo/models/media/media_content.dart';
 import 'package:animo/providers/api_provider.dart';
 import 'package:animo/providers/library_provider.dart';
 import 'package:animo/providers/user_provider.dart';
+import 'package:animo/utils/utils.dart';
 import 'package:animo/widgets/chapter_list/episode_list_anime.dart';
 import 'package:animo/widgets/character_list_view.dart';
 import 'package:animo/widgets/error_view.dart';
@@ -16,6 +17,7 @@ import 'package:animo/widgets/relation_view.dart';
 import 'package:animo/widgets/synopsis_view.dart';
 import 'package:animo/widgets/trailer_view.dart';
 import 'package:animo/widgets/video_player_view.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:animo/repositories/media_repository.dart';
@@ -164,9 +166,47 @@ class _DetailAnimeState extends ConsumerState<DetailAnime> {
                             const SizedBox(
                               width: 6,
                             ),
-                            Text(
-                              media.year.toString(),
-                              style: theme.textTheme.titleSmall,
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.star,
+                                  size: 18,
+                                ),
+                                const SizedBox(
+                                  width: 2,
+                                ),
+                                Text(
+                                  '${media.rating ?? 'N/A'}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleSmall,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              width: 6,
+                            ),
+                            const Text('•'),
+                            const SizedBox(
+                              width: 6,
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  media.status.icon,
+                                  color: theme.colorScheme.onBackground,
+                                  size: 18,
+                                ),
+                                const SizedBox(
+                                  width: 2,
+                                ),
+                                Text(
+                                  media.status.text,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleSmall,
+                                ),
+                              ],
                             ),
                             const SizedBox(
                               width: 6,
@@ -176,7 +216,7 @@ class _DetailAnimeState extends ConsumerState<DetailAnime> {
                               width: 6,
                             ),
                             Text(
-                              media.rating.toString(),
+                              media.year.toString(),
                               style: theme.textTheme.titleSmall,
                             ),
                           ],
@@ -227,7 +267,11 @@ class _DetailAnimeState extends ConsumerState<DetailAnime> {
                             label: const Text('Download'),
                           ),
                           TextButton.icon(
-                            onPressed: () {},
+                            onPressed: () {
+                              BotToast.showText(
+                                text: 'this feature is not yet implemented',
+                              );
+                            },
                             icon: const Icon(Icons.share),
                             label: const Text('Share'),
                           ),
@@ -262,8 +306,11 @@ class _DetailAnimeState extends ConsumerState<DetailAnime> {
         );
       },
       error: (error, stackTrace) {
-        return ErrorView(
-          message: error.toString(),
+        return Scaffold(
+          appBar: AppBar(),
+          body: ErrorView(
+            message: getError(error).message,
+          ),
         );
       },
       loading: () {

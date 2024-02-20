@@ -1,6 +1,7 @@
 import 'package:animo/controllers/auth_controller.dart';
 import 'package:animo/widgets/custom_input_form.dart';
 import 'package:animo/widgets/loader_overlay.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,7 +18,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void signIn() {
+  void _signIn() {
     FocusManager.instance.primaryFocus?.unfocus();
     ref.read(authControllerProvider.notifier).signIn(
           context: context,
@@ -104,6 +105,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
+                      onTap: () {
+                        BotToast.showText(
+                          text: 'this feature is not yet implemented',
+                        );
+                      },
                       child: Text(
                         'Forgot password',
                         style: theme.textTheme.bodyMedium!.copyWith(
@@ -116,7 +122,12 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     height: 14,
                   ),
                   FilledButton(
-                    onPressed: signIn,
+                    onPressed: () {
+                      BotToast.showText(
+                        text: 'this feature is not yet implemented',
+                      );
+                      // _signIn,
+                    },
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -153,7 +164,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       FilledButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          BotToast.showText(
+                            text: 'this feature is not yet implemented',
+                          );
+                        },
                         label: const Text('Google'),
                         style: FilledButton.styleFrom(
                           backgroundColor: Colors.grey.shade200,
@@ -166,7 +181,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         ),
                       ),
                       FilledButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          BotToast.showText(
+                            text: 'this feature is not yet implemented',
+                          );
+                        },
                         label: const Text('MAL'),
                         style: FilledButton.styleFrom(
                           backgroundColor: const Color(0xff2e51a2),
@@ -179,7 +198,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         ),
                       ),
                       FilledButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          BotToast.showText(
+                            text: 'this feature is not yet implemented',
+                          );
+                        },
                         label: const Text('Anilist'),
                         style: FilledButton.styleFrom(
                           backgroundColor: const Color(0xff2b2d42),
@@ -218,6 +241,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         width: 4,
                       ),
                       GestureDetector(
+                        onTap: () {
+                          BotToast.showText(
+                            text: 'this feature is not yet implemented',
+                          );
+                        },
                         child: Text(
                           'Register!',
                           style: theme.textTheme.bodyMedium!.copyWith(

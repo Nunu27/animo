@@ -185,7 +185,7 @@ class _MangaReaderScreenState extends ConsumerState<MangaReaderScreen>
           body: Stack(
             children: [
               PhotoViewGallery.builder(
-                itemCount: 2,
+                itemCount: 1,
                 builder: (context, index) {
                   return PhotoViewGalleryPageOptions.customChild(
                     scaleStateController: _photoViewScaleStateController,

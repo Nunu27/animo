@@ -1,7 +1,7 @@
+import 'package:animo/widgets/not_login_view.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:animo/controllers/auth_controller.dart';
 import 'package:animo/providers/user_provider.dart';
@@ -80,28 +80,7 @@ class Profile extends ConsumerWidget {
                 ],
               ),
             )
-          : SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    "You haven't logged in yet",
-                    style: theme.textTheme.bodyLarge,
-                  ),
-                  const SizedBox(
-                    height: 14,
-                  ),
-                  FilledButton(
-                    onPressed: () {
-                      context.go('/signin');
-                    },
-                    child: const Text('Login'),
-                  )
-                ],
-              ),
-            ),
+          : const NotLoginView(),
     );
   }
 }
