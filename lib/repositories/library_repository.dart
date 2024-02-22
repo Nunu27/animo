@@ -47,7 +47,7 @@ class LibraryRepository extends ApiRepository {
       final request = api.put('/user/library', data: {'slugs': slugs});
       final response = await handleApi(request);
 
-      return right(response.data);
+      return right(List<String>.from(response.data));
     } catch (e) {
       return left(getError(e));
     }
@@ -58,7 +58,7 @@ class LibraryRepository extends ApiRepository {
       final request = api.delete('/user/library', data: {'slugs': slugs});
       final response = await handleApi(request);
 
-      return right(response.data);
+      return right(List<String>.from(response.data));
     } catch (e) {
       return left(getError(e));
     }

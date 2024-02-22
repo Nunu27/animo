@@ -1,6 +1,17 @@
 import 'package:animo/models/media/media_relation.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-enum MediaType { anime, manga, novel }
+part 'base_data.g.dart';
+
+@HiveType(typeId: 2)
+enum MediaType {
+  @HiveField(0)
+  anime,
+  @HiveField(1)
+  manga,
+  @HiveField(2)
+  novel,
+}
 
 enum DataSource { animo, anilist, myanimelist }
 

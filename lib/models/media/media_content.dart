@@ -1,3 +1,4 @@
+import 'package:animo/models/base_data.dart';
 import 'package:animo/utils/utils.dart';
 import 'package:flag/flag_widget.dart';
 import 'package:flutter/material.dart';
@@ -23,14 +24,26 @@ class MediaContent {
     this.group,
   });
 
-  String getTitle() {
+  String getSimpleTitle({MediaType type = MediaType.manga}) {
+    if (number != null) {
+      return '${type == MediaType.anime ? 'Episode' : 'Chapter'} $number';
+    } else if (parentNumber != null) {
+      return 'Volume $parentNumber';
+    } else if (title != null) {
+      return title!;
+    } else {
+      return 'Oneshot';
+    }
+  }
+
+  String getTitle({MediaType type = MediaType.manga}) {
     List<String> info = [];
 
     if (parentNumber != null) {
       info.add('Vol. $parentNumber');
     }
     if (number != null) {
-      info.add('Ch. $number');
+      info.add('${type == MediaType.anime ? 'Ep.' : 'Ch.'} $number');
     }
 
     final String text = info.join(' ');
@@ -88,8 +101,9 @@ class MediaContent {
     );
   }
 
-  factory MediaContent.fromMap(Map<String, dynamic> map) {
+  factory MediaContent.fromMap(Map<String, dynamic> map, {int? index}) {
     return MediaContent(
+      index: index,
       slug: map['slug'] as String,
       number: map['number'] != null ? map['number'] as String : null,
       parentNumber:

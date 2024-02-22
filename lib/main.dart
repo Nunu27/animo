@@ -1,9 +1,3 @@
-import 'package:bot_toast/bot_toast.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-
 import 'package:animo/constants/box_constants.dart';
 import 'package:animo/firebase_options.dart';
 import 'package:animo/models/base_data.dart';
@@ -14,6 +8,11 @@ import 'package:animo/router.dart';
 import 'package:animo/services/notification.dart';
 import 'package:animo/theme/animo_theme.dart';
 import 'package:animo/theme/color_schemes.g.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +21,7 @@ void main() async {
   );
   await Hive.initFlutter();
   Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(MediaTypeAdapter());
   Hive.registerAdapter(MediaBasicAdapter());
   await Hive.openBox(BoxConstants.main);
   for (var type in MediaType.values) {

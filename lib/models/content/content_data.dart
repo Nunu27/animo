@@ -8,13 +8,11 @@ import 'package:animo/models/sync_data.dart';
 import 'package:fpdart/fpdart.dart';
 
 class ContentData<T> {
-  final SyncData syncData;
   final T data;
   final int? current;
   final List<MediaContent>? contents;
 
   ContentData({
-    required this.syncData,
     required this.data,
     required this.current,
     required this.contents,
@@ -27,7 +25,6 @@ class ContentData<T> {
     List<MediaContent>? contents,
   }) {
     return ContentData<T>(
-      syncData: syncData ?? this.syncData,
       data: data ?? this.data,
       current: current ?? this.current,
       contents: contents ?? this.contents,
@@ -36,18 +33,18 @@ class ContentData<T> {
 
   factory ContentData.fromMap(
     Map<String, dynamic> map,
-    SyncData syncData,
     MediaType type,
   ) {
     return ContentData<T>(
-      syncData: syncData,
       data: _parseData(type, map['data']),
       current: map['current'] != null ? map['current'] as int : null,
       contents: map['contents'] != null
           ? List<MediaContent>.from(
               (map['contents'] as List).mapWithIndex<MediaContent?>(
-                (x, index) =>
-                    MediaContent.fromMap(x as Map<String, dynamic>).copyWith(
+                (x, index) => MediaContent.fromMap(
+                  x as Map<String, dynamic>,
+                  index: index,
+                ).copyWith(
                   index: index,
                 ),
               ),
@@ -67,24 +64,20 @@ class ContentData<T> {
 
   @override
   String toString() {
-    return 'ContentData(syncData: $syncData, data: $data, current: $current, contents: $contents)';
+    return 'ContentData(data: $data, current: $current, contents: $contents)';
   }
 
   @override
   bool operator ==(covariant ContentData<T> other) {
     if (identical(this, other)) return true;
 
-    return other.syncData == syncData &&
-        other.data == data &&
+    return other.data == data &&
         other.current == current &&
         listEquals(other.contents, contents);
   }
 
   @override
   int get hashCode {
-    return syncData.hashCode ^
-        data.hashCode ^
-        current.hashCode ^
-        contents.hashCode;
+    return data.hashCode ^ current.hashCode ^ contents.hashCode;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:animo/models/base_data.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fpdart/fpdart.dart';
 
 class PaginatedData<T> {
   final int? total;
@@ -33,7 +34,9 @@ class PaginatedData<T> {
   }
 
   factory PaginatedData.fromMap(
-      Map<String, dynamic> map, T Function(Map<String, dynamic>) fromMap) {
+    Map<String, dynamic> map,
+    T Function(Map<String, dynamic>) fromMap,
+  ) {
     return PaginatedData<T>(
       total: map['total'] != null ? map['total'] as int : null,
       currentPage: map['currentPage'] != null ? map['currentPage'] as int : 1,
@@ -41,6 +44,22 @@ class PaginatedData<T> {
       data: List<T>.from(
         (map['data'] as List).map<T>(
           (x) => fromMap(x as Map<String, dynamic>),
+        ),
+      ),
+    );
+  }
+
+  factory PaginatedData.fromMapWithIndex(
+    Map<String, dynamic> map,
+    T Function(Map<String, dynamic>, {int? index}) fromMapWithIndex,
+  ) {
+    return PaginatedData<T>(
+      total: map['total'] != null ? map['total'] as int : null,
+      currentPage: map['currentPage'] != null ? map['currentPage'] as int : 1,
+      haveMore: map['haveMore'] as bool,
+      data: List<T>.from(
+        (map['data'] as List).mapWithIndex<T>(
+          (x, i) => fromMapWithIndex(x as Map<String, dynamic>, index: i),
         ),
       ),
     );

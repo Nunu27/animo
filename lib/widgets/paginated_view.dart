@@ -20,11 +20,30 @@ class PaginatedView<T> extends StatefulWidget {
 }
 
 class _PaginatedViewState<T> extends State<PaginatedView<T>> {
+  bool refreshable = false;
+
+  bool isRefreshable(PagingStatus status) {
+    switch (status) {
+      case PagingStatus.completed:
+      case PagingStatus.ongoing:
+      case PagingStatus.subsequentPageError:
+        return true;
+
+      default:
+        return false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     widget.pagingController.addPageRequestListener((pageKey) {
       _fetch(pageKey);
+    });
+    widget.pagingController.addStatusListener((status) {
+      setState(() {
+        refreshable = isRefreshable(status);
+      });
     });
   }
 
@@ -47,6 +66,7 @@ class _PaginatedViewState<T> extends State<PaginatedView<T>> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
+      notificationPredicate: (_) => refreshable,
       onRefresh: () => Future.sync(
         () => widget.pagingController.refresh(),
       ),

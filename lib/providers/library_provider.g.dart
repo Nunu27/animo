@@ -6,22 +6,7 @@ part of 'library_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$libraryManagerHash() => r'2a682bce62d2922ab8737a659b3499d8c4a4c354';
-
-/// See also [libraryManager].
-@ProviderFor(libraryManager)
-final libraryManagerProvider = AutoDisposeProvider<LibraryManager>.internal(
-  libraryManager,
-  name: r'libraryManagerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$libraryManagerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef LibraryManagerRef = AutoDisposeProviderRef<LibraryManager>;
-String _$libraryHash() => r'9035591d1bc6cac3af7c17a86a7f6f152dbddb60';
+String _$libraryHash() => r'54fe2009726ac6605e4f5c9785c01d88199932d0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -44,21 +29,30 @@ class _SystemHash {
   }
 }
 
-/// See also [library].
-@ProviderFor(library)
+abstract class _$Library
+    extends BuildlessAutoDisposeNotifier<List<MediaBasic>> {
+  late final MediaType type;
+
+  List<MediaBasic> build(
+    MediaType type,
+  );
+}
+
+/// See also [Library].
+@ProviderFor(Library)
 const libraryProvider = LibraryFamily();
 
-/// See also [library].
+/// See also [Library].
 class LibraryFamily extends Family<List<MediaBasic>> {
-  /// See also [library].
+  /// See also [Library].
   const LibraryFamily();
 
-  /// See also [library].
-  LibraryProvider call({
-    required MediaType type,
-  }) {
+  /// See also [Library].
+  LibraryProvider call(
+    MediaType type,
+  ) {
     return LibraryProvider(
-      type: type,
+      type,
     );
   }
 
@@ -67,7 +61,7 @@ class LibraryFamily extends Family<List<MediaBasic>> {
     covariant LibraryProvider provider,
   ) {
     return call(
-      type: provider.type,
+      provider.type,
     );
   }
 
@@ -86,16 +80,14 @@ class LibraryFamily extends Family<List<MediaBasic>> {
   String? get name => r'libraryProvider';
 }
 
-/// See also [library].
-class LibraryProvider extends AutoDisposeProvider<List<MediaBasic>> {
-  /// See also [library].
-  LibraryProvider({
-    required MediaType type,
-  }) : this._internal(
-          (ref) => library(
-            ref as LibraryRef,
-            type: type,
-          ),
+/// See also [Library].
+class LibraryProvider
+    extends AutoDisposeNotifierProviderImpl<Library, List<MediaBasic>> {
+  /// See also [Library].
+  LibraryProvider(
+    MediaType type,
+  ) : this._internal(
+          () => Library()..type = type,
           from: libraryProvider,
           name: r'libraryProvider',
           debugGetCreateSourceHash:
@@ -120,13 +112,20 @@ class LibraryProvider extends AutoDisposeProvider<List<MediaBasic>> {
   final MediaType type;
 
   @override
-  Override overrideWith(
-    List<MediaBasic> Function(LibraryRef provider) create,
+  List<MediaBasic> runNotifierBuild(
+    covariant Library notifier,
   ) {
+    return notifier.build(
+      type,
+    );
+  }
+
+  @override
+  Override overrideWith(Library Function() create) {
     return ProviderOverride(
       origin: this,
       override: LibraryProvider._internal(
-        (ref) => create(ref as LibraryRef),
+        () => create()..type = type,
         from: from,
         name: null,
         dependencies: null,
@@ -138,7 +137,8 @@ class LibraryProvider extends AutoDisposeProvider<List<MediaBasic>> {
   }
 
   @override
-  AutoDisposeProviderElement<List<MediaBasic>> createElement() {
+  AutoDisposeNotifierProviderElement<Library, List<MediaBasic>>
+      createElement() {
     return _LibraryProviderElement(this);
   }
 
@@ -156,162 +156,18 @@ class LibraryProvider extends AutoDisposeProvider<List<MediaBasic>> {
   }
 }
 
-mixin LibraryRef on AutoDisposeProviderRef<List<MediaBasic>> {
+mixin LibraryRef on AutoDisposeNotifierProviderRef<List<MediaBasic>> {
   /// The parameter `type` of this provider.
   MediaType get type;
 }
 
 class _LibraryProviderElement
-    extends AutoDisposeProviderElement<List<MediaBasic>> with LibraryRef {
+    extends AutoDisposeNotifierProviderElement<Library, List<MediaBasic>>
+    with LibraryRef {
   _LibraryProviderElement(super.provider);
 
   @override
   MediaType get type => (origin as LibraryProvider).type;
-}
-
-String _$isInLibraryHash() => r'002987def2e90b6abc66a0733ffbd95e47b440c9';
-
-/// See also [isInLibrary].
-@ProviderFor(isInLibrary)
-const isInLibraryProvider = IsInLibraryFamily();
-
-/// See also [isInLibrary].
-class IsInLibraryFamily extends Family<bool> {
-  /// See also [isInLibrary].
-  const IsInLibraryFamily();
-
-  /// See also [isInLibrary].
-  IsInLibraryProvider call({
-    required String slug,
-    required MediaType type,
-  }) {
-    return IsInLibraryProvider(
-      slug: slug,
-      type: type,
-    );
-  }
-
-  @override
-  IsInLibraryProvider getProviderOverride(
-    covariant IsInLibraryProvider provider,
-  ) {
-    return call(
-      slug: provider.slug,
-      type: provider.type,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'isInLibraryProvider';
-}
-
-/// See also [isInLibrary].
-class IsInLibraryProvider extends AutoDisposeProvider<bool> {
-  /// See also [isInLibrary].
-  IsInLibraryProvider({
-    required String slug,
-    required MediaType type,
-  }) : this._internal(
-          (ref) => isInLibrary(
-            ref as IsInLibraryRef,
-            slug: slug,
-            type: type,
-          ),
-          from: isInLibraryProvider,
-          name: r'isInLibraryProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$isInLibraryHash,
-          dependencies: IsInLibraryFamily._dependencies,
-          allTransitiveDependencies:
-              IsInLibraryFamily._allTransitiveDependencies,
-          slug: slug,
-          type: type,
-        );
-
-  IsInLibraryProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.slug,
-    required this.type,
-  }) : super.internal();
-
-  final String slug;
-  final MediaType type;
-
-  @override
-  Override overrideWith(
-    bool Function(IsInLibraryRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: IsInLibraryProvider._internal(
-        (ref) => create(ref as IsInLibraryRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        slug: slug,
-        type: type,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<bool> createElement() {
-    return _IsInLibraryProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is IsInLibraryProvider &&
-        other.slug == slug &&
-        other.type == type;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, slug.hashCode);
-    hash = _SystemHash.combine(hash, type.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-mixin IsInLibraryRef on AutoDisposeProviderRef<bool> {
-  /// The parameter `slug` of this provider.
-  String get slug;
-
-  /// The parameter `type` of this provider.
-  MediaType get type;
-}
-
-class _IsInLibraryProviderElement extends AutoDisposeProviderElement<bool>
-    with IsInLibraryRef {
-  _IsInLibraryProviderElement(super.provider);
-
-  @override
-  String get slug => (origin as IsInLibraryProvider).slug;
-  @override
-  MediaType get type => (origin as IsInLibraryProvider).type;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -51,7 +51,11 @@ class _ExploreState extends ConsumerState<Explore>
               } else {
                 mediaType = MediaType.novel;
               }
-              context.goNamed('explore-search', extra: mediaType);
+
+              context.goNamed(
+                'explore-search',
+                pathParameters: {'type': mediaType.name},
+              );
             },
             icon: const Icon(Icons.search),
           ),

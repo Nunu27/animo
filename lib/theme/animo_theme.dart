@@ -88,6 +88,8 @@ class AnimoTheme {
           if (states.contains(MaterialState.selected)) {
             return colorScheme.primaryContainer;
           }
+
+          return null;
         }),
         shape: StadiumBorder(
           side: BorderSide(

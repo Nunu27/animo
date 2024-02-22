@@ -17,7 +17,6 @@ import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/models/media/media_content.dart';
 import 'package:animo/models/paginated_data.dart';
 import 'package:animo/providers/api_client.dart';
-import 'package:animo/providers/api_provider.dart';
 import 'package:animo/services/extractors/rapidcloud.dart';
 import 'package:animo/services/extractors/streamsb.dart';
 import 'package:animo/services/extractors/streamtape.dart';
@@ -177,7 +176,7 @@ class MediaRepository extends ApiRepository {
     );
     final response = await handleApi(request);
 
-    return PaginatedData.fromMap(response.data, MediaContent.fromMap);
+    return PaginatedData.fromMapWithIndex(response.data, MediaContent.fromMap);
   }
 
   Future<ContentData<T>> getContent<T>(
@@ -193,14 +192,6 @@ class MediaRepository extends ApiRepository {
             current: current,
           ) as ContentData<T>;
     }
-
-    final parent = await _ref.read(
-      getMediaProvider(
-        type: baseContent.type,
-        slug: baseContent.parentSlug!,
-      ).future,
-    );
-    final syncData = parent.toSyncData();
     final request = api.get(
       '/${baseContent.type.name}/content/${baseContent.slug}',
       queryParameters: removeNulls(
@@ -212,7 +203,7 @@ class MediaRepository extends ApiRepository {
     );
     final response = await handleApi(request);
 
-    return ContentData.fromMap(response.data, syncData, baseContent.type);
+    return ContentData.fromMap(response.data, baseContent.type);
   }
 
   Future<VideoData> getSource(VideoServer videoServer) async {

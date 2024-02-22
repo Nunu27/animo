@@ -2,46 +2,32 @@ import 'package:animo/models/base_data.dart';
 import 'package:animo/models/media/media_content.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ChapterTile extends StatelessWidget {
+class ChapterTile extends ConsumerWidget {
   final String parentSlug;
   final MediaType type;
   final MediaContent chapter;
-  final Function(int)? onTap;
+  final Function(MediaContent chapter) onTap;
 
   const ChapterTile({
     super.key,
     required this.parentSlug,
     required this.type,
     required this.chapter,
-    this.onTap,
+    required this.onTap,
   });
 
-  void _handleTap(BuildContext context) {
-    if (onTap != null) {
-      onTap!(chapter.index!);
-      context.pop();
-    } else {
-      context.pushNamed(
-        'read',
-        pathParameters: {
-          'slug': parentSlug,
-          'type': type.name,
-          'chapter': chapter.slug,
-        },
-      );
-    }
+  void _handleTap() {
+    onTap(chapter);
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
     return ListTile(
-      onTap: () {
-        _handleTap(context);
-      },
+      onTap: _handleTap,
       title: Text(
         chapter.getTitle(),
         style: theme.textTheme.titleMedium,

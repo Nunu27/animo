@@ -1,8 +1,3 @@
-import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:animo/constants/url_constants.dart';
 import 'package:animo/models/abstract/media_provider.dart';
 import 'package:animo/models/base_data.dart';
@@ -14,20 +9,21 @@ import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/models/media/media_content.dart';
 import 'package:animo/models/paginated_data.dart';
-import 'package:animo/providers/api_provider.dart';
 import 'package:animo/services/media_provider/manga/manga_formatter.dart';
 import 'package:animo/services/media_provider/manga/manga_lut.dart';
 import 'package:animo/utils/utils.dart';
+import 'package:dio/dio.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'manga_provider.g.dart';
 
 @riverpod
 MangaProvider manga(MangaRef ref) {
-  return MangaProvider(ref);
+  return MangaProvider();
 }
 
 class MangaProvider extends MediaProvider<List<ImageContent>> {
-  final Ref _ref;
   final Dio _dio = Dio(
     BaseOptions(
       baseUrl: URLConstants.manga,
@@ -35,8 +31,6 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
       receiveTimeout: const Duration(seconds: 20),
     ),
   );
-
-  MangaProvider(this._ref);
 
   @override
   Future<PaginatedData<MediaBasic>> explore(
@@ -77,6 +71,7 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
 
   @override
   Future<Media> getMedia(String slug) async {
+    print(URLConstants.manga + '/comic/$slug/?tachiyomi=true');
     final response = await _dio.get<Map<String, dynamic>>(
       '/comic/$slug/?tachiyomi=true',
     );
@@ -160,12 +155,6 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
     bool withContentList = false,
     int? current,
   }) async {
-    final parent = await _ref.read(
-      getMediaProvider(type: baseContent.type, slug: baseContent.parentSlug!)
-          .future,
-    );
-    final syncData = parent.toSyncData();
-
     final response = await _dio.get<Map<String, dynamic>>(
       '/chapter/${baseContent.slug}?tachiyomi=true',
     );
@@ -175,7 +164,6 @@ class MangaProvider extends MediaProvider<List<ImageContent>> {
         : null;
 
     return ContentData(
-      syncData: syncData,
       data: (data['chapter']['images'] as List)
           .map(
             (e) => ImageContent.fromMap(e),

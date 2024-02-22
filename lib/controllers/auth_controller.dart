@@ -6,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:animo/constants/box_constants.dart';
-import 'package:animo/providers/library_provider.dart';
+import 'package:animo/providers/library_manager_provider.dart';
 import 'package:animo/repositories/auth_repository.dart';
 import 'package:animo/services/notification.dart';
 

@@ -29,7 +29,7 @@ class ChapterListView extends ConsumerStatefulWidget {
   final List<MediaContent>? chapterList;
   final List<String>? langList;
   final Map<String, dynamic>? options;
-  final Function(int)? onTap;
+  final Function(MediaContent chapter)? onTap;
   final Function(Map<String, dynamic>)? filter;
   final bool isModal;
 
@@ -85,7 +85,7 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Search',
+                            'Chapters',
                             style: theme.textTheme.titleMedium,
                           ),
                           Text(
@@ -99,7 +99,7 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
                       flex: 2,
                       child: CustomInputForm(
                         keyboardType: TextInputType.number,
-                        hintText: 'Goto',
+                        hintText: 'Search',
                         hintTextStyle: theme.textTheme.bodySmall!.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -133,10 +133,10 @@ class _ChapterListViewState extends ConsumerState<ChapterListView> {
           SliverList.builder(
             itemCount: searchResultList?.length ?? widget.chapterList!.length,
             itemBuilder: (context, index) => ChapterTile(
-              onTap: widget.onTap,
               parentSlug: widget.parentSlug,
               type: widget.type,
               chapter: (searchResultList ?? widget.chapterList!)[index],
+              onTap: widget.onTap!,
             ),
           )
         else

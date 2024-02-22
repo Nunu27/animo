@@ -1,9 +1,3 @@
-import 'package:animo/screens/media/detail_screen.dart';
-import 'package:animo/screens/media/manga_reader_screen.dart';
-import 'package:bot_toast/bot_toast.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
 import 'package:animo/models/base_data.dart';
 import 'package:animo/screens/auth/signin_screen.dart';
 import 'package:animo/screens/explore/explore.dart';
@@ -11,10 +5,15 @@ import 'package:animo/screens/explore/explore_detail.dart';
 import 'package:animo/screens/explore/search_screen.dart';
 import 'package:animo/screens/library/library.dart';
 import 'package:animo/screens/media/detail_anime.dart';
+import 'package:animo/screens/media/detail_screen.dart';
+import 'package:animo/screens/media/reader_screen.dart';
 import 'package:animo/screens/profile/profile.dart';
 import 'package:animo/screens/splash_screen.dart';
 import 'package:animo/widgets/error_view.dart';
 import 'package:animo/widgets/scaffold_with_bar.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 final GlobalKey<NavigatorState> _rootNavigator = GlobalKey(debugLabel: 'root');
 
@@ -47,12 +46,15 @@ final router = GoRouter(
                   const NoTransitionPage(child: Explore()),
               routes: [
                 GoRoute(
-                  path: 'search',
+                  path: ':type/search',
                   name: 'explore-search',
                   parentNavigatorKey: _rootNavigator,
                   builder: (context, state) {
-                    final MediaType mediaType = state.extra as MediaType;
-                    return SearchScreen(mediaType: mediaType);
+                    return SearchScreen(
+                      mediaType: MediaType.values.byName(
+                        state.pathParameters['type']!,
+                      ),
+                    );
                   },
                 ),
                 GoRoute(
@@ -60,21 +62,15 @@ final router = GoRouter(
                   name: 'explore-detail',
                   parentNavigatorKey: _rootNavigator,
                   builder: (context, state) {
-                    final MediaType mediaType =
-                        MediaType.values.byName(state.pathParameters['type']!);
-                    final String path = state.pathParameters['path']!;
-                    final String title = state.extra as String;
-
-                    if (state.error != null) {
-                      return ErrorView(message: state.error!.message);
-                    }
-
                     return ExploreDetail(
-                      mediaType: mediaType,
-                      path: path,
-                      options:
-                          Map<String, dynamic>.from(state.uri.queryParameters),
-                      title: title,
+                      mediaType: MediaType.values.byName(
+                        state.pathParameters['type']!,
+                      ),
+                      path: state.pathParameters['path']!,
+                      options: Map<String, dynamic>.from(
+                        state.uri.queryParameters,
+                      ),
+                      title: state.extra as String,
                     );
                   },
                 )
@@ -119,23 +115,24 @@ final router = GoRouter(
         },
         routes: [
           GoRoute(
-            path: 'read/:chapter',
+            path: 'read',
             name: 'read',
             builder: (context, state) {
-              final parentSlug = state.pathParameters['slug']!;
               final type =
                   MediaType.values.byName(state.pathParameters['type']!);
-              final slug = state.pathParameters['chapter']!;
+              final extra = state.extra as Map<String, dynamic>;
 
               if (type == MediaType.anime) {
-                throw 'Unsupported';
-              } else if (type == MediaType.manga) {
-                return MangaReaderScreen(
-                    baseData: BaseData(
-                        slug: slug, parentSlug: parentSlug, type: type));
-              } else {
-                throw 'Unsupported';
+                return const Scaffold(
+                  body: ErrorView(message: 'You can\'t read an anime'),
+                );
               }
+
+              return ReaderScreen(
+                syncData: extra['syncData'],
+                chapter: extra['chapter'],
+                chapters: extra['chapters'],
+              );
             },
           )
         ]),

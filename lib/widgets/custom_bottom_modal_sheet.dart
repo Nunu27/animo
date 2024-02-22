@@ -24,14 +24,17 @@ class CustomBottomModalSheet<T> {
           maxChildSize: maxChildExpand,
           expand: false,
           builder: (context, scrollController) {
-            return CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              controller: scrollController,
-              slivers: [
-                MultiSliver(
-                  children: children,
-                ),
-              ],
+            return Material(
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                controller: scrollController,
+                clipBehavior: Clip.hardEdge,
+                slivers: [
+                  MultiSliver(
+                    children: children,
+                  ),
+                ],
+              ),
             );
           },
         );

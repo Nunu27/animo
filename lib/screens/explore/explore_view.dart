@@ -30,6 +30,9 @@ class ExploreView extends ConsumerWidget {
                     ));
           },
           error: (error, stackTrace) {
+            print('hai');
+            print(error);
+            print(stackTrace);
             return ErrorView(
               message: getError(error).message,
               onRetry: () => ref.invalidate(getFeedProvider(type: mediaType)),

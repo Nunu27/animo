@@ -5,7 +5,7 @@ import 'package:animo/models/media/media.dart';
 import 'package:animo/models/media/media_basic.dart';
 import 'package:animo/models/media/media_content.dart';
 import 'package:animo/providers/api_provider.dart';
-import 'package:animo/providers/library_provider.dart';
+import 'package:animo/providers/library_manager_provider.dart';
 import 'package:animo/providers/user_provider.dart';
 import 'package:animo/utils/utils.dart';
 import 'package:animo/widgets/chapter_list/episode_list_anime.dart';

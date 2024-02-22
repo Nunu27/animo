@@ -6,7 +6,7 @@ part of 'api_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getFeedHash() => r'488513333637fc26398a78cad3b454a1dff572d3';
+String _$getFeedHash() => r'92b9c46418bb51de2981308bcabfcdaac7cba26f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -154,7 +154,7 @@ class _GetFeedProviderElement
   MediaType get type => (origin as GetFeedProvider).type;
 }
 
-String _$getMediaHash() => r'903fe7046a9655742cddb7f74b82ada589e8e091';
+String _$getMediaHash() => r'54ae5e9b52851c553c554ae676f4cb308444876e';
 
 /// See also [getMedia].
 @ProviderFor(getMedia)
@@ -445,7 +445,7 @@ class _GetMediaBasicProviderElement
   DataSource get source => (origin as GetMediaBasicProvider).source;
 }
 
-String _$getSourceHash() => r'b3f42cb06bd909195d5f13cd895dbc0df7ef104d';
+String _$getSourceHash() => r'58718cc142c46d9309cb971c8d5a0068c08ed688';
 
 /// See also [getSource].
 @ProviderFor(getSource)
