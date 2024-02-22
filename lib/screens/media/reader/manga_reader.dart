@@ -7,8 +7,10 @@ import 'package:photo_view/photo_view_gallery.dart';
 
 class MangaReader extends StatefulWidget {
   final List<ImageContent> images;
+  final VoidCallback toggleOverlay;
 
-  const MangaReader({super.key, required this.images});
+  const MangaReader(
+      {super.key, required this.images, required this.toggleOverlay});
 
   @override
   State<MangaReader> createState() => _MangaReaderState();
@@ -96,6 +98,7 @@ class _MangaReaderState extends State<MangaReader>
             }
           },
           child: GestureDetector(
+            onTap: widget.toggleOverlay,
             onDoubleTapDown: (details) {
               _toggleScale(details.globalPosition);
             },

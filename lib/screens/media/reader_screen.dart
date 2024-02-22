@@ -76,7 +76,7 @@ class _MangaReaderScreenState extends ConsumerState<ReaderScreen>
       future = ref.read(mediaRepositoryProvider).getContent(
             BaseData(slug: chapter.slug, type: widget.syncData.type),
             withContentList: withContent,
-            current: chapter.index,
+            current: current,
           );
     });
 
@@ -87,7 +87,7 @@ class _MangaReaderScreenState extends ConsumerState<ReaderScreen>
         chapters = data.contents;
       }
 
-      current ??= data.current!;
+      current ??= data.current ?? widget.chapter.index;
       _updateNav();
       setState(() {});
     });
@@ -140,6 +140,7 @@ class _MangaReaderScreenState extends ConsumerState<ReaderScreen>
               onData: (data) => widget.syncData.type == MediaType.manga
                   ? MangaReader(
                       images: data.data,
+                      toggleOverlay: _toggleOverlay,
                     )
                   : SizedBox(
                       width: MediaQuery.of(context).size.width,

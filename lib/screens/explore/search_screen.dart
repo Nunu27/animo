@@ -73,16 +73,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       setState(() {
                         _searchController.clear();
                       });
+                      _pagingController.refresh();
                     },
                   ),
             hintText: 'Search',
           ),
           onSubmitted: (value) {
-            if (_pagingController.itemList == null) {
-              setState(() {});
-            } else {
+            if (_pagingController.itemList != null) {
               _pagingController.refresh();
             }
+            setState(() {});
           },
         ),
         bottom: PreferredSize(
@@ -146,7 +146,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         child: _searchController.text.isEmpty && options.isEmpty
             ? const ErrorView(message: 'Search something here')
             : PagedGridView(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
+                padding: const EdgeInsets.all(6),
                 showNewPageProgressIndicatorAsGridChild: false,
                 showNewPageErrorIndicatorAsGridChild: false,
                 showNoMoreItemsIndicatorAsGridChild: false,
@@ -183,11 +183,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
     if (data != null) {
       options = data;
-      if (_pagingController.itemList == null) {
-        setState(() {});
-      } else {
+      if (_pagingController.itemList != null) {
         _pagingController.refresh();
       }
+      setState(() {});
     }
   }
 }

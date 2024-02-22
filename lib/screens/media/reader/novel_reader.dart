@@ -14,14 +14,9 @@ class NovelReader extends StatelessWidget {
     return HtmlWidget(
       content,
       textStyle: theme.textTheme.bodyMedium,
-      renderMode: RenderMode.listView,
-      customStylesBuilder: (element) {
-        if (element.children.isEmpty && element.text.isNotEmpty) {
-          return {'padding': '0 14px'};
-        }
-
-        return null;
-      },
+      renderMode: const ListViewMode(
+        padding: EdgeInsets.all(14),
+      ),
       onLoadingBuilder: (context, element, loadingProgress) =>
           Loader(value: loadingProgress),
     );

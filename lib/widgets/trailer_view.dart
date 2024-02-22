@@ -34,102 +34,88 @@ class TrailerView extends StatelessWidget {
             style: theme.textTheme.labelLarge,
           ),
         ),
-        const SizedBox(
-          height: 8,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 350,
-              child: AspectRatio(
-                aspectRatio: 16 / 9,
-                child: GestureDetector(
-                  onTap: () {
-                    _launchUrl();
-                  },
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: AspectRatio(
-                          aspectRatio: 16 / 9,
-                          child: CachedNetworkImage(
-                            imageUrl: trailer.thumbnail,
-                            fit: BoxFit.cover,
-                            errorWidget: (context, url, error) {
-                              return const Icon(
-                                Icons.broken_image_outlined,
-                              );
-                            },
-                            placeholder: (context, url) {
-                              return const LoadingShimmer();
-                            },
-                          ),
-                        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8.0),
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: GestureDetector(
+              onTap: () {
+                _launchUrl();
+              },
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: CachedNetworkImage(
+                        imageUrl: trailer.thumbnail,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) {
+                          return const Icon(
+                            Icons.broken_image_outlined,
+                          );
+                        },
+                        placeholder: (context, url) {
+                          return const LoadingShimmer();
+                        },
                       ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.background,
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: isDarkMode
-                                  ? [
-                                      theme.colorScheme.background
-                                          .withOpacity(0),
-                                      theme.colorScheme.background
-                                          .withOpacity(0.8)
-                                    ]
-                                  : [
-                                      theme.colorScheme.onBackground
-                                          .withOpacity(0),
-                                      theme.colorScheme.onBackground
-                                          .withOpacity(0.8),
-                                    ],
-                              stops: const [0.3, 1.0],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          height: 36,
-                          width: 56,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: const Color(0xfff60002),
-                          ),
-                          alignment: Alignment.center,
-                          child: const Icon(Icons.play_arrow),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Watch on Youtube',
-                            style: theme.textTheme.bodyMedium!.copyWith(
-                              color: isDarkMode
-                                  ? theme.colorScheme.onBackground
-                                  : theme.colorScheme.background,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.background,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: isDarkMode
+                              ? [
+                                  theme.colorScheme.background.withOpacity(0),
+                                  theme.colorScheme.background.withOpacity(0.8)
+                                ]
+                              : [
+                                  theme.colorScheme.onBackground.withOpacity(0),
+                                  theme.colorScheme.onBackground
+                                      .withOpacity(0.8),
+                                ],
+                          stops: const [0.3, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                      height: 36,
+                      width: 56,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: const Color(0xfff60002),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.play_arrow),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Watch on Youtube',
+                        style: theme.textTheme.bodyMedium!.copyWith(
+                          color: isDarkMode
+                              ? theme.colorScheme.onBackground
+                              : theme.colorScheme.background,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            )
-          ],
-        ),
-        const SizedBox(
-          height: 14,
+            ),
+          ),
         ),
       ],
     );
