@@ -14,27 +14,27 @@ class AnimoTheme {
         selectedIcon: null,
         style: ButtonStyle(
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          padding: const MaterialStatePropertyAll(
+          padding: const WidgetStatePropertyAll(
             EdgeInsets.symmetric(
               horizontal: 14,
               vertical: 4,
             ),
           ),
-          backgroundColor: MaterialStateProperty.resolveWith(
+          backgroundColor: WidgetStateProperty.resolveWith(
             (states) {
-              if (states.contains(MaterialState.selected)) {
+              if (states.contains(WidgetState.selected)) {
                 return colorScheme.primaryContainer;
               } else {
-                return colorScheme.background;
+                return colorScheme.surface;
               }
             },
           ),
-          foregroundColor: MaterialStateProperty.resolveWith(
+          foregroundColor: WidgetStateProperty.resolveWith(
             (states) {
-              if (states.contains(MaterialState.selected)) {
+              if (states.contains(WidgetState.selected)) {
                 return colorScheme.onPrimaryContainer;
               } else {
-                return colorScheme.onBackground;
+                return colorScheme.onSurface;
               }
             },
           ),
@@ -42,22 +42,22 @@ class AnimoTheme {
       ),
       navigationBarTheme: NavigationBarThemeData(
         indicatorColor: colorScheme.primaryContainer,
-        iconTheme: MaterialStatePropertyAll(
+        iconTheme: WidgetStatePropertyAll(
           IconThemeData(
             color: colorScheme.onPrimaryContainer,
           ),
         ),
       ),
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: colorScheme.background,
-        surfaceTintColor: colorScheme.background,
+        backgroundColor: colorScheme.surface,
+        surfaceTintColor: colorScheme.surface,
         showDragHandle: true,
       ),
       appBarTheme: AppBarTheme(
         elevation: 0,
-        surfaceTintColor: colorScheme.background,
-        backgroundColor: colorScheme.background,
-        foregroundColor: colorScheme.onBackground,
+        surfaceTintColor: colorScheme.surface,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
@@ -71,7 +71,7 @@ class AnimoTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: colorScheme.onBackground,
+          foregroundColor: colorScheme.onSurface,
           padding: const EdgeInsets.symmetric(
             horizontal: 18,
             vertical: 12,
@@ -80,12 +80,12 @@ class AnimoTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: colorScheme.onBackground,
+          foregroundColor: colorScheme.onSurface,
         ),
       ),
       chipTheme: ChipThemeData(
-        color: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        color: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return colorScheme.primaryContainer;
           }
 

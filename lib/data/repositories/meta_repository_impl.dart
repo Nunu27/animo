@@ -1,3 +1,4 @@
+import 'package:animo/data/repositories/meta_query.dart';
 import 'package:animo/domain/entities/character/character.dart';
 import 'package:animo/domain/entities/character/character_basic.dart';
 import 'package:animo/domain/entities/feed.dart';
@@ -9,64 +10,6 @@ import 'package:animo/domain/enums/media_season.dart';
 import 'package:animo/domain/enums/media_type.dart';
 import 'package:animo/domain/repositories/meta_repository.dart';
 import 'package:dio/dio.dart';
-
-const feedQuery = '''
-query (\$season: MediaSeason, \$seasonYear: Int, \$nextSeason: MediaSeason, \$nextYear: Int) {
-  trending: Page(page: 1, perPage: 6) {
-    media(sort: TRENDING_DESC, type: ANIME, isAdult: false) {
-      ...media
-    }
-  }
-  season: Page(page: 1, perPage: 6) {
-    media(season: \$season, seasonYear: \$seasonYear, sort: POPULARITY_DESC, type: ANIME, isAdult: false) {
-      ...media
-    }
-  }
-  nextSeason: Page(page: 1, perPage: 6) {
-    media(season: \$nextSeason, seasonYear: \$nextYear, sort: POPULARITY_DESC, type: ANIME, isAdult: false) {
-      ...media
-    }
-  }
-  popular: Page(page: 1, perPage: 6) {
-    media(sort: POPULARITY_DESC, type: ANIME, isAdult: false) {
-      ...media
-    }
-  }
-  top: Page(page: 1, perPage: 10) {
-    media(sort: SCORE_DESC, type: ANIME, isAdult: false) {
-      ...media
-    }
-  }
-}
-
-fragment media on Media {
-  id
-  title {
-    userPreferred
-  }
-  coverImage {
-    large
-  }
-  type
-}
-''';
-
-const characterQuery = '''
-    query (\$id: Int) {
-      Character(id: \$id) {
-        id
-        name {
-          first
-          last
-          native
-        }
-        image {
-          large
-        }
-        description
-      }
-    }
-  ''';
 
 class MetaRepositoryImpl implements MetaRepository {
   final _dio = Dio(BaseOptions(baseUrl: 'https://graphql.anilist.co'));
@@ -80,12 +23,12 @@ class MetaRepositoryImpl implements MetaRepository {
     final nextYear = (season == MediaSeason.FALL) ? year + 1 : year;
 
     final response = await _dio.post<Map<String, dynamic>>('', data: {
-      'query': feedQuery,
+      'query': MetaQuery.feed[type],
       'variables': {
         'season': season.name,
         'seasonYear': year,
         'nextSeason': nextSeason.name,
-        'nextYear': nextYear
+        'nextYear': nextYear,
       },
     });
     final data = response.data!['data'];
@@ -115,13 +58,11 @@ class MetaRepositoryImpl implements MetaRepository {
   @override
   Future<Character> getCharacter(int id) async {
     final response = await _dio.post<Map<String, dynamic>>('', data: {
-      'query': characterQuery,
+      'query': MetaQuery.character,
       'variables': {
         'id': id,
       },
     });
-
-    print(response.data);
 
     return Character(
       id: id,

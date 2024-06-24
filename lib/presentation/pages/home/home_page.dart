@@ -1,5 +1,5 @@
 import 'package:animo/domain/enums/media_type.dart';
-import 'package:animo/presentation/views/home_view.dart';
+import 'package:animo/presentation/pages/home/home_view.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late final TabController _tabController;
+
   @override
   void initState() {
     super.initState();
@@ -29,24 +30,26 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Explore'),
-          bottom: TabBar(
-            controller: _tabController,
-            tabs: const <Widget>[
-              Tab(text: 'Anime'),
-              Tab(text: 'Manga'),
-              Tab(text: 'Novel'),
-            ],
-          ),
-        ),
-        body: TabBarView(
+      appBar: AppBar(
+        title: const Text('Explore'),
+        bottom: TabBar(
           controller: _tabController,
-          children: const [
-            HomeView(mediaType: MediaType.ANIME),
-            HomeView(mediaType: MediaType.MANGA),
-            HomeView(mediaType: MediaType.NOVEL),
+          tabs: const [
+            Tab(text: 'Anime'),
+            Tab(text: 'Manga'),
+            Tab(text: 'Novel'),
           ],
-        ));
+        ),
+      ),
+      body: TabBarView(
+        physics: const NeverScrollableScrollPhysics(),
+        controller: _tabController,
+        children: const [
+          HomeView(mediaType: MediaType.ANIME),
+          HomeView(mediaType: MediaType.MANGA),
+          HomeView(mediaType: MediaType.NOVEL),
+        ],
+      ),
+    );
   }
 }
