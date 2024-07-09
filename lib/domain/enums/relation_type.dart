@@ -1,20 +1,22 @@
+// ignore_for_file: constant_identifier_names
+
 enum RelationType {
-  adaptation('Adaptation'),
-  prequel('Prequel'),
-  sequel('Sequel'),
-  parent('Parent'),
-  sideStory('Side story'),
-  character('Character'),
-  summary('Summary'),
-  alternative('Alternative'),
-  spinOff('Spin Off'),
-  source('Source'),
-  compilation('Compilation'),
-  contains('Contains'),
-  doujinshi('Doujinshi'),
-  sharedUniverse('Shared Universe'),
-  coloured('Coloured'),
-  other('Other');
+  ADAPTATION('Adaptation'),
+  PREQUEL('Prequel'),
+  SEQUEL('Sequel'),
+  PARENT('Parent'),
+  SIDE_STORY('Side story'),
+  CHARACTER('Character'),
+  SUMMARY('Summary'),
+  ALTERNATIVE('Alternative'),
+  SPIN_OFF('Spin Off'),
+  SOURCE('Source'),
+  COMPILATION('Compilation'),
+  CONTAINS('Contains'),
+  DOUJINSHI('Doujinshi'),
+  SHARED_UNIVERSE('Shared Universe'),
+  COLOURED('Coloured'),
+  OTHER('Other');
 
   const RelationType(this.text);
 

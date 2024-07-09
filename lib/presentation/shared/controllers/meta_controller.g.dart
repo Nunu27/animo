@@ -6,7 +6,7 @@ part of 'meta_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getFeedHash() => r'14b97d27d88c6ecb65aafb172b8bfeb290507577';
+String _$getFeedHash() => r'558a0521ef8e7c4cfe2d1832629561b71de49228';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -152,6 +152,133 @@ class _GetFeedProviderElement extends AutoDisposeFutureProviderElement<Feed>
 
   @override
   MediaType get type => (origin as GetFeedProvider).type;
+}
+
+String _$getMediaHash() => r'71c02df5e8cf9d2aa11865490737b35fb24c1f5d';
+
+/// See also [getMedia].
+@ProviderFor(getMedia)
+const getMediaProvider = GetMediaFamily();
+
+/// See also [getMedia].
+class GetMediaFamily extends Family<AsyncValue<Media>> {
+  /// See also [getMedia].
+  const GetMediaFamily();
+
+  /// See also [getMedia].
+  GetMediaProvider call(
+    int id,
+  ) {
+    return GetMediaProvider(
+      id,
+    );
+  }
+
+  @override
+  GetMediaProvider getProviderOverride(
+    covariant GetMediaProvider provider,
+  ) {
+    return call(
+      provider.id,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getMediaProvider';
+}
+
+/// See also [getMedia].
+class GetMediaProvider extends AutoDisposeFutureProvider<Media> {
+  /// See also [getMedia].
+  GetMediaProvider(
+    int id,
+  ) : this._internal(
+          (ref) => getMedia(
+            ref as GetMediaRef,
+            id,
+          ),
+          from: getMediaProvider,
+          name: r'getMediaProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getMediaHash,
+          dependencies: GetMediaFamily._dependencies,
+          allTransitiveDependencies: GetMediaFamily._allTransitiveDependencies,
+          id: id,
+        );
+
+  GetMediaProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.id,
+  }) : super.internal();
+
+  final int id;
+
+  @override
+  Override overrideWith(
+    FutureOr<Media> Function(GetMediaRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: GetMediaProvider._internal(
+        (ref) => create(ref as GetMediaRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        id: id,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Media> createElement() {
+    return _GetMediaProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetMediaProvider && other.id == id;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, id.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin GetMediaRef on AutoDisposeFutureProviderRef<Media> {
+  /// The parameter `id` of this provider.
+  int get id;
+}
+
+class _GetMediaProviderElement extends AutoDisposeFutureProviderElement<Media>
+    with GetMediaRef {
+  _GetMediaProviderElement(super.provider);
+
+  @override
+  int get id => (origin as GetMediaProvider).id;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -7,8 +7,8 @@ class PaginatedData<T> extends Equatable {
   final List<T> items;
 
   const PaginatedData({
-    required this.total,
-    required this.current,
+    this.total,
+    this.current = 1,
     required this.haveNext,
     required this.items,
   });

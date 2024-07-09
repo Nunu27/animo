@@ -1,20 +1,22 @@
+// ignore_for_file: constant_identifier_names
+
 enum MediaFormat {
   unknown('Unknown'),
 
   // Anime
-  tv('TV'),
-  tvShort('TV short'),
-  movie('Movie'),
-  special('Special'),
-  ova('OVA'),
-  ona('OVA'),
-  music('Music'),
+  TV('TV'),
+  TV_SHORT('TV short'),
+  MOVIE('Movie'),
+  SPECIAL('Special'),
+  OVA('OVA'),
+  ONA('ONA'),
+  MUSIC('Music'),
 
   // Manga
-  manga('Manga'),
-  novel('Novel'),
-  oneShot('One-shot'),
-  doujinshi('Doujinshi');
+  MANGA('Manga'),
+  NOVEL('Novel'),
+  ONESHOT('One-shot'),
+  DOUJINSHI('Doujinshi');
 
   const MediaFormat(this.text);
 

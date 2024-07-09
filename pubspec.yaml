@@ -46,6 +46,8 @@ dependencies:
   shimmer: ^3.0.0
   sqlite3: ^2.4.3
   sqlite3_flutter_libs: ^0.5.24
+  flutter_widget_from_html_core: ^0.15.1
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:

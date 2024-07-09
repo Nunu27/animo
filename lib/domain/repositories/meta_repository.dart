@@ -9,8 +9,8 @@ import 'package:animo/domain/enums/media_type.dart';
 abstract class MetaRepository {
   Future<Feed> getFeed(MediaType type);
   Future<PaginatedData<MediaBasic>> filter();
-  Future<Media> getDetail(int id);
 
+  Future<Media> getMedia(int id);
   Future<PaginatedData<MediaBasic>> getMediaRelations(
     int id, [
     int page = 1,

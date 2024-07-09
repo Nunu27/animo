@@ -13,6 +13,7 @@ class AppRouter extends $AppRouter {
             AutoRoute(page: ExtensionCreateRoute.page),
             AutoRoute(page: ExtensionEditRoute.page),
           ],
-        )
+        ),
+        AutoRoute(page: MediaDetailRoute.page),
       ];
 }

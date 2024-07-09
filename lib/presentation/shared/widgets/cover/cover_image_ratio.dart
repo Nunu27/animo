@@ -1,5 +1,5 @@
 import 'package:animo/core/constants/constants.dart';
-import 'package:animo/presentation/widgets/cover/cover_image.dart';
+import 'package:animo/presentation/shared/widgets/cover/cover_image.dart';
 import 'package:flutter/material.dart';
 
 class CoverImageRatio extends StatelessWidget {

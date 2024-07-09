@@ -1,2 +1,11 @@
-// ignore: constant_identifier_names
-enum MediaType { ANIME, MANGA, NOVEL }
+// ignore_for_file: constant_identifier_names
+
+enum MediaType {
+  ANIME('Anime'),
+  MANGA('Manga'),
+  NOVEL('Novel');
+
+  const MediaType(this.text);
+
+  final String text;
+}

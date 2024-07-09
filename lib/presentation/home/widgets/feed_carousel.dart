@@ -1,5 +1,5 @@
 import 'package:animo/domain/entities/media/media_basic.dart';
-import 'package:animo/presentation/widgets/cover/cover_image.dart';
+import 'package:animo/presentation/shared/widgets/cover/cover_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +30,7 @@ class FeedCarousel extends StatelessWidget {
                       top: 50,
                     ),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(8),
                       gradient: LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,

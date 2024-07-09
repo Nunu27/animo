@@ -1,9 +1,9 @@
 import 'package:animo/domain/enums/media_type.dart';
-import 'package:animo/presentation/controllers/meta_controller.dart';
-import 'package:animo/presentation/pages/home/widgets/feed_carousel.dart';
-import 'package:animo/presentation/pages/home/widgets/feed_list.dart';
-import 'package:animo/presentation/views/error_view.dart';
-import 'package:animo/presentation/widgets/loader.dart';
+import 'package:animo/presentation/shared/controllers/meta_controller.dart';
+import 'package:animo/presentation/home/widgets/feed_carousel.dart';
+import 'package:animo/presentation/home/widgets/feed_list.dart';
+import 'package:animo/presentation/shared/views/error_view.dart';
+import 'package:animo/presentation/shared/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

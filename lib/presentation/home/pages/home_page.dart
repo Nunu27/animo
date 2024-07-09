@@ -1,5 +1,5 @@
 import 'package:animo/domain/enums/media_type.dart';
-import 'package:animo/presentation/pages/home/home_view.dart';
+import 'package:animo/presentation/home/views/home_view.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 

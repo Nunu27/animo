@@ -1,5 +1,7 @@
+import 'package:animo/core/router/app_router.gr.dart';
 import 'package:animo/domain/entities/media/media_basic.dart';
-import 'package:animo/presentation/widgets/cards/card_cover.dart';
+import 'package:animo/presentation/shared/widgets/cards/card_cover.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 class FeedList extends StatelessWidget {
@@ -30,9 +32,16 @@ class FeedList extends StatelessWidget {
             itemCount: listData.length,
             separatorBuilder: (context, index) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
-              return CardCover(
+              return CoverCard(
                 media: listData[index],
-                onTap: () {},
+                onTap: () {
+                  context.router.push(
+                    MediaDetailRoute(
+                      id: listData[index].id,
+                      cover: listData[index].cover,
+                    ),
+                  );
+                },
               );
             },
           ),

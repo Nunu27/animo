@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 
 class MediaBasic extends Equatable {
   final int id;
-  final String? cover;
+  final String cover;
   final String title;
   final MediaType type;
   final String? info;

@@ -1,9 +1,9 @@
 import 'package:animo/domain/entities/media/media_basic.dart';
-import 'package:animo/presentation/widgets/cover/cover_image.dart';
+import 'package:animo/presentation/shared/widgets/cover/cover_image_ratio.dart';
 import 'package:flutter/material.dart';
 
-class CardCover extends StatelessWidget {
-  const CardCover({
+class CoverCard extends StatelessWidget {
+  const CoverCard({
     super.key,
     required this.media,
     this.width = 120,
@@ -27,7 +27,7 @@ class CardCover extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CoverImage(
+            CoverImageRatio(
               imageUrl: media.cover,
             ),
             const SizedBox(

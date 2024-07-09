@@ -8,41 +8,54 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:animo/presentation/pages/extension/extension_create_page.dart'
+import 'package:animo/presentation/extension/pages/extension_create_page.dart'
     as _i1;
-import 'package:animo/presentation/pages/extension/extension_edit_page.dart'
+import 'package:animo/presentation/extension/pages/extension_edit_page.dart'
     as _i2;
-import 'package:animo/presentation/pages/home/home_page.dart' as _i3;
-import 'package:animo/presentation/pages/root_page.dart' as _i4;
-import 'package:auto_route/auto_route.dart' as _i5;
+import 'package:animo/presentation/home/pages/home_page.dart' as _i3;
+import 'package:animo/presentation/media/media_detail_page.dart' as _i4;
+import 'package:animo/presentation/root_page.dart' as _i5;
+import 'package:auto_route/auto_route.dart' as _i6;
+import 'package:flutter/material.dart' as _i7;
 
-abstract class $AppRouter extends _i5.RootStackRouter {
+abstract class $AppRouter extends _i6.RootStackRouter {
   $AppRouter({super.navigatorKey});
 
   @override
-  final Map<String, _i5.PageFactory> pagesMap = {
+  final Map<String, _i6.PageFactory> pagesMap = {
     ExtensionCreateRoute.name: (routeData) {
-      return _i5.AutoRoutePage<dynamic>(
+      return _i6.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i1.ExtensionCreatePage(),
       );
     },
     ExtensionEditRoute.name: (routeData) {
-      return _i5.AutoRoutePage<dynamic>(
+      return _i6.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i2.ExtensionEditPage(),
       );
     },
     HomeRoute.name: (routeData) {
-      return _i5.AutoRoutePage<dynamic>(
+      return _i6.AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const _i3.HomePage(),
       );
     },
-    RootRoute.name: (routeData) {
-      return _i5.AutoRoutePage<dynamic>(
+    MediaDetailRoute.name: (routeData) {
+      final args = routeData.argsAs<MediaDetailRouteArgs>();
+      return _i6.AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const _i4.RootPage(),
+        child: _i4.MediaDetailPage(
+          key: args.key,
+          id: args.id,
+          cover: args.cover,
+        ),
+      );
+    },
+    RootRoute.name: (routeData) {
+      return _i6.AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const _i5.RootPage(),
       );
     },
   };
@@ -50,8 +63,8 @@ abstract class $AppRouter extends _i5.RootStackRouter {
 
 /// generated route for
 /// [_i1.ExtensionCreatePage]
-class ExtensionCreateRoute extends _i5.PageRouteInfo<void> {
-  const ExtensionCreateRoute({List<_i5.PageRouteInfo>? children})
+class ExtensionCreateRoute extends _i6.PageRouteInfo<void> {
+  const ExtensionCreateRoute({List<_i6.PageRouteInfo>? children})
       : super(
           ExtensionCreateRoute.name,
           initialChildren: children,
@@ -59,13 +72,13 @@ class ExtensionCreateRoute extends _i5.PageRouteInfo<void> {
 
   static const String name = 'ExtensionCreateRoute';
 
-  static const _i5.PageInfo<void> page = _i5.PageInfo<void>(name);
+  static const _i6.PageInfo<void> page = _i6.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i2.ExtensionEditPage]
-class ExtensionEditRoute extends _i5.PageRouteInfo<void> {
-  const ExtensionEditRoute({List<_i5.PageRouteInfo>? children})
+class ExtensionEditRoute extends _i6.PageRouteInfo<void> {
+  const ExtensionEditRoute({List<_i6.PageRouteInfo>? children})
       : super(
           ExtensionEditRoute.name,
           initialChildren: children,
@@ -73,13 +86,13 @@ class ExtensionEditRoute extends _i5.PageRouteInfo<void> {
 
   static const String name = 'ExtensionEditRoute';
 
-  static const _i5.PageInfo<void> page = _i5.PageInfo<void>(name);
+  static const _i6.PageInfo<void> page = _i6.PageInfo<void>(name);
 }
 
 /// generated route for
 /// [_i3.HomePage]
-class HomeRoute extends _i5.PageRouteInfo<void> {
-  const HomeRoute({List<_i5.PageRouteInfo>? children})
+class HomeRoute extends _i6.PageRouteInfo<void> {
+  const HomeRoute({List<_i6.PageRouteInfo>? children})
       : super(
           HomeRoute.name,
           initialChildren: children,
@@ -87,13 +100,56 @@ class HomeRoute extends _i5.PageRouteInfo<void> {
 
   static const String name = 'HomeRoute';
 
-  static const _i5.PageInfo<void> page = _i5.PageInfo<void>(name);
+  static const _i6.PageInfo<void> page = _i6.PageInfo<void>(name);
 }
 
 /// generated route for
-/// [_i4.RootPage]
-class RootRoute extends _i5.PageRouteInfo<void> {
-  const RootRoute({List<_i5.PageRouteInfo>? children})
+/// [_i4.MediaDetailPage]
+class MediaDetailRoute extends _i6.PageRouteInfo<MediaDetailRouteArgs> {
+  MediaDetailRoute({
+    _i7.Key? key,
+    required int id,
+    required String cover,
+    List<_i6.PageRouteInfo>? children,
+  }) : super(
+          MediaDetailRoute.name,
+          args: MediaDetailRouteArgs(
+            key: key,
+            id: id,
+            cover: cover,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'MediaDetailRoute';
+
+  static const _i6.PageInfo<MediaDetailRouteArgs> page =
+      _i6.PageInfo<MediaDetailRouteArgs>(name);
+}
+
+class MediaDetailRouteArgs {
+  const MediaDetailRouteArgs({
+    this.key,
+    required this.id,
+    required this.cover,
+  });
+
+  final _i7.Key? key;
+
+  final int id;
+
+  final String cover;
+
+  @override
+  String toString() {
+    return 'MediaDetailRouteArgs{key: $key, id: $id, cover: $cover}';
+  }
+}
+
+/// generated route for
+/// [_i5.RootPage]
+class RootRoute extends _i6.PageRouteInfo<void> {
+  const RootRoute({List<_i6.PageRouteInfo>? children})
       : super(
           RootRoute.name,
           initialChildren: children,
@@ -101,5 +157,5 @@ class RootRoute extends _i5.PageRouteInfo<void> {
 
   static const String name = 'RootRoute';
 
-  static const _i5.PageInfo<void> page = _i5.PageInfo<void>(name);
+  static const _i6.PageInfo<void> page = _i6.PageInfo<void>(name);
 }

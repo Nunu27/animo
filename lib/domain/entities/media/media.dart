@@ -1,11 +1,12 @@
 import 'package:animo/domain/entities/media/media_basic.dart';
 import 'package:animo/domain/entities/character/character_basic.dart';
 import 'package:animo/domain/entities/media/media_trailer.dart';
+import 'package:animo/domain/entities/paginated_data.dart';
 import 'package:animo/domain/enums/media_format.dart';
 import 'package:animo/domain/enums/media_status.dart';
 
 class Media extends MediaBasic {
-  final int? malId;
+  final int? idMal;
   final String? banner;
   final List<String> synonyms;
   final MediaFormat format;
@@ -14,12 +15,12 @@ class Media extends MediaBasic {
   final int? year;
   final List<String> genres;
   final double? rating;
-  final List<CharacterBasic> characters;
-  final List<MediaBasic> relations;
+  final PaginatedData<CharacterBasic> characters;
+  final PaginatedData<MediaBasic> relations;
   final MediaTrailer? trailer;
 
   const Media({
-    this.malId,
+    this.idMal,
     this.banner,
     this.description,
     this.year,

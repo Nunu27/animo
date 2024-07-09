@@ -1,3 +1,4 @@
+import 'package:animo/data/dto/media/media_dto.dart';
 import 'package:animo/data/repositories/meta_query.dart';
 import 'package:animo/domain/entities/character/character.dart';
 import 'package:animo/domain/entities/character/character_basic.dart';
@@ -14,6 +15,15 @@ import 'package:dio/dio.dart';
 class MetaRepositoryImpl implements MetaRepository {
   final _dio = Dio(BaseOptions(baseUrl: 'https://graphql.anilist.co'));
 
+  Future<Map<String, dynamic>> query(
+      String query, Map<String, dynamic> variables) async {
+    final response = await _dio.post<Map<String, dynamic>>('', data: {
+      'query': query,
+      'variables': variables,
+    });
+    return response.data!['data'];
+  }
+
   @override
   Future<Feed> getFeed(MediaType type) async {
     final season = MediaSeason.getCurrentSeason();
@@ -22,16 +32,12 @@ class MetaRepositoryImpl implements MetaRepository {
         MediaSeason.values[(season.index + 1) % MediaSeason.values.length];
     final nextYear = (season == MediaSeason.FALL) ? year + 1 : year;
 
-    final response = await _dio.post<Map<String, dynamic>>('', data: {
-      'query': MetaQuery.feed[type],
-      'variables': {
-        'season': season.name,
-        'seasonYear': year,
-        'nextSeason': nextSeason.name,
-        'nextYear': nextYear,
-      },
+    final data = await query(MetaQuery.feed[type]!, {
+      'season': season.name,
+      'seasonYear': year,
+      'nextSeason': nextSeason.name,
+      'nextYear': nextYear,
     });
-    final data = response.data!['data'];
 
     return Feed(
       carousel: (data['popular']['media'] as List)
@@ -82,9 +88,10 @@ class MetaRepositoryImpl implements MetaRepository {
   }
 
   @override
-  Future<Media> getDetail(int id) {
-    // TODO: implement getDetail
-    throw UnimplementedError();
+  Future<Media> getMedia(int id) async {
+    final data = await query(MetaQuery.media, {'id': id});
+
+    return MediaDto.fromAnilist(data['Media']);
   }
 
   @override
