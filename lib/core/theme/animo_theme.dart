@@ -97,6 +97,16 @@ class AnimoTheme {
           ),
         ),
       ),
+      expansionTileTheme: const ExpansionTileThemeData(
+        shape: Border(),
+      ),
+      dropdownMenuTheme: DropdownMenuThemeData(
+        menuStyle: MenuStyle(
+          backgroundColor: WidgetStatePropertyAll(
+            colorScheme.secondaryContainer,
+          ),
+        ),
+      ),
     );
   }
 }

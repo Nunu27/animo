@@ -1,7 +1,9 @@
+import 'package:animo/core/router/app_router.gr.dart';
 import 'package:animo/domain/entities/media/media_basic.dart';
 import 'package:animo/domain/entities/paginated_data.dart';
 import 'package:animo/presentation/media/widgets/section_header.dart';
 import 'package:animo/presentation/shared/widgets/cards/card_cover.dart';
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 class RelationView extends StatelessWidget {
@@ -34,9 +36,13 @@ class RelationView extends StatelessWidget {
                 .map(
                   (media) => Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: CoverCard(
+                    child: CardCover(
                       media: media,
-                      onTap: () {},
+                      onTap: () {
+                        context.pushRoute(
+                          MediaDetailRoute(id: media.id, cover: media.cover),
+                        );
+                      },
                     ),
                   ),
                 )

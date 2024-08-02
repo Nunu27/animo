@@ -28,15 +28,18 @@ class MediaDto extends Media {
   });
 
   factory MediaDto.fromAnilist(Map<String, dynamic> data) {
+    final format = MediaFormat.values.byName(data['format']);
     return MediaDto(
       id: data['id'],
       idMal: data['idMal'],
       title: data['title']['userPreferred'],
-      cover: data['coverImage']['medium'],
+      cover: data['coverImage']['large'],
       banner: data['bannerImage'],
       synonyms: List<String>.from(data['synonyms']),
-      type: MediaType.values.byName(data['type']),
-      format: MediaFormat.values.byName(data['format']),
+      type: format == MediaFormat.NOVEL
+          ? MediaType.NOVEL
+          : MediaType.values.byName(data['type']),
+      format: format,
       status: MediaStatus.values.byName(data['status']),
       description: data['description'],
       year: data['startDate']['year'],

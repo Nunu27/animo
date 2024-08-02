@@ -20,7 +20,7 @@ class WatcherView<T> extends ConsumerWidget {
             log(error.toString(), stackTrace: stackTrace);
 
             return ErrorView(
-              message: error.toString(),
+              error: error,
               onRetry: () {
                 ref.invalidate(provider as ProviderOrFamily);
               },

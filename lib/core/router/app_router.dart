@@ -15,5 +15,6 @@ class AppRouter extends $AppRouter {
           ],
         ),
         AutoRoute(page: MediaDetailRoute.page),
+        AutoRoute(page: SearchRoute.page),
       ];
 }

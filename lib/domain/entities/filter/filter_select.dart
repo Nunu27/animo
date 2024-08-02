@@ -1,7 +1,10 @@
-import 'package:animo/domain/entities/filter/filter.dart';
+part of 'filter.dart';
 
-class FilterSelect extends Filter {
-  final Map<String, String> option;
+final class FilterSelect extends Filter {
+  final Map<String, String> options;
 
-  FilterSelect(super.label, super.key, this.option);
+  const FilterSelect(super.label, super.key, this.options);
+
+  @override
+  List<Object?> get props => [label, key, options];
 }

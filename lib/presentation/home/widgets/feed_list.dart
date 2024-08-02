@@ -32,7 +32,7 @@ class FeedList extends StatelessWidget {
             itemCount: listData.length,
             separatorBuilder: (context, index) => const SizedBox(width: 8),
             itemBuilder: (context, index) {
-              return CoverCard(
+              return CardCover(
                 media: listData[index],
                 onTap: () {
                   context.router.push(

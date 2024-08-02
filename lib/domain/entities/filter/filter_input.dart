@@ -1,7 +1,8 @@
-import 'package:animo/domain/entities/filter/filter.dart';
+part of 'filter.dart';
 
-class FilterInput extends Filter {
-  final String? text;
-
-  FilterInput(super.label, super.key, {this.text});
+final class FilterInput extends Filter {
+  const FilterInput(
+    super.label,
+    super.key,
+  );
 }

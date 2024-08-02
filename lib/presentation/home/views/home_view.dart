@@ -38,7 +38,7 @@ class _HomeViewState extends ConsumerState<HomeView>
             ],
           ),
           error: (error, stackTrace) => ErrorView(
-            message: error.toString(),
+            error: error.toString(),
             onRetry: () {
               ref.invalidate(getFeedProvider(widget.mediaType));
             },

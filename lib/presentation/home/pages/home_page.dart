@@ -1,3 +1,4 @@
+import 'package:animo/core/router/app_router.gr.dart';
 import 'package:animo/domain/enums/media_type.dart';
 import 'package:animo/presentation/home/views/home_view.dart';
 import 'package:auto_route/auto_route.dart';
@@ -32,6 +33,16 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Explore'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.router.push(
+                SearchRoute(mediaType: MediaType.values[_tabController.index]),
+              );
+            },
+            icon: const Icon(Icons.search_rounded),
+          )
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [

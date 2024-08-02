@@ -102,7 +102,7 @@ class MediaDetailHeader extends StatelessWidget {
                               width: 2,
                             ),
                             Text(
-                              media.status.anime,
+                              media.status.getText(media.type),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.titleSmall,

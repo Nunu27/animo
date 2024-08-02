@@ -16,15 +16,6 @@ class MediaBasic extends Equatable {
     this.info,
   });
 
-  factory MediaBasic.fromAnilist(Map<String, dynamic> data) {
-    return MediaBasic(
-      id: data['id'],
-      cover: data['coverImage']['large'],
-      title: data['title']['userPreferred'],
-      type: MediaType.values.byName(data['type']),
-    );
-  }
-
   @override
   List<Object?> get props => [id, cover, title, type, info];
 }

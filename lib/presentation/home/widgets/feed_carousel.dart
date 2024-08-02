@@ -18,11 +18,11 @@ class FeedCarousel extends StatelessWidget {
     return CarouselSlider(
       items: carouselData
           .map(
-            (e) => Stack(
+            (media) => Stack(
               fit: StackFit.expand,
               clipBehavior: Clip.antiAlias,
               children: [
-                CoverImage(imageUrl: e.cover),
+                CoverImage(imageUrl: media.cover),
                 Positioned.fill(
                   child: Container(
                     alignment: Alignment.bottomCenter,
@@ -41,7 +41,7 @@ class FeedCarousel extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      e.title,
+                      media.title,
                       style: theme.textTheme.titleMedium!.copyWith(
                         color: theme.colorScheme.onSurface,
                       ),

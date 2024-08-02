@@ -14,7 +14,7 @@ class MediaBasicDto extends MediaBasic {
   factory MediaBasicDto.fromAnilist(Map<String, dynamic> data) {
     return MediaBasicDto(
       id: data['id'],
-      cover: data['coverImage']['medium'],
+      cover: data['coverImage']['large'],
       title: data['title']['userPreferred'],
       type: MediaType.values.byName(data['type']),
     );

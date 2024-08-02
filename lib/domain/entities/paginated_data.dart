@@ -14,5 +14,5 @@ class PaginatedData<T> extends Equatable {
   });
 
   @override
-  List<Object?> get props => [items];
+  List<Object?> get props => [items, current, haveNext, total];
 }
